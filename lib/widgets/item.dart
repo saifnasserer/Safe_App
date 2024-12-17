@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safe/Constants.dart';
 
 class item extends StatelessWidget {
   item({
@@ -56,11 +57,15 @@ class item extends StatelessWidget {
       child: Row(children: [
         Text(price.toString(),
             style: const TextStyle(
-                color: Colors.white, fontSize: 20, fontFamily: 'Rabar')),
+                color: Colors.white,
+                fontSize: 20,
+                fontFamily: Constants.secondaryFontFamily)),
         const VerticalDivider(),
         Text(title,
             style: const TextStyle(
-                color: Colors.white, fontSize: 20, fontFamily: 'Rabar')),
+                color: Colors.white,
+                fontSize: 20,
+                fontFamily: Constants.secondaryFontFamily)),
       ]),
     );
   }

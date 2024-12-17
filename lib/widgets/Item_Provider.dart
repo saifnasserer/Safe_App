@@ -19,12 +19,14 @@ class ItemProvider extends ChangeNotifier {
   }
 
   Future<void> addItem(item newItem) async {
-    if (newItem.flag == false) {  // Expense
+    if (newItem.flag == false) {
+      // Expense
       final newWalletValue = WalletBlock.wallet.value - newItem.price;
       final newSpentValue = SpentBlock.spent.value + newItem.price;
       await WalletBlock.updateWallet(newWalletValue);
       await SpentBlock.updateSpentValue(newSpentValue);
-    } else {  // Income
+    } else {
+      // Income
       final newWalletValue = WalletBlock.wallet.value + newItem.price;
       await WalletBlock.updateWallet(newWalletValue);
     }
@@ -34,12 +36,13 @@ class ItemProvider extends ChangeNotifier {
   }
 
   Future<void> removeItem(int index) async {
-    if (_items[index].flag == false) {  // If it was an expense
+    if (_items[index].flag == false) {
       final newSpentValue = SpentBlock.spent.value - _items[index].price;
       final newWalletValue = WalletBlock.wallet.value + _items[index].price;
       await SpentBlock.updateSpentValue(newSpentValue);
       await WalletBlock.updateWallet(newWalletValue);
-    } else {  // If it was income
+    } else {
+      // If it was income
       final newWalletValue = WalletBlock.wallet.value - _items[index].price;
       await WalletBlock.updateWallet(newWalletValue);
     }

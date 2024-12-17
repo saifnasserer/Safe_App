@@ -112,7 +112,7 @@ class _SpentBlockState extends State<SpentBlock>
                         style: TextStyle(
                           fontSize: containerHeight * 0.05,
                           color: Colors.white,
-                          fontFamily: Constants.defaultFontFamily,
+                          fontFamily: Constants.secondaryFontFamily,
                         ),
                       ),
                       ValueListenableBuilder<double>(
@@ -136,7 +136,10 @@ class _SpentBlockState extends State<SpentBlock>
                           HapticFeedback.mediumImpact();
                           Navigator.pushNamed(context, Reciept.id);
                         },
-                        child: const Text('عرض التفاصيل'),
+                        child: const Text('عرض التفاصيل',
+                            style: TextStyle(
+                              fontFamily: Constants.secondaryFontFamily,
+                            )),
                       ),
                       Container(
                         margin: EdgeInsets.only(

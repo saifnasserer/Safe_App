@@ -36,16 +36,16 @@ class TutorialHelper {
         radius: 10,
         contents: [
           TargetContent(
-            align: ContentAlign.bottom,
+            align: ContentAlign.custom,
             customPosition: CustomTargetContentPosition(
               bottom: 20,
-              left: 0,
-              right: 0,
+              left: 20,
+              right: 20,
             ),
             builder: (context, controller) {
               return Container(
                 padding: const EdgeInsets.all(15),
-                child: const Column(
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -53,8 +53,24 @@ class TutorialHelper {
                       "هنا هتلاقي محفظتك وفلوسك",
                       style: TextStyle(
                         color: Colors.white,
-                        fontFamily: Constants.defaultFontFamily,
+                        fontFamily: Constants.secondaryFontFamily,
                         fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () => controller.next(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Constants.primaryColor,
+                      ),
+                      child: Text(
+                        'التالي',
+                        style: TextStyle(
+                          fontFamily: Constants.secondaryFontFamily,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -64,7 +80,59 @@ class TutorialHelper {
           ),
         ],
       ),
-      // Add more targets as needed
+      if (keys.length > 1)
+        TargetFocus(
+          identify: "goals_key",
+          keyTarget: keys[1],
+          alignSkip: Alignment.bottomRight,
+          shape: ShapeLightFocus.RRect,
+          radius: 10,
+          contents: [
+            TargetContent(
+              align: ContentAlign.custom,
+              customPosition: CustomTargetContentPosition(
+                bottom: 20,
+                left: 20,
+                right: 20,
+              ),
+              builder: (context, controller) {
+                return Container(
+                  padding: const EdgeInsets.all(15),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "هنا تقدر تشوف وتضيف أهدافك",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: Constants.secondaryFontFamily,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () => controller.next(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Constants.primaryColor,
+                        ),
+                        child: Text(
+                          'فهمت',
+                          style: TextStyle(
+                            fontFamily: Constants.secondaryFontFamily,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
     ];
 
     await _markTutorialAsSeen(_keyHomePageSeen);
@@ -72,13 +140,15 @@ class TutorialHelper {
       targets: targets,
       colorShadow: Constants.primaryColor,
       textSkip: "تخطي",
-      textStyleSkip: const TextStyle(
+      textStyleSkip: TextStyle(
         color: Colors.white,
-        fontFamily: Constants.defaultFontFamily,
+        fontFamily: Constants.secondaryFontFamily,
         fontSize: 20,
+        fontWeight: FontWeight.w600,
       ),
       paddingFocus: 10,
       opacityShadow: 0.8,
+      hideSkip: false,
     );
   }
 

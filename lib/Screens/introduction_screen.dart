@@ -71,7 +71,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Rabar',
+                      fontFamily: Constants.secondaryFontFamily,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -82,7 +82,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18,
-                        fontFamily: 'Rabar',
+                        fontFamily: Constants.secondaryFontFamily,
                         height: 1.5,
                       ),
                     ),
@@ -120,7 +120,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        fontFamily: 'Rabar',
+                        fontFamily: Constants.secondaryFontFamily,
                         height: 1.3,
                       ),
                     ),

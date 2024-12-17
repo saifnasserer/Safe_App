@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:safe/Blocks/Spent.dart';
-import 'package:safe/Blocks/Wallet.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/Screens/Goals.dart' show GoalItem, GoalsBlock;
 import 'package:safe/widgets/Goal_Provider.dart';
@@ -116,20 +114,27 @@ class _ManageState extends State<Manage> {
                               return Container(
                                 width: MediaQuery.of(context).size.width - 48,
                                 margin: const EdgeInsets.only(right: 16),
-                                child: GoalItem(
-                                  savedAmount: goal.currentAmount,
-                                  title: goal.title,
-                                  targetAmount: goal.targetAmount,
-                                  color: goal.color,
-                                  onDismissed: () {
-                                    HapticFeedback.heavyImpact();
-                                    goalProvider.removeGoal(index);
-                                    if (goalProvider.goals.isEmpty) {
-                                      setState(() {
-                                        _buildAddNewGoalButton(context);
-                                      });
-                                    }
+                                child: GestureDetector(
+                                  onTap: () {
+                                    HapticFeedback.mediumImpact();
+                                    Navigator.pushNamed(
+                                        context, GoalsBlock.goalsID);
                                   },
+                                  child: GoalItem(
+                                    savedAmount: goal.currentAmount,
+                                    title: goal.title,
+                                    targetAmount: goal.targetAmount,
+                                    color: goal.color,
+                                    onDismissed: () {
+                                      HapticFeedback.heavyImpact();
+                                      goalProvider.removeGoal(index);
+                                      if (goalProvider.goals.isEmpty) {
+                                        setState(() {
+                                          _buildAddNewGoalButton(context);
+                                        });
+                                      }
+                                    },
+                                  ),
                                 ),
                               );
                             },
@@ -201,7 +206,7 @@ class _ManageState extends State<Manage> {
                         child: TextField(
                           controller: amountController,
                           keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true),
+                              signed: false, decimal: true),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: screenWidth * 0.06,
@@ -235,6 +240,7 @@ class _ManageState extends State<Manage> {
                         onPressed: () async {
                           if (titleController.text.isNotEmpty &&
                               amountController.text.isNotEmpty) {
+                            HapticFeedback.mediumImpact();
                             Provider.of<ItemProvider>(context, listen: false)
                                 .addItem(
                               item(
@@ -244,6 +250,7 @@ class _ManageState extends State<Manage> {
                                 dateTime: DateTime.now(),
                               ),
                             );
+                            audioPlayer.play(AssetSource('SFX/moneyAdd.mp3'));
                             amountController.clear();
                             titleController.clear();
                             showSimpleNotification(
@@ -255,6 +262,21 @@ class _ManageState extends State<Manage> {
                                 ),
                               ),
                               background: Colors.green,
+                              duration: const Duration(seconds: 1),
+                            );
+                          } else {
+                            HapticFeedback.heavyImpact();
+                            showSimpleNotification(
+                              const Center(
+                                child: Text(
+                                  'ضيف البيانات الناقصة',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: Constants.defaultFontFamily,
+                                  ),
+                                ),
+                              ),
+                              background: Colors.red,
                               duration: const Duration(seconds: 1),
                             );
                           }
@@ -292,6 +314,7 @@ class _ManageState extends State<Manage> {
                         onPressed: () async {
                           if (titleController.text.isNotEmpty &&
                               amountController.text.isNotEmpty) {
+                            HapticFeedback.mediumImpact();
                             Provider.of<ItemProvider>(context, listen: false)
                                 .addItem(
                               item(
@@ -301,6 +324,7 @@ class _ManageState extends State<Manage> {
                                 dateTime: DateTime.now(),
                               ),
                             );
+                            audioPlayer.play(AssetSource('SFX/moneyAdd.mp3'));
                             amountController.clear();
                             titleController.clear();
                             showSimpleNotification(
@@ -312,6 +336,21 @@ class _ManageState extends State<Manage> {
                                 ),
                               ),
                               background: Colors.green,
+                              duration: const Duration(seconds: 1),
+                            );
+                          } else {
+                            HapticFeedback.heavyImpact();
+                            showSimpleNotification(
+                              const Center(
+                                child: Text(
+                                  'ضيف البيانات الناقصة',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontFamily: Constants.defaultFontFamily,
+                                  ),
+                                ),
+                              ),
+                              background: Colors.red,
                               duration: const Duration(seconds: 1),
                             );
                           }
@@ -376,7 +415,7 @@ class _ManageState extends State<Manage> {
               'إضافة هدف جديد +',
               style: TextStyle(
                 color: Constants.primaryColor,
-                fontFamily: Constants.defaultFontFamily,
+                fontFamily: Constants.secondaryFontFamily,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),

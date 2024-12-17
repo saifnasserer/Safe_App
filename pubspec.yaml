@@ -82,6 +82,7 @@ flutter:
     - assets/SFX/
     - android/app/src/main/res/drawable/
     - assets/animation/
+    - assets/SFX/moneyAdd.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -104,6 +105,9 @@ flutter:
     - family: Omnes
       fonts:
         - asset: assets/fonts/OMNES-ARABIC-BLACK.ttf
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo/SemiBold.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

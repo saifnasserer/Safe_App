@@ -121,7 +121,7 @@ class _WalletBlockState extends State<WalletBlock>
                   "محفظتك فيها",
                   style: TextStyle(
                     fontSize: screenWidth * 0.05,
-                    fontFamily: Constants.defaultFontFamily,
+                    fontFamily: Constants.secondaryFontFamily,
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.01),
@@ -148,7 +148,7 @@ class _WalletBlockState extends State<WalletBlock>
                   "جنية",
                   style: TextStyle(
                     fontSize: screenWidth * 0.05,
-                    fontFamily: Constants.defaultFontFamily,
+                    fontFamily: Constants.secondaryFontFamily,
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.05),

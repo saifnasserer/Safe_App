@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/Screens/manage.dart';
 import 'package:safe/utils/FirstUse.dart';
@@ -114,7 +115,7 @@ class _RecieptState extends State<Reciept> {
                       style: TextStyle(
                         color: Constants.primaryColor,
                         fontSize: 24,
-                        fontFamily: Constants.defaultFontFamily,
+                        fontFamily: Constants.secondaryFontFamily,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -124,7 +125,7 @@ class _RecieptState extends State<Reciept> {
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: Constants.defaultFontSize,
-                        fontFamily: Constants.defaultFontFamily,
+                        fontFamily: Constants.secondaryFontFamily,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -145,7 +146,7 @@ class _RecieptState extends State<Reciept> {
                           child: const Text(
                             'اضافة معاملة',
                             style: TextStyle(
-                                fontFamily: Constants.defaultFontFamily,
+                                fontFamily: Constants.secondaryFontFamily,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold),
                           )),
@@ -269,33 +270,18 @@ class _RecieptState extends State<Reciept> {
                                   const SizedBox(height: 6),
                                   GestureDetector(
                                     onTap: () {
-                                      HapticFeedback.mediumImpact();
-                                      // Find the actual index of the item in the original list
+                                      HapticFeedback.heavyImpact();
                                       final itemIndex = items.indexOf(item);
-                                      Provider.of<ItemProvider>(context, listen: false)
-                                          .removeItem(itemIndex);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: statusColor,
-                                          behavior: SnackBarBehavior.floating,
-                                          margin: const EdgeInsets.all(16),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          content: const Center(
-                                            child: Text(
-                                              'تم الحذف',
-                                              style: TextStyle(
-                                                fontFamily:
-                                                    Constants.defaultFontFamily,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
+                                      if (itemIndex >= 0) {
+                                        Provider.of<ItemProvider>(context,
+                                                listen: false)
+                                            .removeItem(itemIndex);
+                                        showSimpleNotification(
+                                            context: context,
+                                            const Center(
+                                                child: Text('تم الحذف')),
+                                            background: Colors.green);
+                                      }
                                     },
                                     child: Icon(
                                       Icons.delete_outline_rounded,
