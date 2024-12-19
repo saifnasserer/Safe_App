@@ -49,7 +49,7 @@ class TutorialHelper {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       "هنا هتلاقي محفظتك وفلوسك",
                       style: TextStyle(
                         color: Colors.white,
@@ -65,7 +65,7 @@ class TutorialHelper {
                         backgroundColor: Colors.white,
                         foregroundColor: Constants.primaryColor,
                       ),
-                      child: Text(
+                      child: const Text(
                         'التالي',
                         style: TextStyle(
                           fontFamily: Constants.secondaryFontFamily,
@@ -102,7 +102,7 @@ class TutorialHelper {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         "هنا تقدر تشوف وتضيف أهدافك",
                         style: TextStyle(
                           color: Colors.white,
@@ -118,7 +118,7 @@ class TutorialHelper {
                           backgroundColor: Colors.white,
                           foregroundColor: Constants.primaryColor,
                         ),
-                        child: Text(
+                        child: const Text(
                           'فهمت',
                           style: TextStyle(
                             fontFamily: Constants.secondaryFontFamily,
@@ -140,7 +140,7 @@ class TutorialHelper {
       targets: targets,
       colorShadow: Constants.primaryColor,
       textSkip: "تخطي",
-      textStyleSkip: TextStyle(
+      textStyleSkip: const TextStyle(
         color: Colors.white,
         fontFamily: Constants.secondaryFontFamily,
         fontSize: 20,

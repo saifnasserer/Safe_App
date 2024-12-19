@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/utils/storage_service.dart';
 
@@ -61,6 +62,15 @@ class _WalletBlockState extends State<WalletBlock>
         children: [
           Positioned(
             top: screenHeight * 0.15,
+            left: screenWidth * 0.3,
+            child: Lottie.asset(
+              'assets/animation/Underline.json',
+              animate: true,
+              repeat: false,
+            ),
+          ),
+          Positioned(
+            top: screenHeight * 0.15,
             left: screenWidth * 0.08,
             child: ScaleTransition(
               scale: _scaleAnimation,
@@ -113,7 +123,7 @@ class _WalletBlockState extends State<WalletBlock>
                   style: TextStyle(
                     fontSize: screenWidth * 0.12,
                     fontWeight: FontWeight.bold,
-                    fontFamily: Constants.defaultFontFamily,
+                    fontFamily: Constants.titles,
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.05),
@@ -143,7 +153,7 @@ class _WalletBlockState extends State<WalletBlock>
                     },
                   ),
                 ),
-                SizedBox(height: screenHeight * 0.01),
+                SizedBox(height: screenHeight * 0.008),
                 Text(
                   "جنية",
                   style: TextStyle(

@@ -58,7 +58,7 @@ class _ManageState extends State<Manage> {
           'إضافة معاملة جديدة',
           style: TextStyle(
             color: Constants.primaryColor,
-            fontFamily: Constants.defaultFontFamily,
+            fontFamily: Constants.titles,
             fontSize: 30,
             fontWeight: FontWeight.bold,
           ),

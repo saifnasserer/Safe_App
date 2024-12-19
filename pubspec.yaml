@@ -82,7 +82,8 @@ flutter:
     - assets/SFX/
     - android/app/src/main/res/drawable/
     - assets/animation/
-    - assets/SFX/moneyAdd.mp3
+    - assets\animation\Underline.json
+    - assets\SFX\moneyAdd.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -108,6 +109,12 @@ flutter:
     - family: Cairo
       fonts:
         - asset: assets/fonts/Cairo/SemiBold.ttf
+    - family: CairoBold
+      fonts:
+        - asset: assets/fonts/Cairo/Bold.ttf
+    - family: CairoBlack
+      fonts:
+        - asset: assets/fonts/Cairo/Black.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
