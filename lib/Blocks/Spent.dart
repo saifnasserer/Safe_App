@@ -119,7 +119,9 @@ class _SpentBlockState extends State<SpentBlock>
                         valueListenable: SpentBlock.spent,
                         builder: (context, value, child) {
                           return Text(
-                            value.toStringAsFixed(1),
+                            value != value.toInt() || value == 0
+                                ? value.toString()
+                                : value.toString().split('.')[0],
                             maxLines: 1,
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,
@@ -141,10 +143,13 @@ class _SpentBlockState extends State<SpentBlock>
                               fontFamily: Constants.secondaryFontFamily,
                             )),
                       ),
+                      // Spacer(
+                      //   flex: 1,
+                      // ),
                       Container(
                         margin: EdgeInsets.only(
                             bottom: containerHeight * 0.05,
-                            top: containerHeight * 0.05),
+                            top: containerHeight * 0.1),
                         decoration: const BoxDecoration(
                             color: Color(0xff1c1c1c),
                             borderRadius:

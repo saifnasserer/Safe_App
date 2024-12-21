@@ -55,21 +55,6 @@ class _RecieptState extends State<Reciept> {
 
     return Scaffold(
       backgroundColor: Constants.scaffoldBackgroundColor,
-      // appBar: AppBar(
-      //   iconTheme: const IconThemeData(color: Colors.white),
-      //   elevation: 0,
-      //   backgroundColor: Constants.primaryColor,
-      //   centerTitle: true,
-      //   title: const Text(
-      //     "مصاريفك",
-      //     style: TextStyle(
-      //       fontFamily: Constants.defaultFontFamily,
-      //       fontSize: 24,
-      //       fontWeight: FontWeight.bold,
-      //       color: Colors.white,
-      //     ),
-      //   ),
-      // ),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -162,9 +147,10 @@ class _RecieptState extends State<Reciept> {
                 final dateKey =
                     groupedItems.keys.toList().reversed.toList()[index];
                 final itemsForDate = groupedItems[dateKey]!.reversed.toList();
-
+                final screenHight = MediaQuery.of(context).size.height;
+                final screenWidth = MediaQuery.of(context).size.width;
                 return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(
@@ -214,49 +200,8 @@ class _RecieptState extends State<Reciept> {
                           padding: const EdgeInsets.all(16),
                           child: Row(
                             children: [
-                              Container(
-                                height: 44,
-                                width: 44,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: statusColor.withOpacity(.08),
-                                ),
-                                child: Icon(
-                                  isIncome
-                                      ? Icons.arrow_upward_rounded
-                                      : Icons.arrow_downward_rounded,
-                                  color: statusColor,
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.title,
-                                      style: const TextStyle(
-                                        fontFamily: Constants.defaultFontFamily,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF1E293B),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      DateFormat('hh:mm a')
-                                          .format(item.dateTime),
-                                      style: TextStyle(
-                                        color: Colors.grey[500],
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
                               Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
                                     '${item.price} جنيه',
@@ -290,6 +235,47 @@ class _RecieptState extends State<Reciept> {
                                     ),
                                   ),
                                 ],
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      item.title,
+                                      style: const TextStyle(
+                                        fontFamily: Constants.defaultFontFamily,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFF1E293B),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      DateFormat('hh:mm a')
+                                          .format(item.dateTime),
+                                      style: TextStyle(
+                                        color: Colors.grey[500],
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Container(
+                                height: screenHight * 0.05,
+                                width: screenWidth * 0.1,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: statusColor.withOpacity(.08),
+                                ),
+                                child: Icon(
+                                  isIncome
+                                      ? Icons.arrow_upward_rounded
+                                      : Icons.arrow_downward_rounded,
+                                  color: statusColor,
+                                  size: 20,
+                                ),
                               ),
                             ],
                           ),

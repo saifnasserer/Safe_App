@@ -61,7 +61,7 @@ class _WalletBlockState extends State<WalletBlock>
       child: Stack(
         children: [
           Positioned(
-            top: screenHeight * 0.15,
+            top: screenHeight * 0.158,
             left: screenWidth * 0.3,
             child: Lottie.asset(
               'assets/animation/Underline.json',
@@ -142,7 +142,9 @@ class _WalletBlockState extends State<WalletBlock>
                     valueListenable: WalletBlock.wallet,
                     builder: (context, value, child) {
                       return Text(
-                        value.toString(),
+                        value != value.toInt() || value == 0
+                            ? value.toString()
+                            : value.toString().split('.')[0],
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
