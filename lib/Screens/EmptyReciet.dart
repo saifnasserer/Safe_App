@@ -182,6 +182,8 @@ class _RecieptState extends State<Reciept> {
                       final statusColor = isIncome
                           ? const Color(0xFF10B981)
                           : const Color(0xFFEF4444);
+                      final screenHight = MediaQuery.of(context).size.height;
+                      final screenWidth = MediaQuery.of(context).size.width;
 
                       return Container(
                         margin: const EdgeInsets.symmetric(
@@ -197,19 +199,23 @@ class _RecieptState extends State<Reciept> {
                           ),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.all(screenWidth * 0.03),
                           child: Row(
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    '${item.price} جنيه',
-                                    style: TextStyle(
-                                      fontFamily: Constants.defaultFontFamily,
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
-                                      color: statusColor,
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        right: screenWidth * 0.02,
+                                        left: screenWidth * 0.02),
+                                    child: Text(
+                                      '${item.price} جنيه',
+                                      style: TextStyle(
+                                        fontFamily: Constants.defaultFontFamily,
+                                        fontSize: 17,
+                                        color: statusColor,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(height: 6),
@@ -242,14 +248,14 @@ class _RecieptState extends State<Reciept> {
                                   children: [
                                     Text(
                                       item.title,
-                                      style: const TextStyle(
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
                                         fontFamily: Constants.defaultFontFamily,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF1E293B),
+                                        fontSize: screenHight * 0.016,
+                                        color: const Color(0xFF1E293B),
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
+                                    SizedBox(height: screenHight * 0.01),
                                     Text(
                                       DateFormat('hh:mm a')
                                           .format(item.dateTime),
