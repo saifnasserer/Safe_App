@@ -1,36 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:safe/Blocks/Wallet.dart';
+import 'package:safe/utils/goal_types.dart';
 
 class Goal {
+  final String title;
+  final double targetAmount;
+  double currentAmount;
+  final Color color;
+  final GoalType type;
+
   Goal({
     required this.title,
     required this.targetAmount,
+    this.currentAmount = 0,
     required this.color,
+    this.type = GoalType.goal,
   });
 
-  final String title;
-  double targetAmount;
-  double currentAmount = 0.0;
-  Color color;
-
-  // Convert Goal to JSON
   Map<String, dynamic> toJson() {
     return {
       'title': title,
       'targetAmount': targetAmount,
       'currentAmount': currentAmount,
       'color': color.value,
+      'type': type.index,
     };
   }
 
-  // Create Goal from JSON
   factory Goal.fromJson(Map<String, dynamic> json) {
     return Goal(
       title: json['title'],
       targetAmount: json['targetAmount'],
+      currentAmount: json['currentAmount'],
       color: Color(json['color']),
-    )..currentAmount = json['currentAmount'] ?? 0.0;
+      type: GoalType.values[json['type'] ?? 0],
+    );
+  }
+
+  Goal copyWith({
+    String? title,
+    double? targetAmount,
+    double? currentAmount,
+    Color? color,
+    GoalType? type,
+  }) {
+    return Goal(
+      title: title ?? this.title,
+      targetAmount: targetAmount ?? this.targetAmount,
+      currentAmount: currentAmount ?? this.currentAmount,
+      color: color ?? this.color,
+      type: type ?? this.type,
+    );
   }
 }
 

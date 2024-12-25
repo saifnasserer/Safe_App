@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/Screens/Goals.dart' show GoalItem, GoalsBlock;
-import 'package:safe/widgets/Goal_Provider.dart';
 import 'package:safe/widgets/Item_Provider.dart';
+import 'package:safe/widgets/goals_screen_widgets/Goal_Provider.dart';
+import 'package:safe/widgets/goals_screen_widgets/goal_item_widget.dart';
 import 'package:safe/widgets/item.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
@@ -105,11 +106,12 @@ class _ManageState extends State<Manage> {
                               HapticFeedback.mediumImpact();
                               Navigator.pushNamed(context, GoalsBlock.goalsID);
                             },
-                            child: GoalItem(
+                            child: GoalItemWidget(
                               savedAmount: goal.currentAmount,
                               title: goal.title,
                               targetAmount: goal.targetAmount,
                               color: goal.color,
+                              type: goal.type,
                               onDismissed: () {
                                 HapticFeedback.heavyImpact();
                                 goalProvider.removeGoal(index);

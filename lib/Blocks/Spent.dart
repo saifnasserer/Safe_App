@@ -4,9 +4,9 @@ import 'package:safe/Constants.dart';
 import 'package:safe/Screens/EmptyReciet.dart';
 import 'package:safe/Screens/Goals.dart';
 import 'package:safe/Screens/manage.dart';
-import 'package:safe/widgets/ButtonIcon.dart';
 import 'package:safe/utils/storage_service.dart';
 import 'package:safe/utils/date_filter.dart';
+import 'package:safe/widgets/navigation.dart';
 
 class SpentBlock extends StatefulWidget {
   const SpentBlock({super.key});
@@ -291,7 +291,9 @@ class _SpentBlockState extends State<SpentBlock>
                                   ? 'النهاردة'
                                   : _currentFilter == DateFilter.lastWeek
                                       ? 'الاسبوع اللي فات'
-                                      : 'تاريخ معين',
+                                      : _currentFilter == DateFilter.lastMonth
+                                          ? 'الشهر اللي فات'
+                                          : 'تاريخ معين',
                               style: const TextStyle(
                                 color: Color(0xff4558c8),
                                 fontFamily: Constants.secondaryFontFamily,
