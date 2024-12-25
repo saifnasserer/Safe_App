@@ -4,8 +4,9 @@ import 'package:safe/Constants.dart';
 import 'package:safe/Screens/EmptyReciet.dart';
 import 'package:safe/Screens/Goals.dart';
 import 'package:safe/Screens/manage.dart';
-import 'package:safe/widgets/ButtonIcon.dart';
 import 'package:safe/utils/storage_service.dart';
+import 'package:safe/utils/date_filter.dart';
+import 'package:safe/widgets/navigation.dart';
 
 class SpentBlock extends StatefulWidget {
   const SpentBlock({super.key});
@@ -28,11 +29,146 @@ class _SpentBlockState extends State<SpentBlock>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<Offset> _slideAnimation;
+  DateFilter _currentFilter = DateFilter.today;
+  DateTime? _customDate;
+
+  void _showDatePicker() async {
+    final earliestDate = await _getEarliestExpenseDate();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _customDate ?? DateTime.now(),
+      firstDate: earliestDate,
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _customDate = picked;
+        _currentFilter = DateFilter.custom;
+      });
+      _updateSpentValue();
+    }
+  }
+
+  Future<DateTime> _getEarliestExpenseDate() async {
+    final items = await StorageService.loadItems();
+    if (items.isEmpty) {
+      return DateTime.now();
+    }
+    return items.first.dateTime;
+  }
+
+  void _showFilterDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'اختر الفترة',
+            style: TextStyle(
+              fontFamily: Constants.defaultFontFamily,
+              color: Color(0xff4558c8),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text(
+                  'النهاردة',
+                  style: TextStyle(
+                    fontFamily: Constants.secondaryFontFamily,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () {
+                  setState(() {
+                    _currentFilter = DateFilter.today;
+                    _customDate = null;
+                  });
+                  _updateSpentValue();
+                  HapticFeedback.mediumImpact();
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: const Text(
+                  'الاسبوع اللي فات',
+                  style: TextStyle(
+                    fontFamily: Constants.secondaryFontFamily,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () {
+                  setState(() {
+                    _currentFilter = DateFilter.lastWeek;
+                    _customDate = null;
+                  });
+                  _updateSpentValue();
+                  HapticFeedback.mediumImpact();
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: const Text(
+                  'الشهر اللي فات',
+                  style: TextStyle(
+                    fontFamily: Constants.secondaryFontFamily,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () {
+                  setState(() {
+                    _currentFilter = DateFilter.lastMonth;
+                    _customDate = null;
+                  });
+                  _updateSpentValue();
+                  HapticFeedback.mediumImpact();
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: const Text(
+                  'تاريخ معين',
+                  style: TextStyle(
+                    fontFamily: Constants.secondaryFontFamily,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showDatePicker();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _updateSpentValue() async {
+    final items = await StorageService.loadItems();
+    double total = 0;
+
+    for (var item in items) {
+      if (DateFilterHelper.isItemInRange(item.dateTime, _currentFilter,
+          customDate: _customDate)) {
+        if (!item.flag) {
+          // Only count expenses (when flag is false)
+          total += item.price;
+        }
+      }
+    }
+
+    await SpentBlock.updateSpentValue(total);
+  }
 
   @override
   void initState() {
     super.initState();
     SpentBlock.initSpent();
+    _updateSpentValue(); // Initial update based on today's filter
     _controller = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
@@ -118,33 +254,62 @@ class _SpentBlockState extends State<SpentBlock>
                       ValueListenableBuilder<double>(
                         valueListenable: SpentBlock.spent,
                         builder: (context, value, child) {
-                          return Text(
-                            value.toStringAsFixed(1),
-                            maxLines: 1,
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: containerHeight * 0.18,
-                              color: Colors.white,
-                              fontFamily: Constants.defaultFontFamily,
+                          return GestureDetector(
+                            onTap: () {
+                              HapticFeedback.mediumImpact();
+                              Navigator.pushNamed(context, Reciept.id);
+                            },
+                            child: Text(
+                              value != value.toInt() || value == 0
+                                  ? value.toString()
+                                  : value.toString().split('.')[0],
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: containerHeight * 0.18,
+                                color: Colors.white,
+                                fontFamily: Constants.defaultFontFamily,
+                              ),
                             ),
                           );
                         },
                       ),
                       ElevatedButton(
                         onPressed: () {
+                          _showFilterDialog();
                           HapticFeedback.mediumImpact();
-                          Navigator.pushNamed(context, Reciept.id);
                         },
-                        child: const Text('عرض التفاصيل',
-                            style: TextStyle(
-                              fontFamily: Constants.secondaryFontFamily,
-                            )),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              _currentFilter == DateFilter.today
+                                  ? 'النهاردة'
+                                  : _currentFilter == DateFilter.lastWeek
+                                      ? 'الاسبوع اللي فات'
+                                      : _currentFilter == DateFilter.lastMonth
+                                          ? 'الشهر اللي فات'
+                                          : 'تاريخ معين',
+                              style: const TextStyle(
+                                color: Color(0xff4558c8),
+                                fontFamily: Constants.secondaryFontFamily,
+                              ),
+                            ),
+                            const Icon(
+                              Icons.arrow_drop_down,
+                              color: Color(0xff4558c8),
+                            ),
+                          ],
+                        ),
                       ),
                       Container(
                         margin: EdgeInsets.only(
                             bottom: containerHeight * 0.05,
-                            top: containerHeight * 0.05),
+                            top: containerHeight * 0.1),
                         decoration: const BoxDecoration(
                             color: Color(0xff1c1c1c),
                             borderRadius:

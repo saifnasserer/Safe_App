@@ -9,11 +9,12 @@ import 'package:safe/Screens/Goals.dart';
 import 'package:safe/Screens/HomePage.dart';
 import 'package:safe/Screens/introduction_screen.dart';
 import 'package:safe/Screens/manage.dart';
-import 'package:safe/widgets/Goal_Provider.dart';
+import 'package:safe/widgets/goals_screen_widgets/Goal_Provider.dart';
 import 'package:safe/widgets/Item_Provider.dart';
 import 'package:provider/provider.dart';
-import 'package:overlay_support/overlay_support.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:safe/utils/version_control.dart';
+import 'package:safe/widgets/update_notes_dialog.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,14 +36,12 @@ Future<void> main() async {
 
   runZonedGuarded(() {
     runApp(
-      OverlaySupport.global(
-        child: MultiProvider(
-          providers: [
-            ChangeNotifierProvider<ItemProvider>(create: (_) => ItemProvider()),
-            ChangeNotifierProvider<GoalProvider>(create: (_) => GoalProvider()),
-          ],
-          child: const PlanetApp(),
-        ),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<ItemProvider>(create: (_) => ItemProvider()),
+          ChangeNotifierProvider<GoalProvider>(create: (_) => GoalProvider()),
+        ],
+        child: const PlanetApp(),
       ),
     );
   }, (error, stack) {
@@ -51,9 +50,14 @@ Future<void> main() async {
   });
 }
 
-class PlanetApp extends StatelessWidget {
+class PlanetApp extends StatefulWidget {
   const PlanetApp({super.key});
 
+  @override
+  State<PlanetApp> createState() => _PlanetAppState();
+}
+
+class _PlanetAppState extends State<PlanetApp> {
   Future<bool> _isFirstLaunch() async {
     final prefs = await SharedPreferences.getInstance();
     final hasSeenIntro = prefs.getBool('hasSeenIntro') ?? false;
@@ -73,16 +77,23 @@ class PlanetApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: FutureBuilder<bool>(
-        future: _isFirstLaunch(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          }
-          return snapshot.data == true
-              ? const IntroductionScreen()
-              : const Home();
-        },
+      home: Builder(
+        builder: (context) => FutureBuilder<bool>(
+          future: _isFirstLaunch(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _checkForUpdates(context);
+            });
+
+            return snapshot.data == true
+                ? const IntroductionScreen()
+                : const Home();
+          },
+        ),
       ),
       routes: {
         Home.id: (context) => const Home(),
@@ -99,5 +110,24 @@ class PlanetApp extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _checkForUpdates(BuildContext context) async {
+    try {
+      if (await VersionControl.shouldShowUpdateNotes(context)) {
+        final notes = VersionControl.getUpdateNotes();
+        if (notes != null && mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => UpdateNotesDialog(
+              version: VersionControl.currentVersion,
+              notes: notes,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error checking for updates: $e');
+    }
   }
 }

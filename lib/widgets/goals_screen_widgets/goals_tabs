@@ -1,0 +1,91 @@
+
+// لسة بفكر في الموضوع
+
+
+
+import 'package:flutter/material.dart';
+import 'package:safe/Blocks/Goal.dart';
+import 'package:safe/Constants.dart';
+
+class GoalsTabs extends StatelessWidget {
+  final TabController tabController;
+  final List<Goal> goals;
+  final List<Goal> monthlyCommitments;
+  final Widget Function(Goal) goalItemBuilder;
+
+  const GoalsTabs({
+    super.key,
+    required this.tabController,
+    required this.goals,
+    required this.monthlyCommitments,
+    required this.goalItemBuilder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TabBar(
+          controller: tabController,
+          indicatorColor: Constants.primaryColor,
+          labelColor: Constants.primaryColor,
+          unselectedLabelColor: Colors.grey,
+          tabs: const [
+            Tab(text: 'الأهداف'),
+            Tab(text: 'الالتزامات الشهرية'),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: tabController,
+            children: [
+              // Goals Tab
+              _buildList(goals),
+              // Monthly Commitments Tab
+              _buildList(monthlyCommitments),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildList(List<Goal> items) {
+    return items.isEmpty
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Constants.primaryColor.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.list_alt_rounded,
+                    size: 60,
+                    color: Constants.primaryColor,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  items == goals ? 'لا يوجد أهداف' : 'لا يوجد التزامات شهرية',
+                  style: const TextStyle(
+                    color: Constants.primaryColor,
+                    fontSize: 24,
+                    fontFamily: Constants.secondaryFontFamily,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          )
+        : ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            itemCount: items.length,
+            itemBuilder: (context, index) => goalItemBuilder(items[index]),
+          );
+  }
+}

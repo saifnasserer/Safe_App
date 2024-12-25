@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/Screens/Goals.dart' show GoalItem, GoalsBlock;
-import 'package:safe/widgets/Goal_Provider.dart';
 import 'package:safe/widgets/Item_Provider.dart';
+import 'package:safe/widgets/goals_screen_widgets/Goal_Provider.dart';
+import 'package:safe/widgets/goals_screen_widgets/goal_item_widget.dart';
 import 'package:safe/widgets/item.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
@@ -21,25 +22,28 @@ class _ManageState extends State<Manage> {
   final TextEditingController amountController = TextEditingController();
   final AudioPlayer audioPlayer = AudioPlayer();
 
+  @override
+  void dispose() {
+    titleController.dispose();
+    amountController.dispose();
+    audioPlayer.dispose();
+    super.dispose();
+  }
+
   double getAmount() {
-    if (amountController.text.isNotEmpty) {
+    try {
       return double.parse(amountController.text);
-    } else {
-      return 0;
+    } catch (e) {
+      return 0.0;
     }
   }
 
   String getTitle() {
-    if (titleController.text.isNotEmpty) {
-      return titleController.text;
-    } else {
-      return '';
-    }
+    return titleController.text.isNotEmpty ? titleController.text : '';
   }
 
   @override
   Widget build(BuildContext context) {
-    // final GoalsList = Provider.of<GoalProvider>(context).getGoals;
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -54,12 +58,12 @@ class _ManageState extends State<Manage> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'إضافة معاملة جديدة',
+        title: Text(
+          'معاملة جديدة',
           style: TextStyle(
             color: Constants.primaryColor,
             fontFamily: Constants.defaultFontFamily,
-            fontSize: 30,
+            fontSize: screenWidth * 0.06,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -67,88 +71,68 @@ class _ManageState extends State<Manage> {
       ),
       body: GestureDetector(
         onTap: () {
-          // Dismiss keyboard when tapping outside
           FocusScope.of(context).unfocus();
         },
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Goals Section at the top
-              Container(
-                height: 160,
-                margin: const EdgeInsets.symmetric(vertical: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
-                      child: Center(
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          'أهدافك',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: Constants.defaultFontFamily,
-                            color: Constants.primaryColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Expanded(
-                      child: Consumer<GoalProvider>(
-                        builder: (context, goalProvider, _) {
-                          final goals = goalProvider.goals;
-                          if (goals.isEmpty) {
-                            return _buildAddNewGoalButton(context);
-                          }
-                          return ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            scrollDirection: Axis.horizontal,
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: goals.length,
-                            itemBuilder: (context, index) {
-                              final goal = goals[index];
-                              return Container(
-                                width: MediaQuery.of(context).size.width - 48,
-                                margin: const EdgeInsets.only(right: 16),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    HapticFeedback.mediumImpact();
-                                    Navigator.pushNamed(
-                                        context, GoalsBlock.goalsID);
-                                  },
-                                  child: GoalItem(
-                                    savedAmount: goal.currentAmount,
-                                    title: goal.title,
-                                    targetAmount: goal.targetAmount,
-                                    color: goal.color,
-                                    onDismissed: () {
-                                      HapticFeedback.heavyImpact();
-                                      goalProvider.removeGoal(index);
-                                      if (goalProvider.goals.isEmpty) {
-                                        setState(() {
-                                          _buildAddNewGoalButton(context);
-                                        });
-                                      }
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: screenHeight * 0.02,
               ),
-
-              // Main Content
-              Container(
-                margin: const EdgeInsets.all(24),
+            ),
+            SliverToBoxAdapter(
+              child: Consumer<GoalProvider>(
+                builder: (context, goalProvider, _) {
+                  final screenWidth = MediaQuery.of(context).size.width;
+                  final goals = goalProvider.goals ?? [];
+                  if (goals.isEmpty) {
+                    return _buildAddNewGoalButton(context);
+                  }
+                  return SizedBox(
+                    height: screenHeight * .13,
+                    child: ListView.builder(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: goals.length,
+                      itemBuilder: (context, index) {
+                        final goal = goals[index];
+                        return Container(
+                          width: screenWidth - 48,
+                          margin: EdgeInsets.only(right: screenWidth * 0.05),
+                          child: GestureDetector(
+                            onTap: () {
+                              HapticFeedback.mediumImpact();
+                              Navigator.pushNamed(context, GoalsBlock.goalsID);
+                            },
+                            child: GoalItemWidget(
+                              savedAmount: goal.currentAmount,
+                              title: goal.title,
+                              targetAmount: goal.targetAmount,
+                              color: goal.color,
+                              type: goal.type,
+                              onDismissed: () {
+                                HapticFeedback.heavyImpact();
+                                goalProvider.removeGoal(index);
+                                if (goalProvider.goals.isEmpty) {
+                                  setState(() {
+                                    _buildAddNewGoalButton(context);
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                margin: EdgeInsets.all(screenHeight * 0.02),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(24),
@@ -171,7 +155,6 @@ class _ManageState extends State<Manage> {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      // Description TextField
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: const BoxDecoration(
@@ -200,7 +183,6 @@ class _ManageState extends State<Manage> {
                           ),
                         ),
                       ),
-                      // Amount TextField
                       Container(
                         padding: EdgeInsets.all(screenWidth * 0.04),
                         child: TextField(
@@ -229,164 +211,155 @@ class _ManageState extends State<Manage> {
                   ),
                 ),
               ),
-
-              // Action Buttons
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Expanded(
-                      child: MaterialButton(
-                        onPressed: () async {
-                          if (titleController.text.isNotEmpty &&
-                              amountController.text.isNotEmpty) {
-                            HapticFeedback.mediumImpact();
-                            Provider.of<ItemProvider>(context, listen: false)
-                                .addItem(
-                              item(
-                                title: titleController.text,
-                                price: getAmount(),
-                                flag: false,
-                                dateTime: DateTime.now(),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (titleController.text.isNotEmpty &&
+                            amountController.text.isNotEmpty) {
+                          HapticFeedback.mediumImpact();
+                          Provider.of<ItemProvider>(context, listen: false)
+                              .addItem(
+                            item(
+                              title: titleController.text,
+                              price: getAmount(),
+                              flag: false,
+                              dateTime: DateTime.now(),
+                            ),
+                          );
+                          audioPlayer.play(AssetSource('SFX/moneyAdd.mp3'));
+                          amountController.clear();
+                          titleController.clear();
+                          showSimpleNotification(
+                            const Text(
+                              'تم إضافة المصروف بنجاح',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: Constants.defaultFontFamily,
                               ),
-                            );
-                            audioPlayer.play(AssetSource('SFX/moneyAdd.mp3'));
-                            amountController.clear();
-                            titleController.clear();
-                            showSimpleNotification(
-                              const Text(
-                                'تم إضافة المصروف بنجاح',
+                            ),
+                            background: Colors.green,
+                            duration: const Duration(seconds: 1),
+                          );
+                        } else {
+                          HapticFeedback.heavyImpact();
+                          showSimpleNotification(
+                            const Center(
+                              child: Text(
+                                'ضيف البيانات الناقصة',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontFamily: Constants.defaultFontFamily,
                                 ),
                               ),
-                              background: Colors.green,
-                              duration: const Duration(seconds: 1),
-                            );
-                          } else {
-                            HapticFeedback.heavyImpact();
-                            showSimpleNotification(
-                              const Center(
-                                child: Text(
-                                  'ضيف البيانات الناقصة',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily: Constants.defaultFontFamily,
-                                  ),
-                                ),
-                              ),
-                              background: Colors.red,
-                              duration: const Duration(seconds: 1),
-                            );
-                          }
-                        },
-                        height: 56,
-                        color: Colors.red.shade50,
+                            ),
+                            background: Colors.red,
+                            duration: const Duration(seconds: 1),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(screenWidth * .4, screenHeight * .06),
+                        backgroundColor: Colors.red.shade50,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
-                        ),
-                        elevation: 0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.remove_circle_outline,
-                              color: Colors.red.shade400,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'صرف',
-                              style: TextStyle(
-                                color: Colors.red.shade400,
-                                fontFamily: Constants.defaultFontFamily,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
                         ),
                       ),
+                      child: const Row(
+                        children: [
+                          Text(
+                            'صرف',
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontFamily: Constants.defaultFontFamily),
+                          ),
+                          SizedBox(width: 8),
+                          Icon(Icons.remove_circle_outline, color: Colors.red),
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: MaterialButton(
-                        onPressed: () async {
-                          if (titleController.text.isNotEmpty &&
-                              amountController.text.isNotEmpty) {
-                            HapticFeedback.mediumImpact();
-                            Provider.of<ItemProvider>(context, listen: false)
-                                .addItem(
-                              item(
-                                title: titleController.text,
-                                price: getAmount(),
-                                flag: true,
-                                dateTime: DateTime.now(),
+
+                    // _buildActionButton(
+                    //   text: 'إضافة',
+                    //   color: Colors.green.shade400,
+                    //   icon: Icons.add_circle_outline,
+
+                    // ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (titleController.text.isNotEmpty &&
+                            amountController.text.isNotEmpty) {
+                          HapticFeedback.mediumImpact();
+                          Provider.of<ItemProvider>(context, listen: false)
+                              .addItem(
+                            item(
+                              title: titleController.text,
+                              price: getAmount(),
+                              flag: true,
+                              dateTime: DateTime.now(),
+                            ),
+                          );
+                          audioPlayer.play(AssetSource('SFX/moneyAdd.mp3'));
+                          amountController.clear();
+                          titleController.clear();
+                          showSimpleNotification(
+                            const Text(
+                              'تم إضافة الدخل بنجاح',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: Constants.defaultFontFamily,
                               ),
-                            );
-                            audioPlayer.play(AssetSource('SFX/moneyAdd.mp3'));
-                            amountController.clear();
-                            titleController.clear();
-                            showSimpleNotification(
-                              const Text(
-                                'تم إضافة الدخل بنجاح',
+                            ),
+                            background: Colors.green,
+                            duration: const Duration(seconds: 1),
+                          );
+                        } else {
+                          HapticFeedback.heavyImpact();
+                          showSimpleNotification(
+                            const Center(
+                              child: Text(
+                                'ضيف البيانات الناقصة',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontFamily: Constants.defaultFontFamily,
                                 ),
                               ),
-                              background: Colors.green,
-                              duration: const Duration(seconds: 1),
-                            );
-                          } else {
-                            HapticFeedback.heavyImpact();
-                            showSimpleNotification(
-                              const Center(
-                                child: Text(
-                                  'ضيف البيانات الناقصة',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily: Constants.defaultFontFamily,
-                                  ),
-                                ),
-                              ),
-                              background: Colors.red,
-                              duration: const Duration(seconds: 1),
-                            );
-                          }
-                        },
-                        height: 56,
-                        color: Colors.green.shade50,
+                            ),
+                            background: Colors.red,
+                            duration: const Duration(seconds: 1),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(screenWidth * .4, screenHeight * .06),
+                        backgroundColor: Colors.green.shade50,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        elevation: 0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.add_circle_outline,
-                              color: Colors.green.shade400,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'إضافة',
-                              style: TextStyle(
-                                color: Colors.green.shade400,
-                                fontFamily: Constants.defaultFontFamily,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                      ),
+                      child: const Row(
+                        children: [
+                          Text(
+                            'اضافة',
+                            style: TextStyle(
+                                color: Colors.green,
+                                fontFamily: Constants.defaultFontFamily),
+                          ),
+                          SizedBox(width: 8),
+                          Icon(Icons.add_circle_outline, color: Colors.green),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
