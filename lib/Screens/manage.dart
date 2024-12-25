@@ -88,7 +88,7 @@ class _ManageState extends State<Manage> {
                     return _buildAddNewGoalButton(context);
                   }
                   return SizedBox(
-                    height: screenHeight * .12,
+                    height: screenHeight * .13,
                     child: ListView.builder(
                       padding:
                           EdgeInsets.symmetric(horizontal: screenWidth * 0.05),

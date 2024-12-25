@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:safe/Constants.dart';
+import 'package:safe/Screens/manage.dart';
 import 'package:safe/utils/storage_service.dart';
 
 class WalletBlock extends StatefulWidget {
@@ -141,15 +143,21 @@ class _WalletBlockState extends State<WalletBlock>
                   child: ValueListenableBuilder<double>(
                     valueListenable: WalletBlock.wallet,
                     builder: (context, value, child) {
-                      return Text(
-                        value != value.toInt() || value == 0
-                            ? value.toString()
-                            : value.toString().split('.')[0],
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: screenWidth * 0.2,
-                          fontFamily: Constants.defaultFontFamily,
+                      return GestureDetector(
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          Navigator.pushNamed(context, Manage.id);
+                        },
+                        child: Text(
+                          value != value.toInt() || value == 0
+                              ? value.toString()
+                              : value.toString().split('.')[0],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.2,
+                            fontFamily: Constants.defaultFontFamily,
+                          ),
                         ),
                       );
                     },
