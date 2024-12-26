@@ -52,16 +52,16 @@ class _ManageState extends State<Manage> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_ios_new,
-            color: Constants.primaryColor,
+            color: Constants.getPrimaryColor(context),
           ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'معاملة جديدة',
           style: TextStyle(
-            color: Constants.primaryColor,
+            color: Constants.getPrimaryColor(context),
             fontFamily: Constants.defaultFontFamily,
             fontSize: screenWidth * 0.06,
             fontWeight: FontWeight.bold,
@@ -147,7 +147,7 @@ class _ManageState extends State<Manage> {
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Constants.primaryColor,
+                      color: Constants.getPrimaryColor(context),
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(24),
@@ -157,10 +157,10 @@ class _ManageState extends State<Manage> {
                     children: [
                       Container(
                         padding: const EdgeInsets.all(16),
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: Constants.primaryColor,
+                              color: Constants.getPrimaryColor(context),
                               width: 1,
                             ),
                           ),
@@ -375,7 +375,7 @@ class _ManageState extends State<Manage> {
         width: double.infinity,
         margin: const EdgeInsets.symmetric(horizontal: 24),
         decoration: BoxDecoration(
-          color: Constants.primaryColor.withOpacity(0.1),
+          color: Constants.getPrimaryColor(context).withOpacity(0.1),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Center(
@@ -384,10 +384,10 @@ class _ManageState extends State<Manage> {
               HapticFeedback.mediumImpact();
               Navigator.of(context).pushNamed(GoalsBlock.goalsID);
             },
-            child: const Text(
+            child: Text(
               'إضافة هدف جديد +',
               style: TextStyle(
-                color: Constants.primaryColor,
+                color: Constants.getPrimaryColor(context),
                 fontFamily: Constants.secondaryFontFamily,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,

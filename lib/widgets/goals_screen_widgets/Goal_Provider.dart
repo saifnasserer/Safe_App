@@ -1,37 +1,49 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:safe/Blocks/Goal.dart';
 import 'package:safe/utils/storage_service.dart';
+import 'package:safe/providers/profile_provider.dart';
 
 class GoalProvider extends ChangeNotifier {
+  final ProfileProvider _profileProvider;
   List<Goal> _goals = [];
 
-  GoalProvider() {
+  GoalProvider(this._profileProvider) {
     _loadGoals();
   }
 
-  List<Goal> get goals => _goals;
+  List<Goal> get goals => List.unmodifiable(_goals);
 
   Future<void> _loadGoals() async {
-    _goals = await StorageService.loadGoals();
-    notifyListeners();
+    final currentProfile = _profileProvider.currentProfile;
+    if (currentProfile != null) {
+      _goals = await StorageService.loadGoals(currentProfile.id);
+      notifyListeners();
+    }
   }
 
   Future<void> addGoal(Goal newGoal) async {
-    _goals.add(newGoal);
-    await StorageService.saveGoals(_goals);
-    notifyListeners();
+    final currentProfile = _profileProvider.currentProfile;
+    if (currentProfile != null) {
+      _goals.add(newGoal);
+      await StorageService.saveGoals(currentProfile.id, _goals);
+      notifyListeners();
+    }
   }
 
   Future<void> removeGoal(int index) async {
-    _goals.removeAt(index);
-    await StorageService.saveGoals(_goals);
-    notifyListeners();
+    final currentProfile = _profileProvider.currentProfile;
+    if (currentProfile != null) {
+      _goals.removeAt(index);
+      await StorageService.saveGoals(currentProfile.id, _goals);
+      notifyListeners();
+    }
   }
 
   Future<void> updateGoalProgress(int index, double amount) async {
-    if (index >= 0 && index < _goals.length) {
+    final currentProfile = _profileProvider.currentProfile;
+    if (currentProfile != null && index >= 0 && index < _goals.length) {
       _goals[index].currentAmount += amount;
-      await StorageService.saveGoals(_goals);
+      await StorageService.saveGoals(currentProfile.id, _goals);
       notifyListeners();
     }
   }

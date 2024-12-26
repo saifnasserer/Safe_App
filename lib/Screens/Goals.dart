@@ -71,16 +71,16 @@ class _GoalsBlockState extends State<GoalsBlock> {
       elevation: 0,
       backgroundColor: Colors.transparent,
       leading: IconButton(
-        icon: const Icon(
+        icon: Icon(
           Icons.arrow_back_ios_new,
-          color: Constants.primaryColor,
+          color: Constants.getPrimaryColor(context),
         ),
         onPressed: () => Navigator.pop(context),
       ),
-      title: const Text(
+      title: Text(
         'اهدافك',
         style: TextStyle(
-          color: Constants.primaryColor,
+          color: Constants.getPrimaryColor(context),
           fontFamily: Constants.defaultFontFamily,
           fontSize: 30,
           fontWeight: FontWeight.bold,

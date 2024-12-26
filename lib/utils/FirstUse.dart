@@ -29,7 +29,7 @@ class AppTutorial {
     initTargets();
     tutorialCoachMark = TutorialCoachMark(
       targets: targets,
-      colorShadow: Constants.primaryColor,
+      colorShadow: Constants.getPrimaryColor(context),
       textSkip: "تخطي",
       paddingFocus: 10,
       opacityShadow: 0.8,

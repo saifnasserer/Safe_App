@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 import 'package:safe/Constants.dart';
+import 'package:safe/providers/profile_provider.dart';
 import 'package:safe/Screens/manage.dart';
 import 'package:safe/utils/storage_service.dart';
 
@@ -9,17 +11,24 @@ class WalletBlock extends StatefulWidget {
   const WalletBlock({required this.title, super.key});
   final String title;
 
-  // Using a ValueNotifier to track wallet changes
-  static ValueNotifier<double> wallet = ValueNotifier<double>(0);
+  static ValueNotifier<double> wallet = ValueNotifier<double>(0.0);
 
-  // Method to update the wallet
-  static Future<void> updateWallet(double newValue) async {
-    wallet.value = newValue;
-    await StorageService.saveWalletBalance(newValue);
+  static Future<void> updateWallet(
+      BuildContext context, double newValue) async {
+    final profileProvider = context.read<ProfileProvider>();
+    if (profileProvider.currentProfile != null) {
+      wallet.value = newValue;
+      await StorageService.saveWalletBalance(
+          profileProvider.currentProfile!.id, newValue);
+    }
   }
 
-  static Future<void> initWallet() async {
-    wallet.value = await StorageService.loadWalletBalance();
+  static Future<void> initWallet(BuildContext context) async {
+    final profileProvider = context.read<ProfileProvider>();
+    if (profileProvider.currentProfile != null) {
+      wallet.value = await StorageService.loadWalletBalance(
+          profileProvider.currentProfile!.id);
+    }
   }
 
   @override
@@ -45,7 +54,7 @@ class _WalletBlockState extends State<WalletBlock>
     );
 
     _controller.forward();
-    WalletBlock.initWallet();
+    WalletBlock.initWallet(context);
   }
 
   @override
@@ -119,7 +128,6 @@ class _WalletBlockState extends State<WalletBlock>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: screenHeight * 0.1),
                 Text(
                   widget.title,
                   style: TextStyle(
@@ -149,9 +157,7 @@ class _WalletBlockState extends State<WalletBlock>
                           Navigator.pushNamed(context, Manage.id);
                         },
                         child: Text(
-                          value != value.toInt() || value == 0
-                              ? value.toString()
-                              : value.toString().split('.')[0],
+                          value.toStringAsFixed(2),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(

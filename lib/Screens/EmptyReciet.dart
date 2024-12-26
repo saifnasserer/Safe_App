@@ -108,16 +108,16 @@ class _RecieptState extends State<Reciept> {
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_ios_new,
-            color: Constants.primaryColor,
+            color: Constants.getPrimaryColor(context),
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'مصاريفك',
           style: TextStyle(
-            color: Constants.primaryColor,
+            color: Constants.getPrimaryColor(context),
             fontFamily: Constants.defaultFontFamily,
             fontSize: 30,
             fontWeight: FontWeight.bold,
@@ -128,20 +128,20 @@ class _RecieptState extends State<Reciept> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Container(
               decoration: BoxDecoration(
-                color: Constants.primaryColor.withOpacity(0.1),
+                color: Constants.getPrimaryColor(context).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: TextButton.icon(
                 onPressed: _showFilterDialog,
-                icon: const Icon(
+                icon: Icon(
                   Icons.filter_list,
-                  color: Constants.primaryColor,
+                  color: Constants.getPrimaryColor(context),
                   size: 20,
                 ),
                 label: Text(
                   TransactionFilterHelper.getFilterName(_currentFilter),
-                  style: const TextStyle(
-                    color: Constants.primaryColor,
+                  style: TextStyle(
+                    color: Constants.getPrimaryColor(context),
                     fontFamily: Constants.secondaryFontFamily,
                     fontSize: 14,
                   ),
@@ -161,20 +161,21 @@ class _RecieptState extends State<Reciept> {
                       width: 120,
                       height: 120,
                       decoration: BoxDecoration(
-                        color: Constants.primaryColor.withOpacity(0.1),
+                        color:
+                            Constants.getPrimaryColor(context).withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.receipt_long_rounded,
                         size: 60,
-                        color: Constants.primaryColor,
+                        color: Constants.getPrimaryColor(context),
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const Text(
+                    Text(
                       'لا يوجد معاملات',
                       style: TextStyle(
-                        color: Constants.primaryColor,
+                        color: Constants.getPrimaryColor(context),
                         fontSize: 24,
                         fontFamily: Constants.secondaryFontFamily,
                         fontWeight: FontWeight.bold,
@@ -196,7 +197,7 @@ class _RecieptState extends State<Reciept> {
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Constants.primaryColor,
+                            backgroundColor: Constants.getPrimaryColor(context),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -433,7 +434,7 @@ class _RecieptState extends State<Reciept> {
                 HapticFeedback.mediumImpact();
                 Navigator.pushNamed(context, Manage.id);
               },
-              backgroundColor: Constants.primaryColor,
+              backgroundColor: Constants.getPrimaryColor(context),
               child: const Icon(Icons.add, color: Colors.white),
             ),
     );

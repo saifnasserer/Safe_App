@@ -56,13 +56,14 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: Constants.primaryColor.withOpacity(0.1),
+                      color:
+                          Constants.getPrimaryColor(context).withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.waving_hand_rounded,
                       size: 60,
-                      color: Constants.primaryColor,
+                      color: Constants.getPrimaryColor(context),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -102,13 +103,14 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: Constants.primaryColor.withOpacity(0.1),
+                      color:
+                          Constants.getPrimaryColor(context).withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.lightbulb_outline_rounded,
                       size: 60,
-                      color: Constants.primaryColor,
+                      color: Constants.getPrimaryColor(context),
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -134,22 +136,24 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Constants.primaryColor.withOpacity(0.1),
+                            color: Constants.getPrimaryColor(context)
+                                .withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: Constants.primaryColor.withOpacity(0.2),
+                              color: Constants.getPrimaryColor(context)
+                                  .withOpacity(0.2),
                               width: 1,
                             ),
                           ),
-                          child: const Row(
+                          child: Row(
                             textDirection: TextDirection.rtl,
                             children: [
                               Icon(
                                 Icons.add_circle_outline,
-                                color: Constants.primaryColor,
+                                color: Constants.getPrimaryColor(context),
                                 size: 36,
                               ),
-                              SizedBox(width: 16),
+                              const SizedBox(width: 16),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -161,11 +165,12 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         fontFamily: 'Rabar',
-                                        color: Constants.primaryColor,
+                                        color:
+                                            Constants.getPrimaryColor(context),
                                       ),
                                     ),
-                                    SizedBox(height: 8),
-                                    Text(
+                                    const SizedBox(height: 8),
+                                    const Text(
                                       'سجل مصروفاتك اليومية عشان تعرف الفلوس رايحه وجاية منين',
                                       textAlign: TextAlign.right,
                                       style: TextStyle(
@@ -185,22 +190,24 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Constants.primaryColor.withOpacity(0.1),
+                            color: Constants.getPrimaryColor(context)
+                                .withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: Constants.primaryColor.withOpacity(0.2),
+                              color: Constants.getPrimaryColor(context)
+                                  .withOpacity(0.2),
                               width: 1,
                             ),
                           ),
-                          child: const Row(
+                          child: Row(
                             textDirection: TextDirection.rtl,
                             children: [
                               Icon(
                                 Icons.analytics_outlined,
-                                color: Constants.primaryColor,
+                                color: Constants.getPrimaryColor(context),
                                 size: 36,
                               ),
-                              SizedBox(width: 16),
+                              const SizedBox(width: 16),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -212,11 +219,12 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         fontFamily: 'Rabar',
-                                        color: Constants.primaryColor,
+                                        color:
+                                            Constants.getPrimaryColor(context),
                                       ),
                                     ),
-                                    SizedBox(height: 8),
-                                    Text(
+                                    const SizedBox(height: 8),
+                                    const Text(
                                       'حط اهدافك المالية وحاول توصلها اسرع',
                                       textAlign: TextAlign.right,
                                       style: TextStyle(
@@ -249,13 +257,14 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: Constants.primaryColor.withOpacity(0.1),
+                      color:
+                          Constants.getPrimaryColor(context).withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.rocket_launch_rounded,
                       size: 60,
-                      color: Constants.primaryColor,
+                      color: Constants.getPrimaryColor(context),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -292,7 +301,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
               height: 80,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Constants.primaryColor,
+                  backgroundColor: Constants.getPrimaryColor(context),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -318,11 +327,11 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                 children: [
                   TextButton(
                     onPressed: () => _controller.jumpToPage(2),
-                    child: const Text(
+                    child: Text(
                       'تخطي',
                       style: TextStyle(
                         fontFamily: 'Rabar',
-                        color: Constants.primaryColor,
+                        color: Constants.getPrimaryColor(context),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -331,10 +340,10 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                     child: SmoothPageIndicator(
                       controller: _controller,
                       count: 3,
-                      effect: const WormEffect(
+                      effect: WormEffect(
                         spacing: 16,
                         dotColor: Colors.black12,
-                        activeDotColor: Constants.primaryColor,
+                        activeDotColor: Constants.getPrimaryColor(context),
                         dotHeight: 10,
                         dotWidth: 10,
                       ),
@@ -350,11 +359,11 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                       duration: const Duration(milliseconds: 500),
                       curve: Curves.easeInOut,
                     ),
-                    child: const Text(
+                    child: Text(
                       'التالي',
                       style: TextStyle(
                         fontFamily: 'Rabar',
-                        color: Constants.primaryColor,
+                        color: Constants.getPrimaryColor(context),
                         fontWeight: FontWeight.w500,
                       ),
                     ),

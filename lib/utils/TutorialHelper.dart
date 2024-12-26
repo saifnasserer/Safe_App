@@ -63,7 +63,7 @@ class TutorialHelper {
                       onPressed: () => controller.next(),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: Constants.primaryColor,
+                        foregroundColor: Constants.getPrimaryColor(context),
                       ),
                       child: const Text(
                         'التالي',
@@ -116,7 +116,7 @@ class TutorialHelper {
                         onPressed: () => controller.next(),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
-                          foregroundColor: Constants.primaryColor,
+                          foregroundColor: Constants.getPrimaryColor(context),
                         ),
                         child: const Text(
                           'فهمت',
@@ -138,7 +138,7 @@ class TutorialHelper {
     await _markTutorialAsSeen(_keyHomePageSeen);
     return TutorialCoachMark(
       targets: targets,
-      colorShadow: Constants.primaryColor,
+      colorShadow: Constants.getPrimaryColor(context),
       textSkip: "تخطي",
       textStyleSkip: const TextStyle(
         color: Colors.white,
@@ -238,7 +238,7 @@ class TutorialHelper {
     await _markTutorialAsSeen(_keyManageSeen);
     return TutorialCoachMark(
       targets: targets,
-      colorShadow: Constants.primaryColor,
+      colorShadow: Constants.getPrimaryColor(context),
       textSkip: "تخطي",
       textStyleSkip: const TextStyle(
         color: Colors.white,
@@ -300,7 +300,7 @@ class TutorialHelper {
     await _markTutorialAsSeen(_keyGoalsSeen);
     return TutorialCoachMark(
       targets: targets,
-      colorShadow: Constants.primaryColor,
+      colorShadow: Constants.getPrimaryColor(context),
       textSkip: "تخطي",
       textStyleSkip: const TextStyle(
         color: Colors.white,
@@ -362,7 +362,7 @@ class TutorialHelper {
     await _markTutorialAsSeen(_keyReceiptSeen);
     return TutorialCoachMark(
       targets: targets,
-      colorShadow: Constants.primaryColor,
+      colorShadow: Constants.getPrimaryColor(context),
       textSkip: "تخطي",
       textStyleSkip: const TextStyle(
         color: Colors.white,

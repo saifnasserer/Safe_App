@@ -40,13 +40,13 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
+            Text(
               'تعديل الهدف',
               style: TextStyle(
                 fontFamily: Constants.defaultFontFamily,
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Constants.primaryColor,
+                color: Constants.getPrimaryColor(context),
               ),
             ),
             const SizedBox(height: 24),
@@ -97,10 +97,12 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isSelected ? Constants.primaryColor : Colors.transparent,
+            color: isSelected
+                ? Constants.getPrimaryColor(context)
+                : Colors.transparent,
             borderRadius: const BorderRadius.all(Radius.circular(12)),
             border: Border.all(
-              color: Constants.primaryColor,
+              color: Constants.getPrimaryColor(context),
               width: 1,
             ),
           ),
@@ -109,7 +111,9 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: Constants.defaultFontFamily,
-              color: isSelected ? Colors.white : Constants.primaryColor,
+              color: isSelected
+                  ? Colors.white
+                  : Constants.getPrimaryColor(context),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -155,7 +159,7 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
           child: ElevatedButton(
             onPressed: _handleEditGoal,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Constants.primaryColor,
+              backgroundColor: Constants.getPrimaryColor(context),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 12),
               shape: RoundedRectangleBorder(
@@ -179,12 +183,12 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 12),
             ),
-            child: const Text(
+            child: Text(
               'إلغاء',
               style: TextStyle(
                 fontFamily: Constants.defaultFontFamily,
                 fontSize: 16,
-                color: Constants.primaryColor,
+                color: Constants.getPrimaryColor(context),
               ),
             ),
           ),
@@ -207,9 +211,9 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
           .updateGoalProgress(widget.index, finalAmount);
 
       if (!isAdding) {
-        WalletBlock.updateWallet(WalletBlock.wallet.value - amount);
+        WalletBlock.updateWallet(context, WalletBlock.wallet.value - amount);
       } else {
-        WalletBlock.updateWallet(WalletBlock.wallet.value + amount);
+        WalletBlock.updateWallet(context, WalletBlock.wallet.value + amount);
       }
       Navigator.pop(context);
     }

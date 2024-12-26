@@ -54,11 +54,11 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   'إضافة هدف جديد',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      color: Constants.primaryColor,
+                      color: Constants.getPrimaryColor(context),
                       fontSize: 20,
                       fontFamily: Constants.defaultFontFamily),
                 ),
@@ -235,7 +235,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
         ElevatedButton(
           onPressed: _handleAddGoal,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Constants.primaryColor,
+            backgroundColor: Constants.getPrimaryColor(context),
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(
               horizontal: 24,
