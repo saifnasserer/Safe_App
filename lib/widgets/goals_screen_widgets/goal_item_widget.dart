@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/Blocks/Goal.dart';
 import 'package:safe/Blocks/Wallet.dart';
+import 'package:safe/providers/profile_provider.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/widgets/goals_screen_widgets/Goal_Provider.dart';
 import 'package:safe/utils/goal_types.dart';
@@ -124,7 +125,11 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
 
   @override
   Widget build(BuildContext context) {
-    final walletValue = WalletBlock.wallet.value;
+    final profileProvider = context.watch<ProfileProvider>();
+    final currentProfileId = profileProvider.currentProfile?.id;
+    final walletValue = currentProfileId != null 
+        ? WalletBlock.balanceByProfile[currentProfileId]?.value ?? 0.0
+        : 0.0;
     final screenHight = MediaQuery.of(context).size.height;
     final progress = widget.savedAmount / widget.targetAmount;
     final potentialProgress =

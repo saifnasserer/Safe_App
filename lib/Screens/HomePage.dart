@@ -3,8 +3,6 @@ import 'package:safe/Blocks/Spent.dart';
 import 'package:safe/Blocks/Wallet.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/widgets/profile_selector.dart';
-import 'package:provider/provider.dart';
-import 'package:safe/providers/profile_provider.dart';
 
 class Home extends StatefulWidget {
   static const String id = 'HomePage';

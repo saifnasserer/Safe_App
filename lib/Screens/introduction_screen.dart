@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safe/Constants.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:safe/utils/storage_service.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:safe/Screens/HomePage.dart';
 
@@ -15,16 +15,30 @@ class IntroductionScreen extends StatefulWidget {
 class _IntroductionScreenState extends State<IntroductionScreen> {
   final PageController _controller = PageController();
   bool isLastPage = false;
+  final TextEditingController _nameController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
     _controller.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
   void _completeIntroduction() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('hasSeenIntro', true);
+    if (_nameController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('من فضلك اكتب اسمك الأول', textAlign: TextAlign.center),
+          duration: Duration(seconds: 1),
+        ),
+      );
+      return;
+    }
+
+    await StorageService.saveUserName(_nameController.text);
+    await StorageService.setFirstLaunch(false);
 
     if (mounted) {
       Navigator.of(context).pushReplacement(
@@ -42,11 +56,11 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
           controller: _controller,
           onPageChanged: (index) {
             setState(() {
-              isLastPage = index == 2;
+              isLastPage = index == 5;
             });
           },
           children: [
-            // First intro page
+            // Welcome page
             Container(
               color: Colors.white,
               child: Column(
@@ -79,7 +93,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 30),
                     child: Text(
-                      'هاخد من وقتك دقيقه افهمك اية اللي بيحصل هنا',
+                      'هناخد لفة في الابلكيشن كدا اعرفكم علي بعض، متعملش سكيب',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18,
@@ -92,13 +106,12 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
               ),
             ),
 
-            // Second intro page
+            // Expenses & Income
             Container(
               color: Colors.white,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 60),
                   Container(
                     width: 120,
                     height: 120,
@@ -108,7 +121,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      Icons.lightbulb_outline_rounded,
+                      Icons.account_balance_wallet_outlined,
                       size: 60,
                       color: Constants.getPrimaryColor(context),
                     ),
@@ -117,7 +130,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: Text(
-                      'الابلكيشن مصمم انه يكون بسيط ويعمل حاجتين اساسيين',
+                      'تابع فلوسك بسهولة',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 28,
@@ -131,114 +144,22 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Constants.getPrimaryColor(context)
-                                .withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Constants.getPrimaryColor(context)
-                                  .withOpacity(0.2),
-                              width: 1,
-                            ),
-                          ),
-                          child: Row(
-                            textDirection: TextDirection.rtl,
-                            children: [
-                              Icon(
-                                Icons.add_circle_outline,
-                                color: Constants.getPrimaryColor(context),
-                                size: 36,
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'تسجيل المصروفات',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Rabar',
-                                        color:
-                                            Constants.getPrimaryColor(context),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    const Text(
-                                      'سجل مصروفاتك اليومية عشان تعرف الفلوس رايحه وجاية منين',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'Rabar',
-                                        color: Colors.grey,
-                                        height: 1.4,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                        _buildFeatureCard(
+                          context,
+                          icon: Icons.arrow_circle_down_outlined,
+                          title: 'المصروفات',
+                          description:
+                              'سجل كل مصاريفك اليومية وشوف فلوسك راحت فين',
+                          color: Colors.red,
                         ),
                         const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Constants.getPrimaryColor(context)
-                                .withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Constants.getPrimaryColor(context)
-                                  .withOpacity(0.2),
-                              width: 1,
-                            ),
-                          ),
-                          child: Row(
-                            textDirection: TextDirection.rtl,
-                            children: [
-                              Icon(
-                                Icons.analytics_outlined,
-                                color: Constants.getPrimaryColor(context),
-                                size: 36,
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'متابعة اهدافك',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Rabar',
-                                        color:
-                                            Constants.getPrimaryColor(context),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    const Text(
-                                      'حط اهدافك المالية وحاول توصلها اسرع',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: 'Rabar',
-                                        color: Colors.grey,
-                                        height: 1.4,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                        _buildFeatureCard(
+                          context,
+                          icon: Icons.arrow_circle_up_outlined,
+                          title: 'الدخل',
+                          description: 'سجل دخلك وتابع زيادة محفظتك',
+                          color: Colors.green,
                         ),
                       ],
                     ),
@@ -247,7 +168,246 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
               ),
             ),
 
-            // Third intro page
+            // Profiles Feature
+            Container(
+              color: Colors.white,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color:
+                          Constants.getPrimaryColor(context).withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.people_outline_rounded,
+                      size: 60,
+                      color: Constants.getPrimaryColor(context),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(
+                      'حسابات متعددة في مكان واحد',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: Constants.secondaryFontFamily,
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color:
+                            Constants.getPrimaryColor(context).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Constants.getPrimaryColor(context)
+                              .withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: const Column(
+                        children: [
+                          Text(
+                            'قدر تعمل حسابات مختلفة لكل حاجة:',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: Constants.secondaryFontFamily,
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            'حساب للمصاريف الشخصية • \n'
+                            'حساب للمشروع بتاعك • \n'
+                            'حساب للعيلة • \n'
+                            'وأي حاجة تانية تحتاجها •',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: Constants.secondaryFontFamily,
+                              height: 1.8,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Goals Feature
+            Container(
+              color: Colors.white,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color:
+                          Constants.getPrimaryColor(context).withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.flag_outlined,
+                      size: 60,
+                      color: Constants.getPrimaryColor(context),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(
+                      'حط اهدافك وحققها',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: Constants.secondaryFontFamily,
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color:
+                            Constants.getPrimaryColor(context).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Constants.getPrimaryColor(context)
+                              .withOpacity(0.2),
+                          width: 1,
+                        ),
+                      ),
+                      child: const Column(
+                        children: [
+                          Text(
+                            'اهداف مالية زي:',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: Constants.secondaryFontFamily,
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          Text(
+                            'توفير لحاجة معينة • \n'
+                            'تجميع راس مال • \n'
+                            'ادخار للطوارئ • \n'
+                            'او اي هدف او التزام تاني',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: Constants.secondaryFontFamily,
+                              height: 1.8,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Name Input Page
+            Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: Constants.getPrimaryColor(context)
+                              .withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.person_outline_rounded,
+                          size: 60,
+                          color: Constants.getPrimaryColor(context),
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      const Text(
+                        'اسمك ايه ينجم؟',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: Constants.secondaryFontFamily,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        '😠اكتبة بالعربي وعيش عيشة اهلك لو سمحت ',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: Constants.secondaryFontFamily,
+                          height: 1.5,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      TextFormField(
+                        controller: _nameController,
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: 'اكتب اسمك هنا',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(
+                              color: Constants.getPrimaryColor(context),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(
+                              color: Constants.getPrimaryColor(context),
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'من فضلك اكتب اسمك';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Let's Start Page
             Container(
               color: Colors.white,
               child: Column(
@@ -273,18 +433,18 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Rabar',
+                      fontFamily: Constants.secondaryFontFamily,
                     ),
                   ),
                   const SizedBox(height: 20),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 30),
                     child: Text(
-                      'خلينا نبدأ رحلتك في تحقيق اهدافك المالية',
-                      textAlign: TextAlign.right,
+                      'كل حاجة جاهزة.. يلا نبدأ نظبط فلوسك',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 18,
-                        fontFamily: 'Rabar',
+                        fontFamily: Constants.secondaryFontFamily,
                         height: 1.5,
                       ),
                     ),
@@ -299,24 +459,34 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
           ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               height: 80,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Constants.getPrimaryColor(context),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      _controller.previousPage(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                    child: const Text('رجوع'),
                   ),
-                  elevation: 0,
-                ),
-                onPressed: _completeIntroduction,
-                child: const Text(
-                  'يلا نبدأ',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontFamily: 'Rabar',
-                    fontWeight: FontWeight.bold,
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Constants.getPrimaryColor(context),
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(100, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    onPressed: _completeIntroduction,
+                    child: const Text(
+                      'يلا نبدأ',
+                      style: TextStyle(fontSize: 16),
+                    ),
                   ),
-                ),
+                ],
               ),
             )
           : Container(
@@ -326,51 +496,101 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
-                    onPressed: () => _controller.jumpToPage(2),
+                    onPressed: () => _controller.jumpToPage(5),
                     child: Text(
                       'تخطي',
                       style: TextStyle(
-                        fontFamily: 'Rabar',
                         color: Constants.getPrimaryColor(context),
-                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                   Center(
                     child: SmoothPageIndicator(
                       controller: _controller,
-                      count: 3,
+                      count: 6,
                       effect: WormEffect(
                         spacing: 16,
                         dotColor: Colors.black12,
                         activeDotColor: Constants.getPrimaryColor(context),
-                        dotHeight: 10,
-                        dotWidth: 10,
-                      ),
-                      onDotClicked: (index) => _controller.animateToPage(
-                        index,
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeIn,
                       ),
                     ),
                   ),
                   TextButton(
-                    onPressed: () => _controller.nextPage(
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.easeInOut,
-                    ),
+                    onPressed: () {
+                      _controller.nextPage(
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                      );
+                    },
                     child: Text(
                       'التالي',
                       style: TextStyle(
-                        fontFamily: 'Rabar',
                         color: Constants.getPrimaryColor(context),
-                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildFeatureCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String description,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: color.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        textDirection: TextDirection.rtl,
+        children: [
+          Icon(
+            icon,
+            color: color,
+            size: 36,
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  title,
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: Constants.secondaryFontFamily,
+                    color: color,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontFamily: Constants.secondaryFontFamily,
+                    color: Colors.grey,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

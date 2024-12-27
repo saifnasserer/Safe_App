@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:safe/Blocks/Wallet.dart';
+import 'package:safe/providers/profile_provider.dart';
 import 'package:safe/utils/goal_types.dart';
+import 'package:provider/provider.dart';
 
 class Goal {
   final String title;
@@ -107,7 +109,10 @@ class GoalItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 ValueListenableBuilder<double>(
-                  valueListenable: WalletBlock.wallet,
+                  valueListenable: WalletBlock.balanceByProfile[
+                          context.watch<ProfileProvider>().currentProfile?.id ??
+                              ''] ??
+                      ValueNotifier<double>(0.0),
                   builder: (context, savedAmount, child) {
                     double progress =
                         (savedAmount / goal.targetAmount).clamp(0.0, 1.0);
@@ -140,7 +145,10 @@ class GoalItem extends StatelessWidget {
               left: 0,
               bottom: 0,
               child: ValueListenableBuilder<double>(
-                valueListenable: WalletBlock.wallet,
+                valueListenable: WalletBlock.balanceByProfile[
+                        context.watch<ProfileProvider>().currentProfile?.id ??
+                            ''] ??
+                    ValueNotifier<double>(0.0),
                 builder: (context, savedAmount, child) {
                   double progress =
                       (savedAmount / goal.targetAmount).clamp(0.0, 1.0);

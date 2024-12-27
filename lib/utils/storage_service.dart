@@ -11,6 +11,8 @@ class StorageService {
   static const String _spentKey = 'spent';
   static const String _profilesKey = 'profiles';
   static const String _currentProfileKey = 'current_profile';
+  static const String _userNameKey = 'user_name';  
+  static const String _isFirstLaunchKey = 'is_first_launch';  
 
   // Profile-specific key generators
   static String _getProfileItemsKey(String profileId) =>
@@ -103,5 +105,25 @@ class StorageService {
   static Future<void> clearAll() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+  }
+
+  static Future<void> saveUserName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_userNameKey, name);
+  }
+
+  static Future<String?> getUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_userNameKey);
+  }
+
+  static Future<bool> isFirstLaunch() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_isFirstLaunchKey) ?? true;
+  }
+
+  static Future<void> setFirstLaunch(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_isFirstLaunchKey, value);
   }
 }

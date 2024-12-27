@@ -1,33 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/providers/profile_provider.dart';
 import 'package:safe/Screens/manage.dart';
 import 'package:safe/utils/storage_service.dart';
+import 'package:safe/widgets/wallet_widgets/balance_display.dart';
 
 class WalletBlock extends StatefulWidget {
-  const WalletBlock({required this.title, super.key});
   final String title;
+  static final Map<String, ValueNotifier<double>> balanceByProfile = {};
 
-  static ValueNotifier<double> wallet = ValueNotifier<double>(0.0);
+  const WalletBlock({super.key, required this.title});
 
-  static Future<void> updateWallet(
-      BuildContext context, double newValue) async {
+  static Future<void> updateWalletBalance(
+      BuildContext context, double newBalance) async {
     final profileProvider = context.read<ProfileProvider>();
     if (profileProvider.currentProfile != null) {
-      wallet.value = newValue;
-      await StorageService.saveWalletBalance(
-          profileProvider.currentProfile!.id, newValue);
+      final profileId = profileProvider.currentProfile!.id;
+      balanceByProfile[profileId]?.value = newBalance;
+      await StorageService.saveWalletBalance(profileId, newBalance);
     }
   }
 
   static Future<void> initWallet(BuildContext context) async {
     final profileProvider = context.read<ProfileProvider>();
     if (profileProvider.currentProfile != null) {
-      wallet.value = await StorageService.loadWalletBalance(
-          profileProvider.currentProfile!.id);
+      final profileId = profileProvider.currentProfile!.id;
+      if (!balanceByProfile.containsKey(profileId)) {
+        balanceByProfile[profileId] = ValueNotifier<double>(0.0);
+      }
+      balanceByProfile[profileId]!.value =
+          await StorageService.loadWalletBalance(profileId);
     }
   }
 
@@ -54,7 +57,9 @@ class _WalletBlockState extends State<WalletBlock>
     );
 
     _controller.forward();
-    WalletBlock.initWallet(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      WalletBlock.initWallet(context);
+    });
   }
 
   @override
@@ -65,23 +70,37 @@ class _WalletBlockState extends State<WalletBlock>
 
   @override
   Widget build(BuildContext context) {
+    final profileProvider = context.watch<ProfileProvider>();
+    final currentProfileId = profileProvider.currentProfile?.id;
+
+    if (currentProfileId == null) {
+      return const SizedBox(); // Return empty widget if no profile
+    }
+
+    // Ensure we have a ValueNotifier for this profile
+    if (!WalletBlock.balanceByProfile.containsKey(currentProfileId)) {
+      WalletBlock.balanceByProfile[currentProfileId] =
+          ValueNotifier<double>(0.0);
+      WalletBlock.initWallet(context);
+    }
+
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Center(
       child: Stack(
         children: [
+          // Positioned(
+          //   top: screenHeight * 0.15,
+          //   left: screenWidth * 0.3,
+          //   child: Lottie.asset(
+          //     'assets/animation/Underline.json',
+          //     animate: true,
+          //     repeat: false,
+          //   ),
+          // ),
           Positioned(
-            top: screenHeight * 0.158,
-            left: screenWidth * 0.3,
-            child: Lottie.asset(
-              'assets/animation/Underline.json',
-              animate: true,
-              repeat: false,
-            ),
-          ),
-          Positioned(
-            top: screenHeight * 0.15,
+            top: screenHeight * 0.04,
             left: screenWidth * 0.08,
             child: ScaleTransition(
               scale: _scaleAnimation,
@@ -92,8 +111,8 @@ class _WalletBlockState extends State<WalletBlock>
             ),
           ),
           Positioned(
-            top: screenHeight * 0.15,
-            right: screenWidth * 0.08,
+            top: screenHeight * 0.05,
+            left: screenWidth * -0.3,
             child: ScaleTransition(
               scale: _scaleAnimation,
               child: Transform.scale(
@@ -103,8 +122,8 @@ class _WalletBlockState extends State<WalletBlock>
             ),
           ),
           Positioned(
-            top: screenHeight * -0.03,
-            left: screenWidth * 0.1,
+            top: screenHeight * -0.12,
+            right: screenWidth * 0.099,
             child: ScaleTransition(
               scale: _scaleAnimation,
               child: Transform.scale(
@@ -149,22 +168,15 @@ class _WalletBlockState extends State<WalletBlock>
                   padding: EdgeInsets.only(
                       left: screenWidth * .1, right: screenWidth * 0.1),
                   child: ValueListenableBuilder<double>(
-                    valueListenable: WalletBlock.wallet,
-                    builder: (context, value, child) {
-                      return GestureDetector(
+                    valueListenable:
+                        WalletBlock.balanceByProfile[currentProfileId]!,
+                    builder: (context, balance, child) {
+                      return BalanceDisplay(
+                        balance: balance,
+                        fontSize: screenWidth * 0.2,
                         onTap: () {
-                          HapticFeedback.mediumImpact();
                           Navigator.pushNamed(context, Manage.id);
                         },
-                        child: Text(
-                          value.toStringAsFixed(2),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.2,
-                            fontFamily: Constants.defaultFontFamily,
-                          ),
-                        ),
                       );
                     },
                   ),

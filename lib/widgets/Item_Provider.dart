@@ -27,16 +27,24 @@ class ItemProvider extends ChangeNotifier {
   Future<void> addItem(item newItem) async {
     final currentProfile = _profileProvider.currentProfile;
     if (currentProfile != null) {
+      final profileId = currentProfile.id;
       if (newItem.flag == false) {
         // Expense
-        final newWalletValue = WalletBlock.wallet.value - newItem.price;
-        final newSpentValue = SpentBlock.spent.value + newItem.price;
-        await WalletBlock.updateWallet(context, newWalletValue);
+        final currentWallet =
+            WalletBlock.balanceByProfile[profileId]?.value ?? 0.0;
+        final currentSpent = SpentBlock.spentByProfile[profileId]?.value ?? 0.0;
+
+        final newWalletValue = currentWallet - newItem.price;
+        final newSpentValue = currentSpent + newItem.price;
+
+        await WalletBlock.updateWalletBalance(context, newWalletValue);
         await SpentBlock.updateSpentValue(context, newSpentValue);
       } else {
         // Income
-        final newWalletValue = WalletBlock.wallet.value + newItem.price;
-        await WalletBlock.updateWallet(context, newWalletValue);
+        final currentWallet =
+            WalletBlock.balanceByProfile[profileId]?.value ?? 0.0;
+        final newWalletValue = currentWallet + newItem.price;
+        await WalletBlock.updateWalletBalance(context, newWalletValue);
       }
       _items.add(newItem);
       await StorageService.saveItems(currentProfile.id, _items);
@@ -47,15 +55,24 @@ class ItemProvider extends ChangeNotifier {
   Future<void> removeItem(int index) async {
     final currentProfile = _profileProvider.currentProfile;
     if (currentProfile != null) {
+      final profileId = currentProfile.id;
       if (_items[index].flag == false) {
-        final newSpentValue = SpentBlock.spent.value - _items[index].price;
-        final newWalletValue = WalletBlock.wallet.value + _items[index].price;
+        // If it was an expense
+        final currentSpent = SpentBlock.spentByProfile[profileId]?.value ?? 0.0;
+        final currentWallet =
+            WalletBlock.balanceByProfile[profileId]?.value ?? 0.0;
+
+        final newSpentValue = currentSpent - _items[index].price;
+        final newWalletValue = currentWallet + _items[index].price;
+
         await SpentBlock.updateSpentValue(context, newSpentValue);
-        await WalletBlock.updateWallet(context, newWalletValue);
+        await WalletBlock.updateWalletBalance(context, newWalletValue);
       } else {
         // If it was income
-        final newWalletValue = WalletBlock.wallet.value - _items[index].price;
-        await WalletBlock.updateWallet(context, newWalletValue);
+        final currentWallet =
+            WalletBlock.balanceByProfile[profileId]?.value ?? 0.0;
+        final newWalletValue = currentWallet - _items[index].price;
+        await WalletBlock.updateWalletBalance(context, newWalletValue);
       }
       _items.removeAt(index);
       await StorageService.saveItems(currentProfile.id, _items);

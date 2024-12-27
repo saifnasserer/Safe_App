@@ -6,6 +6,7 @@ import 'package:safe/Constants.dart';
 import 'package:safe/Screens/manage.dart';
 import 'package:safe/utils/FirstUse.dart';
 import 'package:safe/utils/transaction_filter.dart';
+import 'package:safe/utils/number_formatter.dart';
 import 'package:safe/widgets/Item_Provider.dart';
 import 'package:provider/provider.dart';
 
@@ -91,15 +92,30 @@ class _RecieptState extends State<Reciept> {
   @override
   Widget build(BuildContext context) {
     final items = Provider.of<ItemProvider>(context).items;
-    final Map<String, List<dynamic>> groupedItems = {};
+    final Map<DateTime, List<dynamic>> groupedItems = {};
 
+    // First, group items by their actual date (not formatted string)
     for (var item in items) {
-      final dateKey = _formatDate(item.dateTime);
+      // Strip time from date for comparison
+      final dateKey = DateTime(
+        item.dateTime.year,
+        item.dateTime.month,
+        item.dateTime.day,
+      );
       if (groupedItems.containsKey(dateKey)) {
         groupedItems[dateKey]!.add(item);
       } else {
         groupedItems[dateKey] = [item];
       }
+    }
+
+    // Sort dates in descending order
+    final sortedDates = groupedItems.keys.toList()
+      ..sort((a, b) => b.compareTo(a));
+
+    // Sort items within each date group by time in descending order
+    for (var date in groupedItems.keys) {
+      groupedItems[date]!.sort((a, b) => b.dateTime.compareTo(a.dateTime));
     }
 
     return Scaffold(
@@ -125,11 +141,11 @@ class _RecieptState extends State<Reciept> {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Container(
               decoration: BoxDecoration(
                 color: Constants.getPrimaryColor(context).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: TextButton.icon(
                 onPressed: _showFilterDialog,
@@ -262,16 +278,16 @@ class _RecieptState extends State<Reciept> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shrinkWrap: true,
                     physics: const ClampingScrollPhysics(),
-                    itemCount: groupedItems.keys.length,
+                    itemCount: sortedDates.length,
                     itemBuilder: (context, index) {
-                      final dateKey =
-                          groupedItems.keys.toList().reversed.toList()[index];
-                      final itemsForDate = _filterItems(groupedItems[dateKey]!)
-                          .reversed
-                          .toList();
+                      final dateKey = sortedDates[index];
+                      final itemsForDate = _filterItems(groupedItems[dateKey]!);
+
                       if (itemsForDate.isEmpty) return const SizedBox.shrink();
+
                       final screenHight = MediaQuery.of(context).size.height;
                       final screenWidth = MediaQuery.of(context).size.width;
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -291,7 +307,7 @@ class _RecieptState extends State<Reciept> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                dateKey,
+                                _formatDate(dateKey),
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -337,7 +353,7 @@ class _RecieptState extends State<Reciept> {
                                               right: screenWidth * 0.02,
                                               left: screenWidth * 0.02),
                                           child: Text(
-                                            '${item.price} جنيه',
+                                            NumberFormatter.formatCurrency(item.price),
                                             style: TextStyle(
                                               fontFamily:
                                                   Constants.defaultFontFamily,
@@ -361,6 +377,8 @@ class _RecieptState extends State<Reciept> {
                                                   const Center(
                                                       child: Text('تم الحذف')),
                                                   background: Colors.green);
+                                              duration:
+                                              const Duration(seconds: 1);
                                             }
                                           },
                                           child: Icon(

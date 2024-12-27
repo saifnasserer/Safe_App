@@ -9,26 +9,31 @@ import 'package:safe/Screens/manage.dart';
 import 'package:safe/utils/storage_service.dart';
 import 'package:safe/utils/date_filter.dart';
 import 'package:safe/widgets/navigation.dart';
+import 'package:safe/widgets/spent_widgets/spent_display.dart';
 
 class SpentBlock extends StatefulWidget {
   const SpentBlock({super.key});
-  static ValueNotifier<double> spent = ValueNotifier<double>(0.0);
+  static final Map<String, ValueNotifier<double>> spentByProfile = {};
 
   static Future<void> updateSpentValue(
       BuildContext context, double newvalue) async {
     final profileProvider = context.read<ProfileProvider>();
     if (profileProvider.currentProfile != null) {
-      spent.value = newvalue;
-      await StorageService.saveSpentAmount(
-          profileProvider.currentProfile!.id, newvalue);
+      final profileId = profileProvider.currentProfile!.id;
+      spentByProfile[profileId]?.value = newvalue;
+      await StorageService.saveSpentAmount(profileId, newvalue);
     }
   }
 
   static Future<void> initSpent(BuildContext context) async {
     final profileProvider = context.read<ProfileProvider>();
     if (profileProvider.currentProfile != null) {
-      spent.value = await StorageService.loadSpentAmount(
-          profileProvider.currentProfile!.id);
+      final profileId = profileProvider.currentProfile!.id;
+      if (!spentByProfile.containsKey(profileId)) {
+        spentByProfile[profileId] = ValueNotifier<double>(0.0);
+      }
+      spentByProfile[profileId]!.value =
+          await StorageService.loadSpentAmount(profileId);
     }
   }
 
@@ -193,11 +198,9 @@ class _SpentBlockState extends State<SpentBlock>
   @override
   void initState() {
     super.initState();
-    SpentBlock.initSpent(context);
-    _updateSpentValue(); // Initial update based on today's filter
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 500),
     );
 
     _slideAnimation = Tween<Offset>(
@@ -209,6 +212,11 @@ class _SpentBlockState extends State<SpentBlock>
     ));
 
     _controller.forward();
+
+    // Initialize spent for current profile
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SpentBlock.initSpent(context);
+    });
   }
 
   @override
@@ -221,9 +229,21 @@ class _SpentBlockState extends State<SpentBlock>
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    final profileProvider = context.watch<ProfileProvider>();
+    final currentProfileId = profileProvider.currentProfile?.id;
+
+    if (currentProfileId == null) {
+      return const SizedBox(); // Return empty widget if no profile
+    }
+
+    // Ensure we have a ValueNotifier for this profile
+    if (!SpentBlock.spentByProfile.containsKey(currentProfileId)) {
+      SpentBlock.spentByProfile[currentProfileId] = ValueNotifier<double>(0.0);
+      SpentBlock.initSpent(context);
+    }
 
     return ValueListenableBuilder<double>(
-      valueListenable: SpentBlock.spent,
+      valueListenable: SpentBlock.spentByProfile[currentProfileId]!,
       builder: (context, value, child) {
         return Expanded(
           child: LayoutBuilder(
@@ -278,16 +298,12 @@ class _SpentBlockState extends State<SpentBlock>
                               fontFamily: Constants.secondaryFontFamily,
                             ),
                           ),
-                          Text(
-                            value.toStringAsFixed(2),
-                            maxLines: 1,
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: containerHeight * 0.18,
-                              color: Colors.white,
-                              fontFamily: Constants.defaultFontFamily,
-                            ),
+                          SpentDisplay(
+                            value: value,
+                            fontSize: screenWidth * 0.2,
+                            onTap: () {
+                              Navigator.pushNamed(context, Reciept.id);
+                            },
                           ),
                           ElevatedButton(
                             onPressed: () {
@@ -309,8 +325,8 @@ class _SpentBlockState extends State<SpentBlock>
                                                   DateFilter.lastMonth
                                               ? 'الشهر اللي فات'
                                               : 'تاريخ معين',
-                                  style: const TextStyle(
-                                    color: Color(0xff4558c8),
+                                  style: TextStyle(
+                                    color: Constants.getPrimaryColor(context),
                                     fontFamily: Constants.secondaryFontFamily,
                                   ),
                                 ),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:safe/Blocks/Goal.dart';
 import 'package:safe/Blocks/Wallet.dart';
 import 'package:safe/Constants.dart';
+import 'package:safe/providers/profile_provider.dart';
 import 'package:safe/widgets/goals_screen_widgets/Goal_Provider.dart';
 
 class EditGoalDialog extends StatefulWidget {
@@ -157,7 +158,11 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
       children: [
         Expanded(
           child: ElevatedButton(
-            onPressed: _handleEditGoal,
+            onPressed: () {
+              if (amountController.text.isNotEmpty) {
+                _handleEditGoal(double.parse(amountController.text), isAdding);
+              }
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Constants.getPrimaryColor(context),
               foregroundColor: Colors.white,
@@ -197,23 +202,35 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
     );
   }
 
-  void _handleEditGoal() {
-    if (amountController.text.isNotEmpty) {
-      double amount = double.parse(amountController.text);
-      if (!isAdding && widget.goal.currentAmount - amount < 0) {
-        return;
-      } else if (isAdding && WalletBlock.wallet.value - amount < 0) {
-        return;
+  void _handleEditGoal(double amount, bool isAdding) {
+    if (amount > 0) {
+      double finalAmount = isAdding
+          ? widget.goal.currentAmount + amount
+          : widget.goal.currentAmount - amount;
+
+      if (finalAmount < 0) {
+        finalAmount = 0;
       }
 
-      final finalAmount = isAdding ? amount : -amount;
-      Provider.of<GoalProvider>(context, listen: false)
+      context
+          .read<GoalProvider>()
           .updateGoalProgress(widget.index, finalAmount);
 
-      if (!isAdding) {
-        WalletBlock.updateWallet(context, WalletBlock.wallet.value - amount);
-      } else {
-        WalletBlock.updateWallet(context, WalletBlock.wallet.value + amount);
+      final profileProvider = context.read<ProfileProvider>();
+      final currentProfileId = profileProvider.currentProfile?.id;
+      
+      if (currentProfileId != null) {
+        final currentBalance = WalletBlock.balanceByProfile[currentProfileId]?.value ?? 0.0;
+        
+        if (!isAdding) {
+          WalletBlock.updateWalletBalance(
+              context,
+              currentBalance - amount);
+        } else {
+          WalletBlock.updateWalletBalance(
+              context,
+              currentBalance + amount);
+        }
       }
       Navigator.pop(context);
     }

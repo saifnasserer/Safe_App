@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:safe/Blocks/Spent.dart';
-import 'package:safe/Blocks/Wallet.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/Screens/EmptyReciet.dart';
 import 'package:safe/Screens/Goals.dart';
@@ -12,11 +9,11 @@ import 'package:safe/Screens/HomePage.dart';
 import 'package:safe/Screens/introduction_screen.dart';
 import 'package:safe/Screens/manage.dart';
 import 'package:safe/providers/profile_provider.dart';
+import 'package:safe/utils/storage_service.dart';
 import 'package:safe/widgets/goals_screen_widgets/Goal_Provider.dart';
 import 'package:safe/widgets/Item_Provider.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/widgets/app_initializer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safe/utils/version_control.dart';
 import 'package:safe/widgets/update_notes_dialog.dart';
 
@@ -86,18 +83,13 @@ class _PlanetAppState extends State<PlanetApp> {
   }
 
   Future<void> _checkFirstLaunch() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isFirstLaunch = prefs.getBool('hasSeenIntro') ?? true;
+    final isFirstLaunch = await StorageService.isFirstLaunch();
 
     if (mounted) {
       setState(() {
         _isFirstLaunch = isFirstLaunch;
         _isLoading = false;
       });
-    }
-
-    if (isFirstLaunch) {
-      await prefs.setBool('hasSeenIntro', false);
     }
   }
 

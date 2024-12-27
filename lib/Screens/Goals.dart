@@ -17,8 +17,6 @@ class GoalsBlock extends StatefulWidget {
 }
 
 class _GoalsBlockState extends State<GoalsBlock> {
-  Color mainColor = const Color(0xFF4459c8);
-
   void _showAddGoalDialog() {
     showDialog(
       context: context,
@@ -49,7 +47,7 @@ class _GoalsBlockState extends State<GoalsBlock> {
             child: goals.isEmpty
                 ? EmptyGoalsView(
                     onAddGoal: _showAddGoalDialog,
-                    mainColor: mainColor,
+                    mainColor: Constants.getPrimaryColor(context),
                   )
                 : _buildGoalsList(goals),
           ),
@@ -59,7 +57,7 @@ class _GoalsBlockState extends State<GoalsBlock> {
           ? FloatingActionButton(
               onPressed: _showAddGoalDialog,
               elevation: 2,
-              backgroundColor: mainColor,
+              backgroundColor: Constants.getPrimaryColor(context),
               child: const Icon(Icons.add, color: Colors.white),
             )
           : null,
@@ -119,7 +117,7 @@ class _GoalsBlockState extends State<GoalsBlock> {
                       SnackBar(
                         content: Center(child: Text("تم حذف ${goal.title}")),
                         behavior: SnackBarBehavior.floating,
-                        backgroundColor: mainColor,
+                        backgroundColor: Constants.getPrimaryColor(context),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),

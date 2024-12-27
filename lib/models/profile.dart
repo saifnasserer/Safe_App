@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'dart:convert';
-
 class Profile {
   final String id;
   final String name;
