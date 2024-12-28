@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safe/Constants.dart';
 
 class LoadingIndicator extends StatelessWidget {
   final String? message;
@@ -18,7 +19,7 @@ class LoadingIndicator extends StatelessWidget {
             color: Theme.of(context).colorScheme.primary,
           ),
           if (message != null) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: Constants.responsiveSpacing(context, 16)),
             Text(
               message!,
               style: Theme.of(context).textTheme.bodyLarge,

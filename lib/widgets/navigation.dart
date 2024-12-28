@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:safe/Constants.dart';
 
 class Screen extends StatelessWidget {
-  Screen(
-      {required this.size,
-      required this.buttonIcon,
-      required this.screenName,
-      super.key});
+  Screen({
+    required this.size,
+    required this.buttonIcon,
+    required this.screenName,
+    super.key,
+  });
   Widget screenName;
   IconData buttonIcon;
   double size;
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
@@ -28,7 +31,7 @@ class Screen extends StatelessWidget {
       icon: Icon(
         buttonIcon,
         color: Colors.white,
-        size: size,
+        size: Constants.responsiveSpacing(context, size),
       ),
     );
   }

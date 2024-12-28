@@ -34,10 +34,12 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(
+          Constants.responsiveSpacing(context, 20),
+        ),
       ),
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(Constants.responsiveSpacing(context, 24)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -45,16 +47,16 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
               'تعديل الهدف',
               style: TextStyle(
                 fontFamily: Constants.defaultFontFamily,
-                fontSize: 24,
+                fontSize: Constants.responsiveFontSize(context, 24),
                 fontWeight: FontWeight.bold,
                 color: Constants.getPrimaryColor(context),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: Constants.responsiveSpacing(context, 24)),
             _buildToggleButtons(),
-            const SizedBox(height: 24),
+            SizedBox(height: Constants.responsiveSpacing(context, 24)),
             _buildAmountField(),
-            const SizedBox(height: 24),
+            SizedBox(height: Constants.responsiveSpacing(context, 24)),
             _buildActionButtons(),
           ],
         ),
@@ -94,17 +96,19 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
     return GestureDetector(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(Constants.responsiveSpacing(context, 8)),
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(Constants.responsiveSpacing(context, 12)),
           decoration: BoxDecoration(
             color: isSelected
                 ? Constants.getPrimaryColor(context)
                 : Colors.transparent,
-            borderRadius: const BorderRadius.all(Radius.circular(12)),
+            borderRadius: BorderRadius.all(
+              Radius.circular(Constants.responsiveSpacing(context, 12)),
+            ),
             border: Border.all(
               color: Constants.getPrimaryColor(context),
-              width: 1,
+              width: Constants.responsiveSpacing(context, 1),
             ),
           ),
           child: Text(
@@ -112,6 +116,7 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: Constants.defaultFontFamily,
+              fontSize: Constants.responsiveFontSize(context, 16),
               color: isSelected
                   ? Colors.white
                   : Constants.getPrimaryColor(context),
@@ -128,25 +133,28 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
       controller: amountController,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       textAlign: TextAlign.center,
-      style: const TextStyle(
+      style: TextStyle(
         fontFamily: Constants.defaultFontFamily,
-        fontSize: 18,
+        fontSize: Constants.responsiveFontSize(context, 18),
       ),
       decoration: InputDecoration(
         hintText: 'ادخل المبلغ',
         hintStyle: TextStyle(
           color: Colors.grey[400],
           fontFamily: Constants.defaultFontFamily,
+          fontSize: Constants.responsiveFontSize(context, 16),
         ),
         filled: true,
         fillColor: Colors.grey[50],
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            Constants.responsiveSpacing(context, 12),
+          ),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: Constants.responsiveSpacing(context, 16),
+          vertical: Constants.responsiveSpacing(context, 14),
         ),
       ),
     );
@@ -166,33 +174,39 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Constants.getPrimaryColor(context),
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: EdgeInsets.symmetric(
+                vertical: Constants.responsiveSpacing(context, 12),
+              ),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(
+                  Constants.responsiveSpacing(context, 12),
+                ),
               ),
             ),
-            child: const Text(
+            child: Text(
               'تأكيد',
               style: TextStyle(
                 fontFamily: Constants.defaultFontFamily,
-                fontSize: 16,
+                fontSize: Constants.responsiveFontSize(context, 16),
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: Constants.responsiveSpacing(context, 12)),
         Expanded(
           child: TextButton(
             onPressed: () => Navigator.pop(context),
             style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: EdgeInsets.symmetric(
+                vertical: Constants.responsiveSpacing(context, 12),
+              ),
             ),
             child: Text(
               'إلغاء',
               style: TextStyle(
                 fontFamily: Constants.defaultFontFamily,
-                fontSize: 16,
+                fontSize: Constants.responsiveFontSize(context, 16),
                 color: Constants.getPrimaryColor(context),
               ),
             ),

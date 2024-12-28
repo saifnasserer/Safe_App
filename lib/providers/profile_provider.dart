@@ -7,16 +7,14 @@ class ProfileProvider extends ChangeNotifier {
   List<Profile> _profiles = [];
   Profile? _currentProfile;
   final _uuid = const Uuid();
-
   Profile? get currentProfile => _currentProfile;
   List<Profile> get profiles => List.unmodifiable(_profiles);
 
   Future<void> initialize() async {
-    _profiles = await StorageService.loadProfiles();
+    _profiles = (await StorageService.loadProfiles()).cast<Profile>();
     if (_profiles.isEmpty) {
       // Get user's name for default profile
       final userName = await StorageService.getUserName() ?? 'Personal';
-
       // Create default profile
       final defaultProfile = Profile(
         id: _uuid.v4(),

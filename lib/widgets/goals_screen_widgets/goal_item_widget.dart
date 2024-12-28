@@ -61,12 +61,12 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text(
+        title: Text(
           'إضافة مبلغ للهدف',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: Constants.defaultFontFamily,
-            fontSize: 24,
+            fontSize: Constants.responsiveFontSize(context, 24),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -74,18 +74,26 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
           controller: _amountController,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           textAlign: TextAlign.center,
-          decoration: const InputDecoration(
+          style: TextStyle(
+            fontSize: Constants.responsiveFontSize(context, 16),
+          ),
+          decoration: InputDecoration(
             hintText: 'ادخل المبلغ',
-            border: OutlineInputBorder(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                Constants.responsiveSpacing(context, 8),
+              ),
+            ),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
+            child: Text(
               'إلغاء',
               style: TextStyle(
                 fontFamily: Constants.defaultFontFamily,
+                fontSize: Constants.responsiveFontSize(context, 14),
               ),
             ),
           ),
@@ -111,10 +119,11 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
                 }
               }
             },
-            child: const Text(
+            child: Text(
               'إضافة',
               style: TextStyle(
                 fontFamily: Constants.defaultFontFamily,
+                fontSize: Constants.responsiveFontSize(context, 14),
               ),
             ),
           ),
@@ -130,7 +139,6 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
     final walletValue = currentProfileId != null 
         ? WalletBlock.balanceByProfile[currentProfileId]?.value ?? 0.0
         : 0.0;
-    final screenHight = MediaQuery.of(context).size.height;
     final progress = widget.savedAmount / widget.targetAmount;
     final potentialProgress =
         (widget.savedAmount + walletValue) / widget.targetAmount;
@@ -150,21 +158,31 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
           background: Container(
             decoration: BoxDecoration(
               color: Colors.red[400],
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(
+                Constants.responsiveSpacing(context, 16),
+              ),
             ),
             alignment: Alignment.centerRight,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: const Icon(Icons.delete_outline, color: Colors.white),
+            padding: EdgeInsets.symmetric(
+              horizontal: Constants.responsiveSpacing(context, 20),
+            ),
+            child: Icon(
+              Icons.delete_outline,
+              color: Colors.white,
+              size: Constants.responsiveSpacing(context, 24),
+            ),
           ),
           onDismissed: (direction) {
             HapticFeedback.mediumImpact();
             widget.onDismissed?.call();
           },
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
             decoration: BoxDecoration(
               color: widget.color.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(
+                Constants.responsiveSpacing(context, 16),
+              ),
               border: Border.all(
                 color: widget.color.withOpacity(0.2),
                 width: 1,
@@ -184,8 +202,8 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
                           Text(
                             widget.title,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 16,
+                            style: TextStyle(
+                              fontSize: Constants.responsiveFontSize(context, 16),
                               color: Colors.black87,
                               fontFamily: Constants.defaultFontFamily,
                             ),
@@ -196,74 +214,80 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
                               widget.commitmentDay != null)
                             Text(
                               'يوم الالتزام: ${widget.commitmentDay}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontFamily: Constants.secondaryFontFamily,
+                                fontSize: Constants.responsiveFontSize(context, 14),
                                 color: Colors.grey,
                               ),
                             ),
-                          SizedBox(height: screenHight * .01),
+                          SizedBox(height: Constants.responsiveSpacing(context, 8)),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 '${widget.savedAmount.toStringAsFixed(0)} جنيه',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: Constants.responsiveFontSize(context, 14),
                                   color: widget.color,
                                   fontFamily: Constants.secondaryFontFamily,
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              SizedBox(width: Constants.responsiveSpacing(context, 8)),
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: Constants.responsiveSpacing(context, 6),
+                                  vertical: Constants.responsiveSpacing(context, 2),
                                 ),
                                 decoration: BoxDecoration(
                                   color: widget.color,
-                                  borderRadius: BorderRadius.circular(4),
+                                  borderRadius: BorderRadius.circular(
+                                    Constants.responsiveSpacing(context, 4),
+                                  ),
                                 ),
                                 child: Text(
                                   '${(progress * 100).toStringAsFixed(0)}%',
-                                  style: const TextStyle(
-                                    fontSize: 12,
+                                  style: TextStyle(
+                                    fontSize: Constants.responsiveFontSize(context, 12),
                                     color: Colors.white,
                                     fontFamily: Constants.secondaryFontFamily,
                                   ),
                                 ),
                               ),
                               if (walletValue > 0) ...[
-                                const SizedBox(width: 4),
+                                SizedBox(width: Constants.responsiveSpacing(context, 4)),
                                 Text(
                                   '→',
                                   style: TextStyle(
                                     color: widget.color,
                                     fontWeight: FontWeight.bold,
+                                    fontSize: Constants.responsiveFontSize(context, 14),
                                   ),
                                 ),
-                                const SizedBox(width: 8),
+                                SizedBox(width: Constants.responsiveSpacing(context, 8)),
                                 Text(
                                   '${widget.targetAmount.toStringAsFixed(0)} جنية',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: Constants.responsiveFontSize(context, 14),
                                     color: widget.color,
                                     fontFamily: Constants.secondaryFontFamily,
                                   ),
                                 ),
-                                const SizedBox(width: 4),
+                                SizedBox(width: Constants.responsiveSpacing(context, 4)),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 2,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: Constants.responsiveSpacing(context, 6),
+                                    vertical: Constants.responsiveSpacing(context, 2),
                                   ),
                                   decoration: BoxDecoration(
                                     color: widget.color.withOpacity(0.15),
-                                    borderRadius: BorderRadius.circular(4),
+                                    borderRadius: BorderRadius.circular(
+                                      Constants.responsiveSpacing(context, 4),
+                                    ),
                                   ),
                                   child: Text(
                                     '${(adjustedPotentialProgress * 100).toStringAsFixed(0)}%',
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize: Constants.responsiveFontSize(context, 12),
                                       color: widget.color,
                                       fontFamily: Constants.secondaryFontFamily,
                                     ),
@@ -277,29 +301,33 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: Constants.responsiveSpacing(context, 12)),
                 Stack(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(
+                        Constants.responsiveSpacing(context, 8),
+                      ),
                       child: LinearProgressIndicator(
                         value: progress,
                         backgroundColor: Colors.grey[200],
                         valueColor: AlwaysStoppedAnimation<Color>(widget.color),
-                        minHeight: 8,
+                        minHeight: Constants.responsiveSpacing(context, 8),
                       ),
                     ),
                     if (walletValue > 0)
                       Positioned.fill(
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(
+                            Constants.responsiveSpacing(context, 8),
+                          ),
                           child: LinearProgressIndicator(
                             value: adjustedPotentialProgress,
                             backgroundColor: Colors.transparent,
                             valueColor: AlwaysStoppedAnimation<Color>(
                               widget.color.withOpacity(0.3),
                             ),
-                            minHeight: 8,
+                            minHeight: Constants.responsiveSpacing(context, 8),
                           ),
                         ),
                       ),
@@ -323,7 +351,7 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
                     _controller.repeat();
                   }
                 },
-                height: 150,
+                height: Constants.heightPercent(context, 20),
               ),
             ),
           ),

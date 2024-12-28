@@ -38,34 +38,44 @@ class item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(15),
-      margin: const EdgeInsets.only(left: 10, right: 10, top: 10),
+      padding: EdgeInsets.all(Constants.responsiveSpacing(context, 15)),
+      margin: EdgeInsets.only(
+        left: Constants.responsiveSpacing(context, 10),
+        right: Constants.responsiveSpacing(context, 10),
+        top: Constants.responsiveSpacing(context, 10)
+      ),
       decoration: BoxDecoration(
         color: flag ? const Color(0xff399918) : const Color(0xffEE4E4E),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 1,
+            spreadRadius: Constants.responsiveSpacing(context, 1),
             blurRadius: 0,
-            offset: const Offset(0, 3), // changes position of shadow
+            offset: Offset(0, Constants.responsiveSpacing(context, 3)),
           ),
         ],
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(Constants.responsiveSpacing(context, 20)),
       ),
       width: double.infinity,
-      height: 60,
+      height: Constants.heightPercent(context, 8), 
       child: Row(children: [
-        Text(price.toString(),
-            style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontFamily: Constants.secondaryFontFamily)),
+        Text(
+          price.toString(),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: Constants.responsiveFontSize(context, 20),
+            fontFamily: Constants.secondaryFontFamily
+          )
+        ),
         const VerticalDivider(),
-        Text(title,
-            style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontFamily: Constants.secondaryFontFamily)),
+        Text(
+          title,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: Constants.responsiveFontSize(context, 20),
+            fontFamily: Constants.secondaryFontFamily
+          )
+        ),
       ]),
     );
   }

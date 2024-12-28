@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:safe/Constants.dart';
-import 'package:safe/Screens/manage.dart';
 import 'package:safe/utils/number_formatter.dart';
 
 class BalanceDisplay extends StatefulWidget {
@@ -48,6 +47,12 @@ class _BalanceDisplayState extends State<BalanceDisplay>
 
   @override
   Widget build(BuildContext context) {
+    // Calculate the base font size responsively
+    double baseFontSize = Constants.responsiveFontSize(
+        context,
+        NumberFormatter.getAppropriateTextSize(
+            widget.balance, widget.fontSize));
+
     return Semantics(
       value: 'Balance: ${widget.balance} pounds',
       child: GestureDetector(
@@ -62,12 +67,16 @@ class _BalanceDisplayState extends State<BalanceDisplay>
           scale: _scaleAnimation,
           child: FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(
-              NumberFormatter.formatNumber(widget.balance),
-              style: TextStyle(
-                fontSize: NumberFormatter.getAppropriateTextSize(
-                    widget.balance, widget.fontSize),
-                fontFamily: Constants.defaultFontFamily,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: Constants.responsiveSpacing(context, 8),
+                  vertical: Constants.responsiveSpacing(context, 4)),
+              child: Text(
+                NumberFormatter.formatNumber(widget.balance),
+                style: TextStyle(
+                  fontSize: baseFontSize,
+                  fontFamily: Constants.defaultFontFamily,
+                ),
               ),
             ),
           ),

@@ -29,6 +29,7 @@ class ProfileSelector extends StatelessWidget {
               style: TextStyle(
                 color: primaryColor,
                 fontFamily: Constants.defaultFontFamily,
+                fontSize: Constants.responsiveFontSize(context, 20),
               ),
               textAlign: TextAlign.center,
             ),
@@ -40,31 +41,49 @@ class ProfileSelector extends StatelessWidget {
                 children: [
                   TextField(
                     controller: nameController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'اسم الملف الشخصي',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          Constants.responsiveSpacing(context, 12),
+                        ),
+                      ),
                       alignLabelWithHint: true,
+                      labelStyle: TextStyle(
+                        fontSize: Constants.responsiveFontSize(context, 16),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: Constants.responsiveSpacing(context, 16),
+                        vertical: Constants.responsiveSpacing(context, 12),
+                      ),
+                    ),
+                    style: TextStyle(
+                      fontSize: Constants.responsiveFontSize(context, 16),
                     ),
                     textAlign: TextAlign.right,
                     textDirection: TextDirection.rtl,
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
+                  SizedBox(height: Constants.responsiveSpacing(context, 16)),
+                  Text(
                     'لون الملف الشخصي',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: Constants.responsiveFontSize(context, 16),
                       fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.right,
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: Constants.responsiveSpacing(context, 8)),
                   SizedBox(
-                    height: 55,
+                    height: Constants.responsiveSpacing(context, 55),
                     child: Container(
-                      padding: const EdgeInsets.all(4),
+                      padding: EdgeInsets.all(
+                        Constants.responsiveSpacing(context, 4),
+                      ),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(
+                          Constants.responsiveSpacing(context, 12),
+                        ),
                       ),
                       child: ListView(
                         scrollDirection: Axis.horizontal,
@@ -80,14 +99,16 @@ class ProfileSelector extends StatelessWidget {
                           const Color(0xFF607D8B), // Soft blue-grey
                         ].map((color) {
                           return Padding(
-                            padding: const EdgeInsets.all(4),
+                            padding: EdgeInsets.all(
+                              Constants.responsiveSpacing(context, 4),
+                            ),
                             child: GestureDetector(
                               onTap: () {
                                 setState(() => selectedColor = color);
                               },
                               child: Container(
-                                width: 40,
-                                height: 40,
+                                width: Constants.responsiveSpacing(context, 40),
+                                height: Constants.responsiveSpacing(context, 40),
                                 decoration: BoxDecoration(
                                   color: color,
                                   shape: BoxShape.circle,
@@ -95,19 +116,27 @@ class ProfileSelector extends StatelessWidget {
                                       ? [
                                           BoxShadow(
                                             color: color.withOpacity(0.4),
-                                            blurRadius: 1,
-                                            spreadRadius: 2,
+                                            blurRadius: Constants.responsiveSpacing(
+                                                context, 1),
+                                            spreadRadius: Constants.responsiveSpacing(
+                                                context, 2),
                                           )
                                         ]
                                       : null,
                                   border: selectedColor == color
                                       ? Border.all(
-                                          color: Colors.white, width: 2)
+                                          color: Colors.white,
+                                          width: Constants.responsiveSpacing(
+                                              context, 2))
                                       : null,
                                 ),
                                 child: selectedColor == color
-                                    ? const Icon(Icons.check,
-                                        color: Colors.white)
+                                    ? Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                        size: Constants.responsiveSpacing(
+                                            context, 20),
+                                      )
                                     : null,
                               ),
                             ),
@@ -122,10 +151,17 @@ class ProfileSelector extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Constants.responsiveSpacing(context, 16),
+                    vertical: Constants.responsiveSpacing(context, 8),
+                  ),
+                ),
                 child: Text(
                   'إلغاء',
                   style: TextStyle(
                     color: primaryColor,
+                    fontSize: Constants.responsiveFontSize(context, 16),
                   ),
                 ),
               ),
@@ -141,8 +177,17 @@ class ProfileSelector extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryColor,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Constants.responsiveSpacing(context, 16),
+                    vertical: Constants.responsiveSpacing(context, 8),
+                  ),
                 ),
-                child: const Text('إنشاء'),
+                child: Text(
+                  'إنشاء',
+                  style: TextStyle(
+                    fontSize: Constants.responsiveFontSize(context, 16),
+                  ),
+                ),
               ),
             ],
             actionsAlignment: MainAxisAlignment.start,
@@ -158,8 +203,10 @@ class ProfileSelector extends StatelessWidget {
 
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(Constants.responsiveSpacing(context, 20)),
+        ),
       ),
       builder: (context) {
         return Directionality(
@@ -168,11 +215,11 @@ class ProfileSelector extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
                 child: Text(
                   'الملفات الشخصية',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: Constants.responsiveFontSize(context, 20),
                     fontWeight: FontWeight.bold,
                     color: Color(currentProfile.primaryColor),
                   ),
@@ -187,32 +234,54 @@ class ProfileSelector extends StatelessWidget {
                       return ListTile(
                         leading: CircleAvatar(
                           backgroundColor: Color(profile.primaryColor),
-                          child: const Icon(Icons.person, color: Colors.white),
+                          radius: Constants.responsiveSpacing(context, 20),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: Constants.responsiveSpacing(context, 24),
+                          ),
                         ),
-                        title: Text(profile.name),
+                        title: Text(
+                          profile.name,
+                          style: TextStyle(
+                            fontSize: Constants.responsiveFontSize(context, 16),
+                          ),
+                        ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             if (isCurrentProfile)
-                              Icon(Icons.check,
-                                  color: Color(profile.primaryColor))
+                              Icon(
+                                Icons.check,
+                                color: Color(profile.primaryColor),
+                                size: Constants.responsiveSpacing(context, 24),
+                              )
                             else if (!profile.isDefault)
                               IconButton(
-                                icon: const Icon(Icons.delete_outline),
+                                icon: Icon(
+                                  Icons.delete_outline,
+                                  size: Constants.responsiveSpacing(context, 24),
+                                ),
                                 onPressed: () {
                                   Navigator.pop(context);
                                   provider.deleteProfile(profile.id);
                                 },
                               ),
                             IconButton(
-                              icon: const Icon(Icons.edit),
+                              icon: Icon(
+                                Icons.edit,
+                                size: Constants.responsiveSpacing(context, 24),
+                              ),
                               onPressed: () {
                                 Navigator.pop(context);
-                                _showEditProfileDialog(
-                                    context, provider, profile);
+                                _showEditProfileDialog(context, provider, profile);
                               },
                             ),
                           ],
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: Constants.responsiveSpacing(context, 16),
+                          vertical: Constants.responsiveSpacing(context, 8),
                         ),
                         onTap: () {
                           if (!isCurrentProfile) {
@@ -225,16 +294,30 @@ class ProfileSelector extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: Constants.responsiveSpacing(context, 8)),
               TextButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
                   _showCreateProfileDialog(context);
                 },
-                icon: const Icon(Icons.add),
-                label: const Text('إضافة ملف شخصي جديد'),
+                icon: Icon(
+                  Icons.add,
+                  size: Constants.responsiveSpacing(context, 24),
+                ),
+                label: Text(
+                  'إضافة ملف شخصي جديد',
+                  style: TextStyle(
+                    fontSize: Constants.responsiveFontSize(context, 16),
+                  ),
+                ),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Constants.responsiveSpacing(context, 16),
+                    vertical: Constants.responsiveSpacing(context, 8),
+                  ),
+                ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: Constants.responsiveSpacing(context, 16)),
             ],
           ),
         );
@@ -260,6 +343,7 @@ class ProfileSelector extends StatelessWidget {
             style: TextStyle(
               color: primaryColor,
               fontFamily: Constants.defaultFontFamily,
+              fontSize: Constants.responsiveFontSize(context, 20),
             ),
           ),
           content: Column(
@@ -268,10 +352,24 @@ class ProfileSelector extends StatelessWidget {
             children: [
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'اسم الملف الشخصي',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(
+                      Constants.responsiveSpacing(context, 12),
+                    ),
+                  ),
                   alignLabelWithHint: true,
+                  labelStyle: TextStyle(
+                    fontSize: Constants.responsiveFontSize(context, 16),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: Constants.responsiveSpacing(context, 16),
+                    vertical: Constants.responsiveSpacing(context, 12),
+                  ),
+                ),
+                style: TextStyle(
+                  fontSize: Constants.responsiveFontSize(context, 16),
                 ),
                 textAlign: TextAlign.right,
                 textDirection: TextDirection.rtl,
@@ -281,10 +379,17 @@ class ProfileSelector extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Constants.responsiveSpacing(context, 16),
+                  vertical: Constants.responsiveSpacing(context, 8),
+                ),
+              ),
               child: Text(
                 'إلغاء',
                 style: TextStyle(
                   color: primaryColor,
+                  fontSize: Constants.responsiveFontSize(context, 16),
                 ),
               ),
             ),
@@ -299,8 +404,17 @@ class ProfileSelector extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,
+                padding: EdgeInsets.symmetric(
+                  horizontal: Constants.responsiveSpacing(context, 16),
+                  vertical: Constants.responsiveSpacing(context, 8),
+                ),
               ),
-              child: const Text('حفظ'),
+              child: Text(
+                'حفظ',
+                style: TextStyle(
+                  fontSize: Constants.responsiveFontSize(context, 16),
+                ),
+              ),
             ),
           ],
           actionsAlignment: MainAxisAlignment.start,
@@ -321,10 +435,15 @@ class ProfileSelector extends StatelessWidget {
         return GestureDetector(
           onTap: () => _showProfileMenu(context, provider),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: EdgeInsets.symmetric(
+              horizontal: Constants.responsiveSpacing(context, 12),
+              vertical: Constants.responsiveSpacing(context, 6),
+            ),
             decoration: BoxDecoration(
               color: primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(
+                Constants.responsiveSpacing(context, 20),
+              ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -332,21 +451,26 @@ class ProfileSelector extends StatelessWidget {
                 Icon(
                   Icons.arrow_drop_down,
                   color: primaryColor,
+                  size: Constants.responsiveSpacing(context, 24),
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: Constants.responsiveSpacing(context, 4)),
                 Text(
                   currentProfile.name,
                   style: TextStyle(
                     color: primaryColor,
                     fontWeight: FontWeight.bold,
+                    fontSize: Constants.responsiveFontSize(context, 16),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: Constants.responsiveSpacing(context, 8)),
                 CircleAvatar(
                   backgroundColor: primaryColor,
-                  radius: 12,
-                  child:
-                      const Icon(Icons.person, size: 16, color: Colors.white),
+                  radius: Constants.responsiveSpacing(context, 12),
+                  child: Icon(
+                    Icons.person,
+                    size: Constants.responsiveSpacing(context, 16),
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),

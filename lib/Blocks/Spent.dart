@@ -3,13 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/providers/profile_provider.dart';
-import 'package:safe/Screens/EmptyReciet.dart';
-import 'package:safe/Screens/Goals.dart';
-import 'package:safe/Screens/manage.dart';
 import 'package:safe/utils/storage_service.dart';
 import 'package:safe/utils/date_filter.dart';
-import 'package:safe/widgets/navigation.dart';
-import 'package:safe/widgets/spent_widgets/spent_display.dart';
+import 'package:safe/widgets/spent_widgets/spent_filter_section.dart';
+import 'package:safe/widgets/spent_widgets/spent_header_section.dart';
+import 'package:safe/widgets/spent_widgets/spent_navigation_bar.dart';
 
 class SpentBlock extends StatefulWidget {
   const SpentBlock({super.key});
@@ -227,16 +225,16 @@ class _SpentBlockState extends State<SpentBlock>
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = Constants.screenWidth(context);
+    final screenHeight = Constants.screenHeight(context);
+    final containerHeight = Constants.heightPercent(context, 50);
     final profileProvider = context.watch<ProfileProvider>();
     final currentProfileId = profileProvider.currentProfile?.id;
 
     if (currentProfileId == null) {
-      return const SizedBox(); // Return empty widget if no profile
+      return const SizedBox.shrink();
     }
 
-    // Ensure we have a ValueNotifier for this profile
     if (!SpentBlock.spentByProfile.containsKey(currentProfileId)) {
       SpentBlock.spentByProfile[currentProfileId] = ValueNotifier<double>(0.0);
       SpentBlock.initSpent(context);
@@ -246,139 +244,52 @@ class _SpentBlockState extends State<SpentBlock>
       valueListenable: SpentBlock.spentByProfile[currentProfileId]!,
       builder: (context, value, child) {
         return Expanded(
-          child: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-            double containerHeight = constraints.maxHeight;
-
-            return SlideTransition(
-              position: _slideAnimation,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-                child: Stack(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Constants.getPrimaryColor(context),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(screenWidth * 0.15),
-                          topRight: Radius.circular(screenWidth * 0.15),
-                        ),
-                      ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: Constants.widthPercent(context, 5)),
+            child: Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Constants.getPrimaryColor(context),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(Constants.widthPercent(context, 15)),
+                      topRight: Radius.circular(Constants.widthPercent(context, 15)),
                     ),
-                    Opacity(
-                      opacity: 0.04,
-                      child: Image.asset(
-                        'assets/dots.png',
-                        fit: BoxFit.cover,
-                        width: screenWidth,
-                        height: screenHeight * .5,
-                      ),
-                    ),
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Spacer(),
-                          Text(
-                            "مصاريفك",
-                            style: TextStyle(
-                              fontSize: containerHeight * 0.09,
-                              color: Colors.white,
-                              fontFamily: Constants.defaultFontFamily,
-                            ),
-                          ),
-                          SizedBox(height: containerHeight * 0.02),
-                          Text(
-                            "انت صرفت",
-                            style: TextStyle(
-                              fontSize: containerHeight * 0.05,
-                              color: Colors.white,
-                              fontFamily: Constants.secondaryFontFamily,
-                            ),
-                          ),
-                          SpentDisplay(
-                            value: value,
-                            fontSize: screenWidth * 0.2,
-                            onTap: () {
-                              Navigator.pushNamed(context, Reciept.id);
-                            },
-                          ),
-                          ElevatedButton(
-                            onPressed: () {
-                              _showFilterDialog();
-                              HapticFeedback.mediumImpact();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  _currentFilter == DateFilter.today
-                                      ? 'النهاردة'
-                                      : _currentFilter == DateFilter.lastWeek
-                                          ? 'الاسبوع اللي فات'
-                                          : _currentFilter ==
-                                                  DateFilter.lastMonth
-                                              ? 'الشهر اللي فات'
-                                              : 'تاريخ معين',
-                                  style: TextStyle(
-                                    color: Constants.getPrimaryColor(context),
-                                    fontFamily: Constants.secondaryFontFamily,
-                                  ),
-                                ),
-                                const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Color(0xff4558c8),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                                bottom: containerHeight * 0.05,
-                                top: containerHeight * 0.1),
-                            decoration: const BoxDecoration(
-                                color: Color(0xff1c1c1c),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(40))),
-                            height: containerHeight * 0.12,
-                            width: containerHeight * 0.5,
-                            child: Row(children: [
-                              const Spacer(flex: 1),
-                              Screen(
-                                buttonIcon: Icons.add,
-                                screenName: const Manage(),
-                                size: containerHeight * 0.08,
-                              ),
-                              const Spacer(flex: 1),
-                              Screen(
-                                  buttonIcon: Icons.task_alt_rounded,
-                                  screenName: const GoalsBlock(),
-                                  size: containerHeight * 0.08),
-                              const Spacer(flex: 1),
-                              Screen(
-                                  size: containerHeight * 0.08,
-                                  buttonIcon: Icons.receipt_long_rounded,
-                                  screenName: const Reciept()),
-                              const Spacer(flex: 1),
-                            ]),
-                          )
-                          // SizedBox(
-                          //   height: containerHeight * 0.25,
-                          //   child: const MyNavigator(),
-                          // ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            );
-          }),
+                Opacity(
+                  opacity: 0.04,
+                  child: Image.asset(
+                    'assets/dots.png',
+                    fit: BoxFit.cover,
+                    width: screenWidth,
+                    height: Constants.heightPercent(context, 50),
+                  ),
+                ),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Spacer(),
+                      SpentHeaderSection(
+                        value: value,
+                        containerHeight: containerHeight,
+                      ),
+                      SpentFilterSection(
+                        currentFilter: _currentFilter,
+                        onFilterTap: _showFilterDialog,
+                      ),
+                      SpentNavigationBar(
+                        containerHeight: containerHeight,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

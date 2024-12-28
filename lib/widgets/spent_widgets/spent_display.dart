@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:safe/Constants.dart';
-import 'package:safe/Screens/EmptyReciet.dart';
 import 'package:safe/utils/number_formatter.dart';
 
 class SpentDisplay extends StatefulWidget {
@@ -60,15 +59,21 @@ class _SpentDisplayState extends State<SpentDisplay>
         },
         child: ScaleTransition(
           scale: _scaleAnimation,
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              NumberFormatter.formatNumber(widget.value),
-              style: TextStyle(
-                fontSize: NumberFormatter.getAppropriateTextSize(
-                    widget.value, widget.fontSize),
-                fontFamily: Constants.defaultFontFamily,
-                color: Colors.white,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: Constants.responsiveSpacing(context, 16),
+              vertical: Constants.responsiveSpacing(context, 8),
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                NumberFormatter.formatNumber(widget.value),
+                style: TextStyle(
+                  fontSize:
+                      Constants.responsiveFontSize(context, widget.fontSize),
+                  fontFamily: Constants.defaultFontFamily,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),

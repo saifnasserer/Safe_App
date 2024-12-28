@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safe/Constants.dart';
 
 class UpdateNoteItem extends StatelessWidget {
   final String note;
@@ -13,16 +14,20 @@ class UpdateNoteItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
+      margin: EdgeInsets.only(
+        bottom: Constants.responsiveSpacing(context, 12),
+      ),
+      padding: EdgeInsets.all(Constants.responsiveSpacing(context, 12)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(
+          Constants.responsiveSpacing(context, 12),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            blurRadius: Constants.responsiveSpacing(context, 8),
+            offset: Offset(0, Constants.responsiveSpacing(context, 2)),
           ),
         ],
       ),
@@ -32,14 +37,15 @@ class UpdateNoteItem extends StatelessWidget {
           Icon(
             icon,
             color: Theme.of(context).primaryColor,
-            size: 20,
+            size: Constants.responsiveSpacing(context, 20),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: Constants.responsiveSpacing(context, 12)),
           Expanded(
             child: Text(
               note,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     height: 1.5,
+                    fontSize: Constants.responsiveFontSize(context, 14),
                   ),
               textDirection: TextDirection.rtl,
             ),

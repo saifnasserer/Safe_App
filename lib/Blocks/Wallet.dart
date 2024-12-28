@@ -90,15 +90,6 @@ class _WalletBlockState extends State<WalletBlock>
     return Center(
       child: Stack(
         children: [
-          // Positioned(
-          //   top: screenHeight * 0.15,
-          //   left: screenWidth * 0.3,
-          //   child: Lottie.asset(
-          //     'assets/animation/Underline.json',
-          //     animate: true,
-          //     repeat: false,
-          //   ),
-          // ),
           Positioned(
             top: screenHeight * 0.04,
             left: screenWidth * 0.08,
@@ -147,12 +138,18 @@ class _WalletBlockState extends State<WalletBlock>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  widget.title,
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.12,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: Constants.titles,
+                SizedBox(height: screenHeight * 0.05),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    widget.title,
+                    style: TextStyle(
+                      fontSize: Constants.responsiveFontSize(context, 32),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: Constants.titles,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.05),

@@ -365,7 +365,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                       ),
                       const SizedBox(height: 20),
                       const Text(
-                        '😠اكتبة بالعربي وعيش عيشة اهلك لو سمحت ',
+                        'اكتبة بالعربي وعيش عيشة اهلك لو سمحت ',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14,
@@ -380,6 +380,8 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                         textAlign: TextAlign.center,
                         decoration: InputDecoration(
                           hintText: 'اكتب اسمك هنا',
+                          hintStyle: TextStyle(
+                              color: Constants.getPrimaryColor(context)),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                             borderSide: BorderSide(

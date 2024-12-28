@@ -34,18 +34,22 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
       textDirection: TextDirection.rtl,
       child: Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(
+            Constants.responsiveSpacing(context, 20),
+          ),
         ),
         child: Container(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(Constants.responsiveSpacing(context, 24)),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(
+              Constants.responsiveSpacing(context, 20),
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                blurRadius: Constants.responsiveSpacing(context, 10),
+                offset: Offset(0, Constants.responsiveSpacing(context, 4)),
               ),
             ],
           ),
@@ -58,15 +62,16 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
                   'إضافة هدف جديد',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      color: Constants.getPrimaryColor(context),
-                      fontSize: 20,
-                      fontFamily: Constants.defaultFontFamily),
+                    color: Constants.getPrimaryColor(context),
+                    fontSize: Constants.responsiveFontSize(context, 20),
+                    fontFamily: Constants.defaultFontFamily,
+                  ),
                 ),
-                const SizedBox(height: 5),
+                SizedBox(height: Constants.responsiveSpacing(context, 5)),
                 _buildForm(),
-                const SizedBox(height: 16),
+                SizedBox(height: Constants.responsiveSpacing(context, 16)),
                 _buildColorPicker(),
-                const SizedBox(height: 24),
+                SizedBox(height: Constants.responsiveSpacing(context, 24)),
                 _buildActionButtons(),
               ],
             ),
@@ -81,9 +86,9 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
       key: _formKey,
       child: Column(
         children: [
-          const SizedBox(height: 16),
+          SizedBox(height: Constants.responsiveSpacing(context, 16)),
           _buildTitleField(),
-          const SizedBox(height: 16),
+          SizedBox(height: Constants.responsiveSpacing(context, 16)),
           _buildAmountField(),
         ],
       ),
@@ -94,26 +99,46 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
     return TextField(
       controller: titleController,
       textAlign: TextAlign.right,
+      style: TextStyle(fontSize: Constants.responsiveFontSize(context, 16)),
       decoration: InputDecoration(
         labelText: 'اسم الهدف',
         alignLabelWithHint: true,
         hintText: 'مثال: سيارة جديدة  ',
-        hintStyle: const TextStyle(fontFamily: Constants.secondaryFontFamily),
+        hintStyle: TextStyle(
+          fontFamily: Constants.secondaryFontFamily,
+          fontSize: Constants.responsiveFontSize(context, 14),
+        ),
+        labelStyle: TextStyle(
+          fontSize: Constants.responsiveFontSize(context, 16),
+        ),
         hintTextDirection: TextDirection.rtl,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            Constants.responsiveSpacing(context, 12),
+          ),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            Constants.responsiveSpacing(context, 12),
+          ),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.blue, width: 2),
+          borderRadius: BorderRadius.circular(
+            Constants.responsiveSpacing(context, 12),
+          ),
+          borderSide: BorderSide(
+            color: Colors.blue,
+            width: Constants.responsiveSpacing(context, 2),
+          ),
         ),
         filled: true,
         fillColor: Colors.grey.shade50,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: Constants.responsiveSpacing(context, 12),
+          vertical: Constants.responsiveSpacing(context, 16),
+        ),
       ),
     );
   }
@@ -123,26 +148,46 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
       controller: amountController,
       textAlign: TextAlign.right,
       keyboardType: TextInputType.number,
+      style: TextStyle(fontSize: Constants.responsiveFontSize(context, 16)),
       decoration: InputDecoration(
         labelText: 'المبلغ المستهدف',
         alignLabelWithHint: true,
+        labelStyle: TextStyle(
+          fontSize: Constants.responsiveFontSize(context, 16),
+        ),
         hintTextDirection: TextDirection.rtl,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            Constants.responsiveSpacing(context, 12),
+          ),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            Constants.responsiveSpacing(context, 12),
+          ),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.blue, width: 2),
+          borderRadius: BorderRadius.circular(
+            Constants.responsiveSpacing(context, 12),
+          ),
+          borderSide: BorderSide(
+            color: Colors.blue,
+            width: Constants.responsiveSpacing(context, 2),
+          ),
         ),
         filled: true,
         fillColor: Colors.grey.shade50,
         prefixText: 'جنية: ',
-        prefixStyle: const TextStyle(fontFamily: Constants.secondaryFontFamily),
+        prefixStyle: TextStyle(
+          fontFamily: Constants.secondaryFontFamily,
+          fontSize: Constants.responsiveFontSize(context, 14),
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: Constants.responsiveSpacing(context, 12),
+          vertical: Constants.responsiveSpacing(context, 16),
+        ),
       ),
     );
   }
@@ -150,22 +195,24 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
   Widget _buildColorPicker() {
     return Column(
       children: [
-        const Text(
+        Text(
           'لون الهدف',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: Constants.responsiveFontSize(context, 16),
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: Constants.responsiveSpacing(context, 8)),
         StatefulBuilder(
           builder: (context, setState) {
             return Container(
-              height: 55,
-              padding: const EdgeInsets.all(4),
+              height: Constants.responsiveSpacing(context, 55),
+              padding: EdgeInsets.all(Constants.responsiveSpacing(context, 4)),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(
+                  Constants.responsiveSpacing(context, 12),
+                ),
               ),
               child: ListView(
                 scrollDirection: Axis.horizontal,
@@ -198,30 +245,35 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
         });
       },
       child: Container(
-        width: 40,
-        height: 40,
-        margin: const EdgeInsets.symmetric(horizontal: 4),
+        width: Constants.responsiveSpacing(context, 40),
+        height: Constants.responsiveSpacing(context, 40),
+        margin: EdgeInsets.symmetric(
+          horizontal: Constants.responsiveSpacing(context, 4),
+        ),
         decoration: BoxDecoration(
           color: color,
           shape: BoxShape.circle,
           border: selectedColor == color
-              ? Border.all(color: Colors.white, width: 2)
+              ? Border.all(
+                  color: Colors.white,
+                  width: Constants.responsiveSpacing(context, 2),
+                )
               : null,
           boxShadow: selectedColor == color
               ? [
                   BoxShadow(
                     color: color.withOpacity(0.4),
-                    blurRadius: 1,
-                    spreadRadius: 2,
+                    blurRadius: Constants.responsiveSpacing(context, 1),
+                    spreadRadius: Constants.responsiveSpacing(context, 2),
                   )
                 ]
               : null,
         ),
         child: selectedColor == color
-            ? const Icon(
+            ? Icon(
                 Icons.check,
                 color: Colors.white,
-                size: 20,
+                size: Constants.responsiveSpacing(context, 20),
               )
             : null,
       ),
@@ -237,37 +289,39 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
           style: ElevatedButton.styleFrom(
             backgroundColor: Constants.getPrimaryColor(context),
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 12,
+            padding: EdgeInsets.symmetric(
+              horizontal: Constants.responsiveSpacing(context, 24),
+              vertical: Constants.responsiveSpacing(context, 12),
             ),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(
+                Constants.responsiveSpacing(context, 12),
+              ),
             ),
             elevation: 0,
           ),
-          child: const Text(
+          child: Text(
             'إضافة',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: Constants.responsiveFontSize(context, 16),
               fontWeight: FontWeight.w600,
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: Constants.responsiveSpacing(context, 8)),
         TextButton(
           onPressed: () => Navigator.pop(context),
           style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 12,
+            padding: EdgeInsets.symmetric(
+              horizontal: Constants.responsiveSpacing(context, 20),
+              vertical: Constants.responsiveSpacing(context, 12),
             ),
           ),
           child: Text(
             'إلغاء',
             style: TextStyle(
               color: Colors.grey.shade700,
-              fontSize: 16,
+              fontSize: Constants.responsiveFontSize(context, 16),
             ),
           ),
         ),

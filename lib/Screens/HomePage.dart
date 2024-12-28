@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:safe/Blocks/Spent.dart';
 import 'package:safe/Blocks/Wallet.dart';
 import 'package:safe/Constants.dart';
+import 'package:safe/utils/greeting_service.dart';
+import 'package:safe/utils/storage_service.dart';
 import 'package:safe/widgets/profile_selector.dart';
 
 class Home extends StatefulWidget {
@@ -43,7 +45,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    final user_name = StorageService.getUserName();
     return Scaffold(
       appBar: AppBar(
         title: const ProfileSelector(),
@@ -57,9 +59,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       backgroundColor: const Color(0xffefefef),
       body: FadeTransition(
         opacity: _fadeAnimation,
-        child: const Column(
+        child: Column(
           children: [
-            WalletBlock(title: "ازيك ي قمر"),
+            WalletBlock(title: GreetingService.getGreeting('sd')),
             SpentBlock(),
           ],
         ),

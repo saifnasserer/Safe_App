@@ -11,8 +11,8 @@ class StorageService {
   static const String _spentKey = 'spent';
   static const String _profilesKey = 'profiles';
   static const String _currentProfileKey = 'current_profile';
-  static const String _userNameKey = 'user_name';  
-  static const String _isFirstLaunchKey = 'is_first_launch';  
+  static const String _userNameKey = 'user_name';
+  static const String _isFirstLaunchKey = 'is_first_launch';
 
   // Profile-specific key generators
   static String _getProfileItemsKey(String profileId) =>

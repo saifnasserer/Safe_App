@@ -25,6 +25,7 @@ class _ManageState extends State<Manage> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   final AudioPlayer audioPlayer = AudioPlayer();
+  final FocusNode _amountFocusNode = FocusNode();
   bool _isCalculatorMode = false;
   DateTime _selectedDate = DateTime.now();
 
@@ -47,14 +48,16 @@ class _ManageState extends State<Manage> {
   void _toggleCalculatorMode() {
     setState(() {
       _isCalculatorMode = !_isCalculatorMode;
-      // If switching to calculator mode, clear the current value
       if (_isCalculatorMode) {
         amountController.clear();
+        _amountFocusNode.unfocus(); // Remove focus in calculator mode
       } else {
-        // If switching back, try to calculate the final value
         try {
           final calculatedValue = getAmount();
-          amountController.text = NumberFormatter.formatCalculatorNumber(calculatedValue);
+          amountController.text =
+              NumberFormatter.formatCalculatorNumber(calculatedValue);
+          _amountFocusNode
+              .requestFocus(); // Focus and show keyboard when exiting calculator mode
         } catch (e) {
           amountController.clear();
         }
@@ -95,11 +98,23 @@ class _ManageState extends State<Manage> {
   }
 
   Widget _buildCalculatorKeypad() {
-    final calculatorButtons = [
-      '7', '8', '9', '/',
-      '4', '5', '6', '*',
-      '1', '2', '3', '-',
-      '0', '.', '=', '+',
+    final List<String> calculatorButtons = [
+      '7',
+      '8',
+      '9',
+      '/',
+      '4',
+      '5',
+      '6',
+      '*',
+      '1',
+      '2',
+      '3',
+      '-',
+      '0',
+      '.',
+      '⌫',
+      '+',
     ];
 
     return GridView.builder(
@@ -114,11 +129,19 @@ class _ManageState extends State<Manage> {
         final button = calculatorButtons[index];
         return TextButton(
           onPressed: () {
-            if (button == '=') {
+            if (button == '⌫') {
+              // Handle backspace
+              final currentText = amountController.text;
+              if (currentText.isNotEmpty) {
+                amountController.text =
+                    currentText.substring(0, currentText.length - 1);
+              }
+            } else if (button == '=') {
               // Calculate the result
               try {
                 final result = getAmount();
-                amountController.text = NumberFormatter.formatCalculatorNumber(result);
+                amountController.text =
+                    NumberFormatter.formatCalculatorNumber(result);
               } catch (e) {
                 amountController.text = 'Error';
               }
@@ -127,13 +150,19 @@ class _ManageState extends State<Manage> {
               amountController.text += button;
             }
           },
-          child: Text(
-            button,
-            style: TextStyle(
-              color: Constants.getPrimaryColor(context),
-              fontSize: 18,
-            ),
-          ),
+          child: button == '⌫'
+              ? Icon(
+                  Icons.backspace_outlined,
+                  color: Constants.getPrimaryColor(context),
+                  size: 24,
+                )
+              : Text(
+                  button,
+                  style: TextStyle(
+                    color: Constants.getPrimaryColor(context),
+                    fontSize: 18,
+                  ),
+                ),
         );
       },
     );
@@ -143,6 +172,7 @@ class _ManageState extends State<Manage> {
   void dispose() {
     titleController.dispose();
     amountController.dispose();
+    _amountFocusNode.dispose();
     audioPlayer.dispose();
     super.dispose();
   }
@@ -299,10 +329,19 @@ class _ManageState extends State<Manage> {
                           children: [
                             TextField(
                               controller: amountController,
-                              keyboardType: _isCalculatorMode 
+                              focusNode: _amountFocusNode,
+                              keyboardType: _isCalculatorMode
                                   ? TextInputType.none
-                                  : const TextInputType.numberWithOptions(signed: false, decimal: true),
+                                  : const TextInputType.numberWithOptions(
+                                      signed: false, decimal: true),
                               textAlign: TextAlign.center,
+                              onTap: () {
+                                if (_isCalculatorMode) {
+                                  _amountFocusNode.unfocus();
+                                } else {
+                                  _amountFocusNode.requestFocus();
+                                }
+                              },
                               style: TextStyle(
                                 fontSize: screenWidth * 0.06,
                                 fontFamily: Constants.defaultFontFamily,
@@ -315,14 +354,17 @@ class _ManageState extends State<Manage> {
                                   fontFamily: Constants.defaultFontFamily,
                                 ),
                                 border: InputBorder.none,
-                                contentPadding: EdgeInsets.only(left: 48, right: 48),
+                                contentPadding:
+                                    EdgeInsets.only(left: 48, right: 48),
                               ),
                             ),
                             Positioned(
                               right: 0,
                               child: IconButton(
                                 icon: Icon(
-                                  _isCalculatorMode ? Icons.keyboard : Icons.calculate,
+                                  _isCalculatorMode
+                                      ? Icons.keyboard
+                                      : Icons.calculate,
                                   color: Constants.getPrimaryColor(context),
                                 ),
                                 onPressed: _toggleCalculatorMode,
@@ -364,7 +406,7 @@ class _ManageState extends State<Manage> {
                               title: getTitle(),
                               price: amount,
                               flag: false,
-                              dateTime: _selectedDate,  // Use selected date
+                              dateTime: _selectedDate, // Use selected date
                             );
                             HapticFeedback.mediumImpact();
                             Provider.of<ItemProvider>(context, listen: false)
@@ -379,13 +421,13 @@ class _ManageState extends State<Manage> {
                             showSimpleNotification(
                               Text(
                                 WalletBlock.balanceByProfile[currentProfileId]
-                                            ?.value !=
-                                        null &&
-                                    WalletBlock
-                                            .balanceByProfile[
-                                                currentProfileId]!
-                                            .value <
-                                        200
+                                                ?.value !=
+                                            null &&
+                                        WalletBlock
+                                                .balanceByProfile[
+                                                    currentProfileId]!
+                                                .value <
+                                            200
                                     ? 'خف صرف شوية بقا المحفظة فضيت'
                                     : 'تم اضافة اللي صرفتة يغالي ',
                                 textAlign: TextAlign.center,
@@ -449,7 +491,6 @@ class _ManageState extends State<Manage> {
                         ],
                       ),
                     ),
-
                     ElevatedButton(
                       onPressed: () async {
                         if (titleController.text.isNotEmpty &&
@@ -460,7 +501,7 @@ class _ManageState extends State<Manage> {
                               title: getTitle(),
                               price: amount,
                               flag: true,
-                              dateTime: _selectedDate,  // Use selected date
+                              dateTime: _selectedDate, // Use selected date
                             );
                             HapticFeedback.mediumImpact();
                             Provider.of<ItemProvider>(context, listen: false)
