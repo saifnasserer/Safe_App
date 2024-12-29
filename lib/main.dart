@@ -17,24 +17,24 @@ import 'package:safe/widgets/app_initializer.dart';
 import 'package:safe/utils/version_control.dart';
 import 'package:safe/widgets/update_notes_dialog.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() {
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  // Lock orientation to portrait mode only
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+    // Lock orientation to portrait mode only
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
 
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.presentError(details);
-    debugPrint('Flutter Error: ${details.toString()}');
-  };
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.presentError(details);
+      debugPrint('Flutter Error: ${details.toString()}');
+    };
 
-  final profileProvider = ProfileProvider();
-  await profileProvider.initialize();
+    final profileProvider = ProfileProvider();
+    await profileProvider.initialize();
 
-  runZonedGuarded(() {
     runApp(
       MultiProvider(
         providers: [
@@ -42,17 +42,18 @@ Future<void> main() async {
             value: profileProvider,
           ),
           ChangeNotifierProxyProvider<ProfileProvider, ItemProvider>(
-              create: (context) => ItemProvider(
-                    context.read<ProfileProvider>(),
-                    context,
-                  ),
-              update: (context, profileProvider, previous) =>
-                  ItemProvider(profileProvider, context)),
+            create: (context) => ItemProvider(
+              profileProvider,
+              context,
+            ),
+            update: (context, profileProvider, previous) =>
+                ItemProvider(profileProvider, context),
+          ),
           ChangeNotifierProxyProvider<ProfileProvider, GoalProvider>(
-              create: (context) =>
-                  GoalProvider(context.read<ProfileProvider>()),
-              update: (context, profileProvider, previous) =>
-                  GoalProvider(profileProvider)),
+            create: (context) => GoalProvider(profileProvider),
+            update: (context, profileProvider, previous) =>
+                GoalProvider(profileProvider),
+          ),
         ],
         child: const AppInitializer(
           child: PlanetApp(),
@@ -60,7 +61,7 @@ Future<void> main() async {
       ),
     );
   }, (error, stack) {
-    debugPrint('Caught error: $error');
+    debugPrint('Error caught by runZonedGuarded: $error');
     debugPrint('Stack trace: $stack');
   });
 }

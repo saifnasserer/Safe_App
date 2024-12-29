@@ -18,6 +18,7 @@ class SpentHeaderSection extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        SizedBox(height: Constants.responsiveSpacing(context, 8)),
         Text(
           "مصاريفك",
           style: TextStyle(

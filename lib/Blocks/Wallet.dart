@@ -138,7 +138,7 @@ class _WalletBlockState extends State<WalletBlock>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: screenHeight * 0.05),
+                SizedBox(height: screenHeight * 0.02),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(

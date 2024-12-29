@@ -18,6 +18,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
+  String? _userName;
 
   @override
   void initState() {
@@ -35,6 +36,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     );
 
     _controller.forward();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    final userName = await StorageService.getUserName();
+    setState(() {
+      _userName = userName;
+    });
   }
 
   @override
@@ -45,7 +54,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final user_name = StorageService.getUserName();
     return Scaffold(
       appBar: AppBar(
         title: const ProfileSelector(),
@@ -61,8 +69,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         opacity: _fadeAnimation,
         child: Column(
           children: [
-            WalletBlock(title: GreetingService.getGreeting('sd')),
-            SpentBlock(),
+            WalletBlock(title: GreetingService.getGreeting(_userName ?? '')),
+            const SpentBlock(),
           ],
         ),
       ),

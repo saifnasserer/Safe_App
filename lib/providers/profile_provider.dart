@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safe/models/profile.dart';
 import 'package:safe/utils/storage_service.dart';
+import 'package:safe/Constants.dart';
 import 'package:uuid/uuid.dart';
 
 class ProfileProvider extends ChangeNotifier {
@@ -14,12 +15,16 @@ class ProfileProvider extends ChangeNotifier {
     _profiles = (await StorageService.loadProfiles()).cast<Profile>();
     if (_profiles.isEmpty) {
       // Get user's name for default profile
-      final userName = await StorageService.getUserName() ?? 'Personal';
-      // Create default profile
+      final userName = await StorageService.getUserName();
+      if (userName == null) {
+        return;
+      }
+
+      // Create default profile with the saved username
       final defaultProfile = Profile(
         id: _uuid.v4(),
         name: userName,
-        primaryColor: const Color(0xff4558c8).value,
+        primaryColor: Constants.defaultPrimaryColor.value,
         isDefault: true,
         created: DateTime.now(),
       );

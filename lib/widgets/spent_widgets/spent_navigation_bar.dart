@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safe/Constants.dart';
 import 'package:safe/Screens/EmptyReciet.dart';
 import 'package:safe/Screens/Goals.dart';
 import 'package:safe/screens/Manage.dart';
@@ -16,34 +17,35 @@ class SpentNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(
-        bottom: containerHeight * 0.05,
-        top: containerHeight * 0.1,
+        bottom: Constants.responsiveSpacing(context, 10),
+        top: Constants.responsiveSpacing(context, 10),
       ),
-      decoration: const BoxDecoration(
-        color: Color(0xff1c1c1c),
-        borderRadius: BorderRadius.all(Radius.circular(40)),
+      decoration: BoxDecoration(
+        color: const Color(0xff1c1c1c),
+        borderRadius: BorderRadius.all(
+            Radius.circular(Constants.responsiveRadius(context, 40))),
       ),
-      height: containerHeight * 0.12,
-      width: containerHeight * 0.5,
+      height: Constants.heightPercent(context, 7),
+      width: Constants.screenWidth(context) * 0.5,
       child: Row(
         children: [
           const Spacer(flex: 1),
           Screen(
             buttonIcon: Icons.add_circle_outline_rounded,
             screenName: const Manage(),
-            size: containerHeight * 0.08,
+            size: Constants.responsiveSpacing(context, 32),
           ),
           const Spacer(flex: 1),
           Screen(
             buttonIcon: Icons.task_alt_rounded,
             screenName: const GoalsBlock(),
-            size: containerHeight * 0.08,
+            size: Constants.responsiveSpacing(context, 32),
           ),
           const Spacer(flex: 1),
           Screen(
             buttonIcon: Icons.receipt_long_rounded,
             screenName: const Reciept(),
-            size: containerHeight * 0.08,
+            size: Constants.responsiveSpacing(context, 32),
           ),
           const Spacer(flex: 1),
         ],

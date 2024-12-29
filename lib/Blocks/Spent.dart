@@ -227,7 +227,7 @@ class _SpentBlockState extends State<SpentBlock>
   Widget build(BuildContext context) {
     final screenWidth = Constants.screenWidth(context);
     final screenHeight = Constants.screenHeight(context);
-    final containerHeight = Constants.heightPercent(context, 50);
+    final containerHeight = Constants.screenHeight(context);
     final profileProvider = context.watch<ProfileProvider>();
     final currentProfileId = profileProvider.currentProfile?.id;
 
@@ -245,7 +245,8 @@ class _SpentBlockState extends State<SpentBlock>
       builder: (context, value, child) {
         return Expanded(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: Constants.widthPercent(context, 5)),
+            padding: EdgeInsets.symmetric(
+                horizontal: Constants.widthPercent(context, 5)),
             child: Stack(
               children: [
                 Container(
@@ -254,8 +255,10 @@ class _SpentBlockState extends State<SpentBlock>
                   decoration: BoxDecoration(
                     color: Constants.getPrimaryColor(context),
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(Constants.widthPercent(context, 15)),
-                      topRight: Radius.circular(Constants.widthPercent(context, 15)),
+                      topLeft:
+                          Radius.circular(Constants.widthPercent(context, 15)),
+                      topRight:
+                          Radius.circular(Constants.widthPercent(context, 15)),
                     ),
                   ),
                 ),
@@ -265,25 +268,30 @@ class _SpentBlockState extends State<SpentBlock>
                     'assets/dots.png',
                     fit: BoxFit.cover,
                     width: screenWidth,
-                    height: Constants.heightPercent(context, 50),
+                    height: Constants.screenHeight(context),
                   ),
                 ),
                 Center(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Spacer(),
+                      const Spacer(flex: 2),
                       SpentHeaderSection(
                         value: value,
-                        containerHeight: containerHeight,
+                        containerHeight: Constants.screenHeight(context),
                       ),
+                      const Spacer(flex: 1),
                       SpentFilterSection(
                         currentFilter: _currentFilter,
                         onFilterTap: _showFilterDialog,
                       ),
-                      SpentNavigationBar(
-                        containerHeight: containerHeight,
+                      const Spacer(flex: 1),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: SpentNavigationBar(
+                          containerHeight: Constants.screenHeight(context),
+                        ),
                       ),
+                      const Spacer(flex: 1),
                     ],
                   ),
                 ),

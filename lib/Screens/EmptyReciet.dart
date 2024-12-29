@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
-import 'package:overlay_support/overlay_support.dart';
+import 'package:provider/provider.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/Screens/manage.dart';
 import 'package:safe/utils/FirstUse.dart';
 import 'package:safe/utils/transaction_filter.dart';
-import 'package:safe/utils/number_formatter.dart';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:safe/Screens/receipt_widgets/empty_state_widget.dart';
+import 'package:safe/Screens/receipt_widgets/receipt_app_bar.dart';
+import 'package:safe/Screens/receipt_widgets/transaction_filter_header.dart';
+import 'package:safe/Screens/receipt_widgets/transaction_list_view.dart';
 import 'package:safe/widgets/Item_Provider.dart';
-import 'package:provider/provider.dart';
+import 'package:safe/Screens/receipt_widgets/transaction_filter_dialog.dart';
 
 class Reciept extends StatefulWidget {
   const Reciept({super.key});
@@ -19,58 +21,34 @@ class Reciept extends StatefulWidget {
 }
 
 class _RecieptState extends State<Reciept> {
-  final AppTutorial _appTutorial = AppTutorial();
-  final GlobalKey _walletKey = GlobalKey();
-  final GlobalKey _spentKey = GlobalKey();
-  final GlobalKey _goalsKey = GlobalKey();
-  final GlobalKey _addTransactionKey = GlobalKey();
   TransactionType _currentFilter = TransactionType.all;
+  final _appTutorial = AppTutorial();
 
   void _showFilterDialog() {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            'اختر نوع المعاملات',
-            style: TextStyle(
-              fontFamily: Constants.defaultFontFamily,
-              color: Color(0xff4558c8),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: TransactionType.values
-                .map((type) => ListTile(
-                      title: Text(
-                        TransactionFilterHelper.getFilterName(type),
-                        style: const TextStyle(
-                          fontFamily: Constants.secondaryFontFamily,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      onTap: () {
-                        setState(() {
-                          _currentFilter = type;
-                        });
-                        HapticFeedback.mediumImpact();
-                        Navigator.pop(context);
-                      },
-                    ))
-                .toList(),
-          ),
-        );
-      },
+      builder: (context) => TransactionFilterDialog(
+        currentFilter: _currentFilter,
+        onFilterSelected: (filter) {
+          setState(() => _currentFilter = filter);
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 
-  List<dynamic> _filterItems(List<dynamic> items) {
-    if (_currentFilter == TransactionType.all) return items;
-    return items
-        .where((item) =>
-            _currentFilter == TransactionType.expenses ? !item.flag : item.flag)
-        .toList();
+  void _handleDeleteItem(dynamic item) {
+    final itemIndex =
+        Provider.of<ItemProvider>(context, listen: false).items.indexOf(item);
+    if (itemIndex >= 0) {
+      Provider.of<ItemProvider>(context, listen: false).removeItem(itemIndex);
+      showSimpleNotification(
+        const Center(child: Text('تم الحذف')),
+        background: Colors.green,
+        context: context,
+        duration: const Duration(seconds: 1),
+      );
+    }
   }
 
   @override
@@ -92,354 +70,30 @@ class _RecieptState extends State<Reciept> {
   @override
   Widget build(BuildContext context) {
     final items = Provider.of<ItemProvider>(context).items;
-    final Map<DateTime, List<dynamic>> groupedItems = {};
-
-    // First, group items by their actual date (not formatted string)
-    for (var item in items) {
-      // Strip time from date for comparison
-      final dateKey = DateTime(
-        item.dateTime.year,
-        item.dateTime.month,
-        item.dateTime.day,
-      );
-      if (groupedItems.containsKey(dateKey)) {
-        groupedItems[dateKey]!.add(item);
-      } else {
-        groupedItems[dateKey] = [item];
-      }
-    }
-
-    // Sort dates in descending order
-    final sortedDates = groupedItems.keys.toList()
-      ..sort((a, b) => b.compareTo(a));
-
-    // Sort items within each date group by time in descending order
-    for (var date in groupedItems.keys) {
-      groupedItems[date]!.sort((a, b) => b.dateTime.compareTo(a.dateTime));
-    }
 
     return Scaffold(
       backgroundColor: Constants.scaffoldBackgroundColor,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: Constants.getPrimaryColor(context),
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'مصاريفك',
-          style: TextStyle(
-            color: Constants.getPrimaryColor(context),
-            fontFamily: Constants.defaultFontFamily,
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Constants.getPrimaryColor(context).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: TextButton.icon(
-                onPressed: _showFilterDialog,
-                icon: Icon(
-                  Icons.filter_list,
-                  color: Constants.getPrimaryColor(context),
-                  size: 20,
-                ),
-                label: Text(
-                  TransactionFilterHelper.getFilterName(_currentFilter),
-                  style: TextStyle(
-                    color: Constants.getPrimaryColor(context),
-                    fontFamily: Constants.secondaryFontFamily,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-        centerTitle: true,
+      appBar: ReceiptAppBar(
+        currentFilter: _currentFilter,
+        onFilterTap: _showFilterDialog,
       ),
       body: items.isEmpty
-          ? Center(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color:
-                            Constants.getPrimaryColor(context).withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.receipt_long_rounded,
-                        size: 60,
-                        color: Constants.getPrimaryColor(context),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'لا يوجد معاملات',
-                      style: TextStyle(
-                        color: Constants.getPrimaryColor(context),
-                        fontSize: 24,
-                        fontFamily: Constants.secondaryFontFamily,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'اضغط على الزر في الأسفل لإضافة معاملة جديدة',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: Constants.defaultFontSize,
-                        fontFamily: Constants.secondaryFontFamily,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 32),
-                    Container(
-                      key: _appTutorial.goalsKey,
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Constants.getPrimaryColor(context),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(context, Manage.id);
-                          },
-                          child: const Text(
-                            'اضافة معاملة',
-                            style: TextStyle(
-                                fontFamily: Constants.secondaryFontFamily,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          )),
-                    ),
-                  ]),
+          ? EmptyStateWidget(
+              onAddTransaction: () => Navigator.pushNamed(context, Manage.id),
+              tutorialKey: _appTutorial.goalsKey,
             )
           : Column(
               children: [
-                if (items.isNotEmpty && _currentFilter != TransactionType.all)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 24),
-                      decoration: BoxDecoration(
-                        color: _currentFilter == TransactionType.expenses
-                            ? const Color(0xFFEF4444) // Red for expenses
-                            : const Color(0xFF10B981), // Green for income
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '${TransactionFilterHelper.calculateTotal(items, _currentFilter)}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: Constants.defaultFontFamily,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.right,
-                          ),
-                          Text(
-                            _currentFilter == TransactionType.expenses
-                                ? ':اجمالي المصروفات '
-                                : ':اجمالي الدخل ',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: Constants.secondaryFontFamily,
-                              fontSize: 16,
-                            ),
-                            textAlign: TextAlign.right,
-                          ),
-                        ],
-                      ),
-                    ),
+                if (_currentFilter != TransactionType.all)
+                  TransactionFilterHeader(
+                    items: items,
+                    filterType: _currentFilter,
                   ),
                 Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shrinkWrap: true,
-                    physics: const ClampingScrollPhysics(),
-                    itemCount: sortedDates.length,
-                    itemBuilder: (context, index) {
-                      final dateKey = sortedDates[index];
-                      final itemsForDate = _filterItems(groupedItems[dateKey]!);
-
-                      if (itemsForDate.isEmpty) return const SizedBox.shrink();
-
-                      final screenHight = MediaQuery.of(context).size.height;
-                      final screenWidth = MediaQuery.of(context).size.width;
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24.0,
-                              vertical: 12.0,
-                            ),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color:
-                                    const Color(0xFF1E293B).withOpacity(0.04),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                _formatDate(dateKey),
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: Constants.defaultFontFamily,
-                                  color: Color(0xFF1E293B),
-                                ),
-                              ),
-                            ),
-                          ),
-                          ...itemsForDate.map((item) {
-                            final isIncome = item.flag;
-                            final statusColor = isIncome
-                                ? const Color(0xFF10B981)
-                                : const Color(0xFFEF4444);
-                            final screenHight =
-                                MediaQuery.of(context).size.height;
-                            final screenWidth =
-                                MediaQuery.of(context).size.width;
-
-                            return Container(
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: const Color(0xFFE2E8F0),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.all(screenWidth * 0.03),
-                                child: Row(
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              right: screenWidth * 0.02,
-                                              left: screenWidth * 0.02),
-                                          child: Text(
-                                            NumberFormatter.formatCurrency(item.price),
-                                            style: TextStyle(
-                                              fontFamily:
-                                                  Constants.defaultFontFamily,
-                                              fontSize: 17,
-                                              color: statusColor,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 6),
-                                        GestureDetector(
-                                          onTap: () {
-                                            HapticFeedback.heavyImpact();
-                                            final itemIndex =
-                                                items.indexOf(item);
-                                            if (itemIndex >= 0) {
-                                              Provider.of<ItemProvider>(context,
-                                                      listen: false)
-                                                  .removeItem(itemIndex);
-                                              showSimpleNotification(
-                                                  context: context,
-                                                  const Center(
-                                                      child: Text('تم الحذف')),
-                                                  background: Colors.green);
-                                              duration:
-                                              const Duration(seconds: 1);
-                                            }
-                                          },
-                                          child: Icon(
-                                            Icons.delete_outline_rounded,
-                                            color: statusColor,
-                                            size: 20,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            item.title,
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                              fontFamily:
-                                                  Constants.defaultFontFamily,
-                                              fontSize: screenHight * 0.016,
-                                              color: const Color(0xFF1E293B),
-                                            ),
-                                          ),
-                                          SizedBox(height: screenHight * 0.01),
-                                          Text(
-                                            DateFormat('hh:mm a')
-                                                .format(item.dateTime),
-                                            style: TextStyle(
-                                              color: Colors.grey[500],
-                                              fontSize: 13,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Container(
-                                      height: screenHight * 0.05,
-                                      width: screenWidth * 0.1,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: statusColor.withOpacity(.08),
-                                      ),
-                                      child: Icon(
-                                        isIncome
-                                            ? Icons.arrow_upward_rounded
-                                            : Icons.arrow_downward_rounded,
-                                        color: statusColor,
-                                        size: 20,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }),
-                        ],
-                      );
-                    },
+                  child: TransactionListView(
+                    items: items,
+                    filterType: _currentFilter,
+                    onDeleteItem: _handleDeleteItem,
                   ),
                 ),
               ],
@@ -449,27 +103,15 @@ class _RecieptState extends State<Reciept> {
           : FloatingActionButton(
               key: _appTutorial.addTransactionKey,
               onPressed: () {
-                HapticFeedback.mediumImpact();
                 Navigator.pushNamed(context, Manage.id);
               },
               backgroundColor: Constants.getPrimaryColor(context),
-              child: const Icon(Icons.add, color: Colors.white),
+              child: Icon(
+                Icons.add,
+                color: Colors.white,
+                size: Constants.responsiveFontSize(context, 24),
+              ),
             ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    final today = DateTime.now();
-    final yesterday = today.subtract(const Duration(days: 1));
-
-    if (DateFormat('yyyy-MM-dd').format(date) ==
-        DateFormat('yyyy-MM-dd').format(today)) {
-      return 'اليوم';
-    } else if (DateFormat('yyyy-MM-dd').format(date) ==
-        DateFormat('yyyy-MM-dd').format(yesterday)) {
-      return 'أمس';
-    } else {
-      return DateFormat('yyyy-MM-dd').format(date);
-    }
   }
 }
