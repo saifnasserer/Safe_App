@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 class NumberFormatter {
   static final _arabicFormatter = NumberFormat('#,##0.0', 'ar');
   static final _arabicIntFormatter = NumberFormat('#,##0', 'ar');
-  
+
   /// Formats a number with Arabic locale and thousands separators
   /// If the number is a whole number, removes decimal places
   static String formatNumber(double number) {

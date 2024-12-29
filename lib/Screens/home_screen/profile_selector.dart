@@ -321,14 +321,14 @@ class ProfileSelector extends StatelessWidget {
                       'إضافة ملف جديد',
                       style: TextStyle(
                         fontSize: Constants.responsiveFontSize(context, 16),
-                        color: Color(0xfff5f2fa),
+                        color: const Color(0xfff5f2fa),
                       ),
                     ),
                     SizedBox(width: Constants.responsiveSpacing(context, 8)),
                     Icon(
                       Icons.add,
                       size: Constants.responsiveSpacing(context, 24),
-                      color: Color(0xfff5f2fa),
+                      color: const Color(0xfff5f2fa),
                     ),
                   ],
                 ),

@@ -14,10 +14,11 @@ class Constants {
   static const double mobileBreakpoint = 600;
   static const double tabletBreakpoint = 900;
   static const double desktopBreakpoint = 1200;
-  
+
   static Color getPrimaryColor(BuildContext context) {
     try {
-      final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+      final profileProvider =
+          Provider.of<ProfileProvider>(context, listen: false);
       return profileProvider.currentProfile != null
           ? Color(profileProvider.currentProfile!.primaryColor)
           : const Color(0xFF4558C8);
@@ -51,19 +52,22 @@ class Constants {
   static double responsiveFontSize(BuildContext context, double baseSize) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double scaleFactor = (screenWidth + screenHeight) / 1400; // baseline for average phone
+    double scaleFactor =
+        (screenWidth + screenHeight) / 1400; // baseline for average phone
     return baseSize * scaleFactor;
   }
 
   static double responsiveSpacing(BuildContext context, double baseSpacing) {
     double screenWidth = MediaQuery.of(context).size.width;
-    return baseSpacing * (screenWidth / 375); // 375 is iPhone SE width as baseline
+    return baseSpacing *
+        (screenWidth / 375); // 375 is iPhone SE width as baseline
   }
 
   static double responsiveSpacingNew(BuildContext context, double baseSize) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double scaleFactor = (screenWidth + screenHeight) / 1400; // baseline for average phone
+    double scaleFactor =
+        (screenWidth + screenHeight) / 1400; // baseline for average phone
     return baseSize * scaleFactor;
   }
 
@@ -77,8 +81,8 @@ class Constants {
   }
 
   static bool isTablet(BuildContext context) {
-    return screenWidth(context) >= mobileBreakpoint && 
-           screenWidth(context) < tabletBreakpoint;
+    return screenWidth(context) >= mobileBreakpoint &&
+        screenWidth(context) < tabletBreakpoint;
   }
 
   static bool isDesktop(BuildContext context) {

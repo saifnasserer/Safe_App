@@ -55,7 +55,8 @@ class UpdateNotesDialog extends StatelessWidget {
                 ),
                 SizedBox(width: Constants.responsiveSpacing(context, 12)),
                 Container(
-                  padding: EdgeInsets.all(Constants.responsiveSpacing(context, 8)),
+                  padding:
+                      EdgeInsets.all(Constants.responsiveSpacing(context, 8)),
                   decoration: BoxDecoration(
                     color: Colors.green.withOpacity(0.1),
                     shape: BoxShape.circle,

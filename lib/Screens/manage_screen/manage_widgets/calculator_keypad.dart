@@ -12,10 +12,22 @@ class CalculatorKeypad extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<String> calculatorButtons = [
-      '7', '8', '9', '/',
-      '4', '5', '6', '*',
-      '1', '2', '3', '-',
-      '0', '.', '⌫', '+',
+      '7',
+      '8',
+      '9',
+      '/',
+      '4',
+      '5',
+      '6',
+      '*',
+      '1',
+      '2',
+      '3',
+      '-',
+      '0',
+      '.',
+      '⌫',
+      '+',
     ];
 
     return GridView.builder(

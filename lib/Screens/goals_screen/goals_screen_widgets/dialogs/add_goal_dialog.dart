@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:safe/Blocks/Goal.dart';
+import 'package:safe/providers/Goal_Provider.dart';
+import 'package:safe/widgets/Goal.dart';
 import 'package:safe/Constants.dart';
-import 'package:safe/utils/goal_types.dart';
-import 'package:safe/widgets/goals_screen_widgets/Goal_Provider.dart';
 
 class AddGoalDialog extends StatefulWidget {
   const AddGoalDialog({super.key});
@@ -18,7 +17,6 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
   final TextEditingController amountController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   Color selectedColor = Colors.blue;
-  final GoalType _selectedType = GoalType.goal;
   // int? _selectedCommitmentDay;
 
   @override
@@ -103,7 +101,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
       decoration: InputDecoration(
         labelText: 'اسم الهدف',
         alignLabelWithHint: true,
-        hintText: 'مثال: سيارة جديدة  ',
+        hintText: 'مثال: اشتري هدوم  ',
         hintStyle: TextStyle(
           fontFamily: Constants.secondaryFontFamily,
           fontSize: Constants.responsiveFontSize(context, 14),
@@ -196,7 +194,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
     return Column(
       children: [
         Text(
-          'لون الهدف',
+          'اللون',
           style: TextStyle(
             fontSize: Constants.responsiveFontSize(context, 16),
             fontWeight: FontWeight.w500,
@@ -337,7 +335,6 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
           title: titleController.text,
           targetAmount: double.parse(amountController.text),
           color: selectedColor,
-          type: _selectedType,
         ),
       );
       Navigator.pop(context);

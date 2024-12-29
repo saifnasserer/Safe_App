@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:safe/Blocks/Spent.dart';
-import 'package:safe/Blocks/Wallet.dart';
+import 'package:safe/Screens/home_screen/Spent.dart';
+import 'package:safe/Screens/home_screen/Wallet.dart';
 
 class AppInitializer extends StatefulWidget {
   final Widget child;

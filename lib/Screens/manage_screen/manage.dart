@@ -5,17 +5,17 @@ import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:math_expressions/math_expressions.dart';
 import 'package:safe/Constants.dart';
+import 'package:safe/Screens/home_screen/Wallet.dart';
+import 'package:safe/Screens/manage_screen/manage_widgets/add_goal_button.dart';
+import 'package:safe/Screens/manage_screen/manage_widgets/goals_list_view.dart';
+import 'package:safe/Screens/manage_screen/manage_widgets/manage_app_bar.dart';
+import 'package:safe/Screens/manage_screen/manage_widgets/transaction_buttons.dart';
+import 'package:safe/Screens/manage_screen/manage_widgets/transaction_input_form.dart';
+import 'package:safe/providers/Goal_Provider.dart';
+import 'package:safe/providers/Item_Provider.dart';
 import 'package:safe/providers/profile_provider.dart';
 import 'package:safe/utils/number_formatter.dart';
-import 'package:safe/widgets/Item_Provider.dart';
 import 'package:safe/widgets/item.dart';
-import 'package:safe/Blocks/Wallet.dart';
-import 'package:safe/widgets/goals_screen_widgets/Goal_Provider.dart';
-import 'package:safe/Screens/manage_widgets/manage_app_bar.dart';
-import 'package:safe/Screens/manage_widgets/transaction_input_form.dart';
-import 'package:safe/Screens/manage_widgets/goals_list_view.dart';
-import 'package:safe/Screens/manage_widgets/add_goal_button.dart';
-import 'package:safe/Screens/manage_widgets/transaction_buttons.dart';
 
 class Manage extends StatefulWidget {
   const Manage({super.key});

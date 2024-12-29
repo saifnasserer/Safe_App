@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:safe/Blocks/Goal.dart';
+import 'package:safe/widgets/Goal.dart';
 import 'package:safe/utils/storage_service.dart';
 import 'package:safe/providers/profile_provider.dart';
 

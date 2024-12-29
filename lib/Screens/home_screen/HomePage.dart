@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:safe/Blocks/Spent.dart';
-import 'package:safe/Blocks/Wallet.dart';
+import 'package:safe/Screens/home_screen/Spent.dart';
+
 import 'package:safe/Constants.dart';
+import 'package:safe/Screens/home_screen/Wallet.dart';
 import 'package:safe/utils/greeting_service.dart';
 import 'package:safe/utils/storage_service.dart';
-import 'package:safe/widgets/profile_selector.dart';
+import 'package:safe/Screens/home_screen/profile_selector.dart';
 
 class Home extends StatefulWidget {
   static const String id = 'HomePage';

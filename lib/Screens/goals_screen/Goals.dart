@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:safe/Blocks/Goal.dart';
+import 'package:safe/providers/Goal_Provider.dart';
+import 'package:safe/widgets/Goal.dart';
 import 'package:safe/Constants.dart';
-import 'package:safe/widgets/goals_screen_widgets/Goal_Provider.dart';
-import 'package:safe/widgets/goals_screen_widgets/dialogs/add_goal_dialog.dart';
-import 'package:safe/widgets/goals_screen_widgets/dialogs/edit_goal_dialog.dart';
-import 'package:safe/widgets/goals_screen_widgets/empty_goals_view.dart';
-import 'package:safe/widgets/goals_screen_widgets/goal_item_widget.dart';
+import 'package:safe/Screens/goals_screen/goals_screen_widgets/dialogs/add_goal_dialog.dart';
+import 'package:safe/Screens/goals_screen/goals_screen_widgets/dialogs/edit_goal_dialog.dart';
+import 'package:safe/Screens/goals_screen/goals_screen_widgets/empty_goals_view.dart';
+import 'package:safe/Screens/goals_screen/goals_screen_widgets/goal_item_widget.dart';
 
 class GoalsBlock extends StatefulWidget {
   const GoalsBlock({super.key});
@@ -97,8 +97,8 @@ class _GoalsBlockState extends State<GoalsBlock> {
       itemBuilder: (context, index) {
         final goal = goals[index];
         return Padding(
-          padding:
-              EdgeInsets.symmetric(vertical: Constants.defaultFontSize / 2),
+          padding: const EdgeInsets.symmetric(
+              vertical: Constants.defaultFontSize / 2),
           child: Center(
             child: SizedBox(
               width: Constants.widthPercent(context, 90),
@@ -112,7 +112,6 @@ class _GoalsBlockState extends State<GoalsBlock> {
                   targetAmount: goal.targetAmount,
                   savedAmount: goal.currentAmount,
                   color: goal.color,
-                  type: goal.type,
                   onDismissed: () {
                     Provider.of<GoalProvider>(context, listen: false)
                         .removeGoal(index);
@@ -125,7 +124,7 @@ class _GoalsBlockState extends State<GoalsBlock> {
                           borderRadius: BorderRadius.circular(
                               Constants.defaultFontSize * 0.625),
                         ),
-                        margin: EdgeInsets.all(Constants.defaultFontSize),
+                        margin: const EdgeInsets.all(Constants.defaultFontSize),
                       ),
                     );
                   },

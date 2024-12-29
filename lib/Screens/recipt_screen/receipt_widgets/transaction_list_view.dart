@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safe/Constants.dart';
-import 'package:safe/Screens/receipt_widgets/transaction_date_header.dart';
-import 'package:safe/Screens/receipt_widgets/transaction_item_card.dart';
+import 'package:safe/Screens/recipt_screen/receipt_widgets/transaction_date_header.dart';
+import 'package:safe/Screens/recipt_screen/receipt_widgets/transaction_item_card.dart';
 import 'package:safe/utils/transaction_filter.dart';
 
 class TransactionListView extends StatelessWidget {
@@ -30,9 +30,10 @@ class TransactionListView extends StatelessWidget {
 
   List<dynamic> _filterItems(List<dynamic> items) {
     if (filterType == TransactionType.all) return items;
-    return items.where((item) => 
-      filterType == TransactionType.expenses ? !item.flag : item.flag
-    ).toList();
+    return items
+        .where((item) =>
+            filterType == TransactionType.expenses ? !item.flag : item.flag)
+        .toList();
   }
 
   String _formatDate(String dateKey) {
@@ -48,7 +49,8 @@ class TransactionListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final groupedItems = _groupItemsByDate(items);
-    final sortedDates = groupedItems.keys.toList()..sort((a, b) => b.compareTo(a));
+    final sortedDates = groupedItems.keys.toList()
+      ..sort((a, b) => b.compareTo(a));
 
     return ListView.builder(
       padding: EdgeInsets.symmetric(
@@ -71,9 +73,9 @@ class TransactionListView extends StatelessWidget {
               formatDate: _formatDate,
             ),
             ...itemsForDate.map((item) => TransactionItemCard(
-              item: item,
-              onDelete: onDeleteItem,
-            )),
+                  item: item,
+                  onDelete: onDeleteItem,
+                )),
           ],
         );
       },

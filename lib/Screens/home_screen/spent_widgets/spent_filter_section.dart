@@ -30,6 +30,10 @@ class SpentFilterSection extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          const Icon(
+            Icons.arrow_drop_down,
+            color: Color(0xff4558c8),
+          ),
           Text(
             _getFilterText(),
             style: TextStyle(
@@ -37,10 +41,6 @@ class SpentFilterSection extends StatelessWidget {
               color: Constants.getPrimaryColor(context),
               fontFamily: Constants.secondaryFontFamily,
             ),
-          ),
-          const Icon(
-            Icons.arrow_drop_down,
-            color: Color(0xff4558c8),
           ),
         ],
       ),

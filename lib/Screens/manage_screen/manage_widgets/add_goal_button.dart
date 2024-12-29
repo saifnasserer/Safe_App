@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:safe/Constants.dart';
-import 'package:safe/Screens/Goals.dart';
+import 'package:safe/Screens/goals_screen/Goals.dart';
 
 class AddGoalButton extends StatelessWidget {
   const AddGoalButton({super.key});
@@ -17,7 +17,8 @@ class AddGoalButton extends StatelessWidget {
           backgroundColor: Constants.getPrimaryColor(context).withOpacity(0.1),
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(Constants.responsiveRadius(context, 16)),
+            borderRadius:
+                BorderRadius.circular(Constants.responsiveRadius(context, 16)),
             side: BorderSide(
               color: Constants.getPrimaryColor(context),
               width: 2,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safe/Constants.dart';
-import 'package:safe/Screens/manage_widgets/calculator_keypad.dart';
+import 'package:safe/Screens/manage_screen/manage_widgets/calculator_keypad.dart';
 
 class TransactionInputForm extends StatelessWidget {
   final TextEditingController titleController;
@@ -28,7 +28,8 @@ class TransactionInputForm extends StatelessWidget {
       margin: EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(Constants.responsiveRadius(context, 24)),
+        borderRadius:
+            BorderRadius.circular(Constants.responsiveRadius(context, 24)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -43,7 +44,8 @@ class TransactionInputForm extends StatelessWidget {
             color: Constants.getPrimaryColor(context),
             width: 2,
           ),
-          borderRadius: BorderRadius.circular(Constants.responsiveRadius(context, 24)),
+          borderRadius:
+              BorderRadius.circular(Constants.responsiveRadius(context, 24)),
         ),
         padding: EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
         child: Column(
@@ -63,13 +65,13 @@ class TransactionInputForm extends StatelessWidget {
                 controller: titleController,
                 style: TextStyle(
                   fontSize: Constants.responsiveFontSize(context, 30),
-                  fontFamily: Constants.defaultFontFamily,
+                  fontFamily: Constants.secondaryFontFamily,
                 ),
                 decoration: const InputDecoration(
                   hintText: 'وصف المعاملة',
                   hintStyle: TextStyle(
                     color: Colors.grey,
-                    fontFamily: Constants.defaultFontFamily,
+                    fontFamily: Constants.secondaryFontFamily,
                   ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
@@ -98,14 +100,14 @@ class TransactionInputForm extends StatelessWidget {
                     },
                     style: TextStyle(
                       fontSize: Constants.responsiveFontSize(context, 30),
-                      fontFamily: Constants.defaultFontFamily,
+                      fontFamily: Constants.secondaryFontFamily,
                       fontWeight: FontWeight.bold,
                     ),
                     decoration: const InputDecoration(
                       hintText: '0.00',
                       hintStyle: TextStyle(
                         color: Colors.grey,
-                        fontFamily: Constants.defaultFontFamily,
+                        fontFamily: Constants.secondaryFontFamily,
                       ),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.only(left: 48, right: 48),

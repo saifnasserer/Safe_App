@@ -5,9 +5,9 @@ import 'package:safe/Constants.dart';
 import 'package:safe/providers/profile_provider.dart';
 import 'package:safe/utils/storage_service.dart';
 import 'package:safe/utils/date_filter.dart';
-import 'package:safe/widgets/spent_widgets/spent_filter_section.dart';
-import 'package:safe/widgets/spent_widgets/spent_header_section.dart';
-import 'package:safe/widgets/spent_widgets/spent_navigation_bar.dart';
+import 'package:safe/Screens/home_screen/spent_widgets/spent_filter_section.dart';
+import 'package:safe/Screens/home_screen/spent_widgets/spent_header_section.dart';
+import 'package:safe/Screens/home_screen/spent_widgets/spent_navigation_bar.dart';
 
 class SpentBlock extends StatefulWidget {
   const SpentBlock({super.key});

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/utils/storage_service.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:safe/Screens/HomePage.dart';
+import 'package:safe/Screens/home_screen/HomePage.dart';
 
 class IntroductionScreen extends StatefulWidget {
   const IntroductionScreen({super.key});

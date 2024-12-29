@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/Constants.dart';
-import 'package:safe/Screens/manage.dart';
+import 'package:safe/Screens/manage_screen/manage.dart';
+import 'package:safe/providers/Item_Provider.dart';
 import 'package:safe/utils/FirstUse.dart';
 import 'package:safe/utils/transaction_filter.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:safe/Screens/receipt_widgets/empty_state_widget.dart';
-import 'package:safe/Screens/receipt_widgets/receipt_app_bar.dart';
-import 'package:safe/Screens/receipt_widgets/transaction_filter_header.dart';
-import 'package:safe/Screens/receipt_widgets/transaction_list_view.dart';
-import 'package:safe/widgets/Item_Provider.dart';
-import 'package:safe/Screens/receipt_widgets/transaction_filter_dialog.dart';
+import 'package:safe/Screens/recipt_screen/receipt_widgets/empty_state_widget.dart';
+import 'package:safe/Screens/recipt_screen/receipt_widgets/receipt_app_bar.dart';
+import 'package:safe/Screens/recipt_screen/receipt_widgets/transaction_filter_header.dart';
+import 'package:safe/Screens/recipt_screen/receipt_widgets/transaction_list_view.dart';
+import 'package:safe/Screens/recipt_screen/receipt_widgets/transaction_filter_dialog.dart';
 
 class Reciept extends StatefulWidget {
   const Reciept({super.key});

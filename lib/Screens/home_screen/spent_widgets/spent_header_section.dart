@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safe/Constants.dart';
-import 'package:safe/Screens/EmptyReciet.dart';
-import 'package:safe/widgets/spent_widgets/spent_display.dart';
+import 'package:safe/Screens/recipt_screen/recipt.dart';
+import 'package:safe/Screens/home_screen/spent_widgets/spent_display.dart';
 
 class SpentHeaderSection extends StatelessWidget {
   final double value;

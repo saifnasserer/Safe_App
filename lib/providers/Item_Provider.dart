@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:safe/Screens/home_screen/Wallet.dart';
 import 'package:safe/widgets/item.dart';
 import 'package:safe/utils/storage_service.dart';
 import 'package:safe/providers/profile_provider.dart';
-import 'package:safe/Blocks/Spent.dart';
-import 'package:safe/Blocks/Wallet.dart';
+import 'package:safe/Screens/home_screen/Spent.dart';
 
 class ItemProvider extends ChangeNotifier {
   final ProfileProvider _profileProvider;

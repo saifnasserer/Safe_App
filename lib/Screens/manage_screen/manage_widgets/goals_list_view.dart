@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:safe/Constants.dart';
-import 'package:safe/Screens/Goals.dart';
-import 'package:safe/widgets/goals_screen_widgets/goal_item_widget.dart';
-import 'package:safe/Blocks/Goal.dart';
+import 'package:safe/Screens/goals_screen/Goals.dart';
+import 'package:safe/Screens/goals_screen/goals_screen_widgets/goal_item_widget.dart';
+import 'package:safe/widgets/Goal.dart';
 
 class GoalsListView extends StatelessWidget {
   final List<Goal> goals;
@@ -43,7 +43,6 @@ class GoalsListView extends StatelessWidget {
                 title: goal.title,
                 targetAmount: goal.targetAmount,
                 color: goal.color,
-                type: goal.type,
                 onDismissed: () {
                   HapticFeedback.heavyImpact();
                   onGoalRemoved(index);

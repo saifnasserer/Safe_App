@@ -8,15 +8,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:safe/Screens/manage_screen/manage_widgets/calculator_keypad.dart';
+import 'package:safe/Screens/manage_screen/manage_widgets/transaction_input_form.dart';
+import 'package:safe/providers/Goal_Provider.dart';
+import 'package:safe/providers/Item_Provider.dart';
 import 'package:safe/providers/profile_provider.dart';
-import 'package:safe/widgets/Item_Provider.dart';
-import 'package:safe/widgets/goals_screen_widgets/Goal_Provider.dart';
 import 'package:safe/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:safe/Screens/HomePage.dart';
+import 'package:safe/Screens/home_screen/HomePage.dart';
 import 'package:safe/Screens/introduction_screen.dart';
-import 'package:safe/Screens/manage_widgets/calculator_keypad.dart';
-import 'package:safe/Screens/manage_widgets/transaction_input_form.dart';
 
 void main() {
   group('PlanetApp Tests', () {
@@ -24,7 +24,8 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
-    testWidgets('shows loading indicator initially', (WidgetTester tester) async {
+    testWidgets('shows loading indicator initially',
+        (WidgetTester tester) async {
       final profileProvider = ProfileProvider();
       await profileProvider.initialize();
 
@@ -56,10 +57,8 @@ void main() {
     testWidgets('navigates to Home after loading when not first launch',
         (WidgetTester tester) async {
       // Set up SharedPreferences to indicate not first launch
-      SharedPreferences.setMockInitialValues({
-        'isFirstLaunch': false,
-        'userName': 'Test User'
-      });
+      SharedPreferences.setMockInitialValues(
+          {'isFirstLaunch': false, 'userName': 'Test User'});
 
       final profileProvider = ProfileProvider();
       await profileProvider.initialize();
@@ -97,9 +96,7 @@ void main() {
     late ProfileProvider profileProvider;
 
     setUp(() async {
-      SharedPreferences.setMockInitialValues({
-        'isFirstLaunch': true
-      });
+      SharedPreferences.setMockInitialValues({'isFirstLaunch': true});
       profileProvider = ProfileProvider();
       await profileProvider.initialize();
     });

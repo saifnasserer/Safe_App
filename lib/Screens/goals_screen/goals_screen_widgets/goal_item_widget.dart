@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:safe/Blocks/Goal.dart';
-import 'package:safe/Blocks/Wallet.dart';
+import 'package:safe/Screens/home_screen/Wallet.dart';
+import 'package:safe/providers/Goal_Provider.dart';
+import 'package:safe/widgets/Goal.dart';
+
 import 'package:safe/providers/profile_provider.dart';
 import 'package:safe/Constants.dart';
-import 'package:safe/widgets/goals_screen_widgets/Goal_Provider.dart';
-import 'package:safe/utils/goal_types.dart';
 
 class GoalItemWidget extends StatefulWidget {
   final String title;
   final double targetAmount;
   final double savedAmount;
   final Color color;
-  final GoalType type;
+
   final int? commitmentDay;
   final Function? onDismissed;
 
@@ -24,7 +24,6 @@ class GoalItemWidget extends StatefulWidget {
     required this.targetAmount,
     required this.savedAmount,
     required this.color,
-    required this.type,
     this.commitmentDay,
     this.onDismissed,
   });
@@ -110,7 +109,6 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
                                 title: widget.title,
                                 targetAmount: widget.targetAmount,
                                 color: widget.color,
-                                type: widget.type,
                               )),
                           amount);
                   HapticFeedback.mediumImpact();
@@ -136,7 +134,7 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
   Widget build(BuildContext context) {
     final profileProvider = context.watch<ProfileProvider>();
     final currentProfileId = profileProvider.currentProfile?.id;
-    final walletValue = currentProfileId != null 
+    final walletValue = currentProfileId != null
         ? WalletBlock.balanceByProfile[currentProfileId]?.value ?? 0.0
         : 0.0;
     final progress = widget.savedAmount / widget.targetAmount;
@@ -203,40 +201,37 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
                             widget.title,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: Constants.responsiveFontSize(context, 16),
+                              fontSize:
+                                  Constants.responsiveFontSize(context, 16),
                               color: Colors.black87,
                               fontFamily: Constants.defaultFontFamily,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          if (widget.type == GoalType.monthlyCommitment &&
-                              widget.commitmentDay != null)
-                            Text(
-                              'يوم الالتزام: ${widget.commitmentDay}',
-                              style: TextStyle(
-                                fontFamily: Constants.secondaryFontFamily,
-                                fontSize: Constants.responsiveFontSize(context, 14),
-                                color: Colors.grey,
-                              ),
-                            ),
-                          SizedBox(height: Constants.responsiveSpacing(context, 8)),
+                          SizedBox(
+                              height: Constants.responsiveSpacing(context, 8)),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 '${widget.savedAmount.toStringAsFixed(0)} جنيه',
                                 style: TextStyle(
-                                  fontSize: Constants.responsiveFontSize(context, 14),
+                                  fontSize:
+                                      Constants.responsiveFontSize(context, 14),
                                   color: widget.color,
                                   fontFamily: Constants.secondaryFontFamily,
                                 ),
                               ),
-                              SizedBox(width: Constants.responsiveSpacing(context, 8)),
+                              SizedBox(
+                                  width:
+                                      Constants.responsiveSpacing(context, 8)),
                               Container(
                                 padding: EdgeInsets.symmetric(
-                                  horizontal: Constants.responsiveSpacing(context, 6),
-                                  vertical: Constants.responsiveSpacing(context, 2),
+                                  horizontal:
+                                      Constants.responsiveSpacing(context, 6),
+                                  vertical:
+                                      Constants.responsiveSpacing(context, 2),
                                 ),
                                 decoration: BoxDecoration(
                                   color: widget.color,
@@ -247,36 +242,47 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
                                 child: Text(
                                   '${(progress * 100).toStringAsFixed(0)}%',
                                   style: TextStyle(
-                                    fontSize: Constants.responsiveFontSize(context, 12),
+                                    fontSize: Constants.responsiveFontSize(
+                                        context, 12),
                                     color: Colors.white,
                                     fontFamily: Constants.secondaryFontFamily,
                                   ),
                                 ),
                               ),
                               if (walletValue > 0) ...[
-                                SizedBox(width: Constants.responsiveSpacing(context, 4)),
+                                SizedBox(
+                                    width: Constants.responsiveSpacing(
+                                        context, 4)),
                                 Text(
                                   '→',
                                   style: TextStyle(
                                     color: widget.color,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: Constants.responsiveFontSize(context, 14),
+                                    fontSize: Constants.responsiveFontSize(
+                                        context, 14),
                                   ),
                                 ),
-                                SizedBox(width: Constants.responsiveSpacing(context, 8)),
+                                SizedBox(
+                                    width: Constants.responsiveSpacing(
+                                        context, 8)),
                                 Text(
                                   '${widget.targetAmount.toStringAsFixed(0)} جنية',
                                   style: TextStyle(
-                                    fontSize: Constants.responsiveFontSize(context, 14),
+                                    fontSize: Constants.responsiveFontSize(
+                                        context, 14),
                                     color: widget.color,
                                     fontFamily: Constants.secondaryFontFamily,
                                   ),
                                 ),
-                                SizedBox(width: Constants.responsiveSpacing(context, 4)),
+                                SizedBox(
+                                    width: Constants.responsiveSpacing(
+                                        context, 4)),
                                 Container(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: Constants.responsiveSpacing(context, 6),
-                                    vertical: Constants.responsiveSpacing(context, 2),
+                                    horizontal:
+                                        Constants.responsiveSpacing(context, 6),
+                                    vertical:
+                                        Constants.responsiveSpacing(context, 2),
                                   ),
                                   decoration: BoxDecoration(
                                     color: widget.color.withOpacity(0.15),
@@ -287,7 +293,8 @@ class _GoalItemWidgetState extends State<GoalItemWidget>
                                   child: Text(
                                     '${(adjustedPotentialProgress * 100).toStringAsFixed(0)}%',
                                     style: TextStyle(
-                                      fontSize: Constants.responsiveFontSize(context, 12),
+                                      fontSize: Constants.responsiveFontSize(
+                                          context, 12),
                                       color: widget.color,
                                       fontFamily: Constants.secondaryFontFamily,
                                     ),

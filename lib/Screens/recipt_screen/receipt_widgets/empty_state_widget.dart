@@ -42,10 +42,11 @@ class EmptyStateWidget extends StatelessWidget {
           ),
           SizedBox(height: Constants.responsiveSpacing(context, 12)),
           Text(
-            'اضغط على الزر في الأسفل لإضافة معاملة جديدة',
+            'اضغط على الزار ده عشان تضيف معاملة جديدة',
             style: TextStyle(
               color: Colors.grey,
-              fontSize: Constants.responsiveFontSize(context, Constants.defaultFontSize),
+              fontSize: Constants.responsiveFontSize(
+                  context, Constants.defaultFontSize),
               fontFamily: Constants.secondaryFontFamily,
             ),
             textAlign: TextAlign.center,
@@ -60,7 +61,8 @@ class EmptyStateWidget extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Constants.getPrimaryColor(context),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(Constants.responsiveRadius(context, 16)),
+                  borderRadius: BorderRadius.circular(
+                      Constants.responsiveRadius(context, 16)),
                 ),
                 padding: EdgeInsets.symmetric(
                   horizontal: Constants.responsiveSpacing(context, 24),

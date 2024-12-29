@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:safe/models/profile.dart';
 import 'package:safe/widgets/item.dart';
-import 'package:safe/Blocks/Goal.dart';
+import 'package:safe/widgets/Goal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService {

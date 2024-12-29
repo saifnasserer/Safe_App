@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:safe/Blocks/Wallet.dart';
+import 'package:safe/Screens/home_screen/Wallet.dart';
 import 'package:safe/providers/profile_provider.dart';
-import 'package:safe/utils/goal_types.dart';
 import 'package:provider/provider.dart';
 
 class Goal {
@@ -10,14 +9,12 @@ class Goal {
   final double targetAmount;
   double currentAmount;
   final Color color;
-  final GoalType type;
 
   Goal({
     required this.title,
     required this.targetAmount,
     this.currentAmount = 0,
     required this.color,
-    this.type = GoalType.goal,
   });
 
   Map<String, dynamic> toJson() {
@@ -26,7 +23,6 @@ class Goal {
       'targetAmount': targetAmount,
       'currentAmount': currentAmount,
       'color': color.value,
-      'type': type.index,
     };
   }
 
@@ -36,7 +32,6 @@ class Goal {
       targetAmount: json['targetAmount'],
       currentAmount: json['currentAmount'],
       color: Color(json['color']),
-      type: GoalType.values[json['type'] ?? 0],
     );
   }
 
@@ -45,14 +40,12 @@ class Goal {
     double? targetAmount,
     double? currentAmount,
     Color? color,
-    GoalType? type,
   }) {
     return Goal(
       title: title ?? this.title,
       targetAmount: targetAmount ?? this.targetAmount,
       currentAmount: currentAmount ?? this.currentAmount,
       color: color ?? this.color,
-      type: type ?? this.type,
     );
   }
 }

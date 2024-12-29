@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/providers/profile_provider.dart';
-import 'package:safe/Screens/manage.dart';
+import 'package:safe/Screens/manage_screen/manage.dart';
 import 'package:safe/utils/storage_service.dart';
-import 'package:safe/widgets/wallet_widgets/balance_display.dart';
+import 'package:safe/Screens/home_screen/wallet_widgets/balance_display.dart';
 
 class WalletBlock extends StatefulWidget {
   final String title;

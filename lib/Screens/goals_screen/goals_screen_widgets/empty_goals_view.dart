@@ -20,15 +20,17 @@ class EmptyGoalsView extends StatelessWidget {
         children: [
           LottieBuilder.asset(
             'assets/animation/Onion.json',
-            height: Constants.heightPercent(context, 25), // 25% of screen height
+            height:
+                Constants.heightPercent(context, 25), // 25% of screen height
           ),
           SizedBox(height: Constants.responsiveSpacing(context, 24)),
           Text(
-            "لا يوجد اهداف حاليا",
+            "معندكش اهدف",
             style: TextStyle(
               fontSize: Constants.responsiveFontSize(context, 20),
               fontWeight: FontWeight.w500,
               color: Colors.black87,
+              fontFamily: Constants.secondaryFontFamily,
             ),
           ),
           SizedBox(height: Constants.responsiveSpacing(context, 16)),
@@ -39,12 +41,13 @@ class EmptyGoalsView extends StatelessWidget {
               size: Constants.responsiveSpacing(context, 24),
             ),
             label: Text(
-              "اضف هدف جديد",
+              "ضيف هدف جديد",
               style: TextStyle(
                 fontSize: Constants.responsiveFontSize(context, 16),
               ),
             ),
             style: TextButton.styleFrom(
+              backgroundColor: mainColor.withOpacity(0.1),
               foregroundColor: mainColor,
               padding: EdgeInsets.symmetric(
                 horizontal: Constants.responsiveSpacing(context, 20),

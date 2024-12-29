@@ -28,18 +28,23 @@ class AppErrorWidget extends StatelessWidget {
             Text(
               message,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontSize: Constants.responsiveFontSize(context, Theme.of(context).textTheme.titleMedium?.fontSize ?? 16),
-              ),
+                    fontSize: Constants.responsiveFontSize(
+                        context,
+                        Theme.of(context).textTheme.titleMedium?.fontSize ??
+                            16),
+                  ),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
               SizedBox(height: Constants.responsiveSpacing(context, 16)),
               ElevatedButton.icon(
                 onPressed: onRetry,
-                icon: Icon(Icons.refresh, size: Constants.responsiveSpacing(context, 24)),
+                icon: Icon(Icons.refresh,
+                    size: Constants.responsiveSpacing(context, 24)),
                 label: Text(
                   'إعادة المحاولة',
-                  style: TextStyle(fontSize: Constants.responsiveFontSize(context, 14)),
+                  style: TextStyle(
+                      fontSize: Constants.responsiveFontSize(context, 14)),
                 ),
               ),
             ],

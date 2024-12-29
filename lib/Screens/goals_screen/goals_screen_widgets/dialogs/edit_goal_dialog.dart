@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safe/Blocks/Goal.dart';
-import 'package:safe/Blocks/Wallet.dart';
+import 'package:safe/Screens/home_screen/Wallet.dart';
+import 'package:safe/providers/Goal_Provider.dart';
+import 'package:safe/widgets/Goal.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/providers/profile_provider.dart';
-import 'package:safe/widgets/goals_screen_widgets/Goal_Provider.dart';
 
 class EditGoalDialog extends StatefulWidget {
   final Goal goal;
@@ -232,18 +232,15 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
 
       final profileProvider = context.read<ProfileProvider>();
       final currentProfileId = profileProvider.currentProfile?.id;
-      
+
       if (currentProfileId != null) {
-        final currentBalance = WalletBlock.balanceByProfile[currentProfileId]?.value ?? 0.0;
-        
+        final currentBalance =
+            WalletBlock.balanceByProfile[currentProfileId]?.value ?? 0.0;
+
         if (!isAdding) {
-          WalletBlock.updateWalletBalance(
-              context,
-              currentBalance - amount);
+          WalletBlock.updateWalletBalance(context, currentBalance - amount);
         } else {
-          WalletBlock.updateWalletBalance(
-              context,
-              currentBalance + amount);
+          WalletBlock.updateWalletBalance(context, currentBalance + amount);
         }
       }
       Navigator.pop(context);
