@@ -25,7 +25,7 @@ class ProfileSelector extends StatelessWidget {
         child: StatefulBuilder(
           builder: (context, setState) => AlertDialog(
             title: Text(
-              'إنشاء ملف شخصي جديد',
+              'إنشاء ملف جديد',
               style: TextStyle(
                 color: primaryColor,
                 fontFamily: Constants.defaultFontFamily,
@@ -42,7 +42,7 @@ class ProfileSelector extends StatelessWidget {
                   TextField(
                     controller: nameController,
                     decoration: InputDecoration(
-                      labelText: 'اسم الملف الشخصي',
+                      labelText: 'اسم الملف',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(
                           Constants.responsiveSpacing(context, 12),
@@ -65,12 +65,12 @@ class ProfileSelector extends StatelessWidget {
                   ),
                   SizedBox(height: Constants.responsiveSpacing(context, 16)),
                   Text(
-                    'لون الملف الشخصي',
+                    'اللون الافتراضي ',
                     style: TextStyle(
                       fontSize: Constants.responsiveFontSize(context, 16),
                       fontWeight: FontWeight.w500,
                     ),
-                    textAlign: TextAlign.right,
+                    textAlign: TextAlign.center,
                   ),
                   SizedBox(height: Constants.responsiveSpacing(context, 8)),
                   SizedBox(
@@ -108,7 +108,8 @@ class ProfileSelector extends StatelessWidget {
                               },
                               child: Container(
                                 width: Constants.responsiveSpacing(context, 40),
-                                height: Constants.responsiveSpacing(context, 40),
+                                height:
+                                    Constants.responsiveSpacing(context, 40),
                                 decoration: BoxDecoration(
                                   color: color,
                                   shape: BoxShape.circle,
@@ -116,10 +117,12 @@ class ProfileSelector extends StatelessWidget {
                                       ? [
                                           BoxShadow(
                                             color: color.withOpacity(0.4),
-                                            blurRadius: Constants.responsiveSpacing(
-                                                context, 1),
-                                            spreadRadius: Constants.responsiveSpacing(
-                                                context, 2),
+                                            blurRadius:
+                                                Constants.responsiveSpacing(
+                                                    context, 1),
+                                            spreadRadius:
+                                                Constants.responsiveSpacing(
+                                                    context, 2),
                                           )
                                         ]
                                       : null,
@@ -215,9 +218,10 @@ class ProfileSelector extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
+                padding:
+                    EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
                 child: Text(
-                  'الملفات الشخصية',
+                  'ملفات حساباتك',
                   style: TextStyle(
                     fontSize: Constants.responsiveFontSize(context, 20),
                     fontWeight: FontWeight.bold,
@@ -260,7 +264,8 @@ class ProfileSelector extends StatelessWidget {
                               IconButton(
                                 icon: Icon(
                                   Icons.delete_outline,
-                                  size: Constants.responsiveSpacing(context, 24),
+                                  size:
+                                      Constants.responsiveSpacing(context, 24),
                                 ),
                                 onPressed: () {
                                   Navigator.pop(context);
@@ -274,7 +279,8 @@ class ProfileSelector extends StatelessWidget {
                               ),
                               onPressed: () {
                                 Navigator.pop(context);
-                                _showEditProfileDialog(context, provider, profile);
+                                _showEditProfileDialog(
+                                    context, provider, profile);
                               },
                             ),
                           ],
@@ -295,26 +301,36 @@ class ProfileSelector extends StatelessWidget {
                 ),
               ),
               SizedBox(height: Constants.responsiveSpacing(context, 8)),
-              TextButton.icon(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                   _showCreateProfileDialog(context);
                 },
-                icon: Icon(
-                  Icons.add,
-                  size: Constants.responsiveSpacing(context, 24),
-                ),
-                label: Text(
-                  'إضافة ملف شخصي جديد',
-                  style: TextStyle(
-                    fontSize: Constants.responsiveFontSize(context, 16),
-                  ),
-                ),
                 style: TextButton.styleFrom(
+                  elevation: 1,
                   padding: EdgeInsets.symmetric(
                     horizontal: Constants.responsiveSpacing(context, 16),
                     vertical: Constants.responsiveSpacing(context, 8),
                   ),
+                  backgroundColor: Constants.getPrimaryColor(context),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'إضافة ملف جديد',
+                      style: TextStyle(
+                        fontSize: Constants.responsiveFontSize(context, 16),
+                        color: Color(0xfff5f2fa),
+                      ),
+                    ),
+                    SizedBox(width: Constants.responsiveSpacing(context, 8)),
+                    Icon(
+                      Icons.add,
+                      size: Constants.responsiveSpacing(context, 24),
+                      color: Color(0xfff5f2fa),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: Constants.responsiveSpacing(context, 16)),
@@ -339,7 +355,7 @@ class ProfileSelector extends StatelessWidget {
         textDirection: TextDirection.rtl,
         child: AlertDialog(
           title: Text(
-            'تعديل الملف الشخصي',
+            'حسابك',
             style: TextStyle(
               color: primaryColor,
               fontFamily: Constants.defaultFontFamily,
@@ -353,7 +369,7 @@ class ProfileSelector extends StatelessWidget {
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(
-                  labelText: 'اسم الملف الشخصي',
+                  labelText: 'اسم الملف',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(
                       Constants.responsiveSpacing(context, 12),

@@ -19,7 +19,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
   final _formKey = GlobalKey<FormState>();
   Color selectedColor = Colors.blue;
   final GoalType _selectedType = GoalType.goal;
-  int? _selectedCommitmentDay;
+  // int? _selectedCommitmentDay;
 
   @override
   void dispose() {

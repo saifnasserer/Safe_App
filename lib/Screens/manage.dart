@@ -55,7 +55,8 @@ class _ManageState extends State<Manage> {
       } else {
         try {
           final calculatedValue = getAmount();
-          amountController.text = NumberFormatter.formatCalculatorNumber(calculatedValue);
+          amountController.text =
+              NumberFormatter.formatCalculatorNumber(calculatedValue);
           _amountFocusNode.requestFocus();
         } catch (e) {
           amountController.clear();
@@ -100,7 +101,8 @@ class _ManageState extends State<Manage> {
     if (button == '⌫') {
       final currentText = amountController.text;
       if (currentText.isNotEmpty) {
-        amountController.text = currentText.substring(0, currentText.length - 1);
+        amountController.text =
+            currentText.substring(0, currentText.length - 1);
       }
     } else {
       amountController.text += button;
@@ -128,7 +130,8 @@ class _ManageState extends State<Manage> {
           showSimpleNotification(
             Text(
               WalletBlock.balanceByProfile[currentProfileId]?.value != null &&
-                      WalletBlock.balanceByProfile[currentProfileId]!.value < 200
+                      WalletBlock.balanceByProfile[currentProfileId]!.value <
+                          200
                   ? 'خف صرف شوية بقا المحفظة فضيت'
                   : 'تم اضافة اللي صرفتة يغالي ',
               textAlign: TextAlign.center,
@@ -203,7 +206,7 @@ class _ManageState extends State<Manage> {
             SliverToBoxAdapter(
               child: Consumer<GoalProvider>(
                 builder: (context, goalProvider, _) {
-                  final goals = goalProvider.goals ?? [];
+                  final goals = goalProvider.goals;
                   if (goals.isEmpty) {
                     return const AddGoalButton();
                   }

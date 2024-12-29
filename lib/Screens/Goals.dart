@@ -80,7 +80,7 @@ class _GoalsBlockState extends State<GoalsBlock> {
         style: TextStyle(
           color: Constants.getPrimaryColor(context),
           fontFamily: Constants.defaultFontFamily,
-          fontSize: 30,
+          fontSize: Constants.defaultFontSize * 1.875,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -90,15 +90,18 @@ class _GoalsBlockState extends State<GoalsBlock> {
 
   Widget _buildGoalsList(List<Goal> goals) {
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+          horizontal: Constants.defaultFontSize,
+          vertical: Constants.defaultFontSize / 2),
       itemCount: goals.length,
       itemBuilder: (context, index) {
         final goal = goals[index];
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding:
+              EdgeInsets.symmetric(vertical: Constants.defaultFontSize / 2),
           child: Center(
             child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.9,
+              width: Constants.widthPercent(context, 90),
               child: GestureDetector(
                 onTap: () {
                   HapticFeedback.mediumImpact();
@@ -119,9 +122,10 @@ class _GoalsBlockState extends State<GoalsBlock> {
                         behavior: SnackBarBehavior.floating,
                         backgroundColor: Constants.getPrimaryColor(context),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(
+                              Constants.defaultFontSize * 0.625),
                         ),
-                        margin: const EdgeInsets.all(16),
+                        margin: EdgeInsets.all(Constants.defaultFontSize),
                       ),
                     );
                   },

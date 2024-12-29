@@ -5,10 +5,10 @@ import 'package:safe/Blocks/Goal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService {
-  static const String _itemsKey = 'items';
-  static const String _goalsKey = 'goals';
-  static const String _walletKey = 'wallet';
-  static const String _spentKey = 'spent';
+  // static const String _itemsKey = 'items';
+  // static const String _goalsKey = 'goals';
+  // static const String _walletKey = 'wallet';
+  // static const String _spentKey = 'spent';
   static const String _profilesKey = 'profiles';
   static const String _currentProfileKey = 'current_profile';
   static const String _userNameKey = 'user_name';

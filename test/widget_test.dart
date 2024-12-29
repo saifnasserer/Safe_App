@@ -7,20 +7,127 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:safe/providers/profile_provider.dart';
+import 'package:safe/widgets/Item_Provider.dart';
+import 'package:safe/widgets/goals_screen_widgets/Goal_Provider.dart';
+import 'package:safe/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:safe/Screens/HomePage.dart';
 import 'package:safe/Screens/introduction_screen.dart';
 import 'package:safe/Screens/manage_widgets/calculator_keypad.dart';
 import 'package:safe/Screens/manage_widgets/transaction_input_form.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  group('Introduction Screen Tests', () {
-    testWidgets('shows welcome message and name input',
-        (WidgetTester tester) async {
+  group('PlanetApp Tests', () {
+    setUp(() {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    testWidgets('shows loading indicator initially', (WidgetTester tester) async {
+      final profileProvider = ProfileProvider();
+      await profileProvider.initialize();
+
       await tester.pumpWidget(
-        const MaterialApp(
-          home: IntroductionScreen(),
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<ProfileProvider>.value(
+              value: profileProvider,
+            ),
+            ChangeNotifierProxyProvider<ProfileProvider, ItemProvider>(
+              create: (context) => ItemProvider(profileProvider, context),
+              update: (context, profileProvider, previous) =>
+                  ItemProvider(profileProvider, context),
+            ),
+            ChangeNotifierProxyProvider<ProfileProvider, GoalProvider>(
+              create: (context) => GoalProvider(profileProvider),
+              update: (context, profileProvider, previous) =>
+                  GoalProvider(profileProvider),
+            ),
+          ],
+          child: const PlanetApp(),
         ),
       );
+
+      // Initially should show loading indicator
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
+
+    testWidgets('navigates to Home after loading when not first launch',
+        (WidgetTester tester) async {
+      // Set up SharedPreferences to indicate not first launch
+      SharedPreferences.setMockInitialValues({
+        'isFirstLaunch': false,
+        'userName': 'Test User'
+      });
+
+      final profileProvider = ProfileProvider();
+      await profileProvider.initialize();
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<ProfileProvider>.value(
+              value: profileProvider,
+            ),
+            ChangeNotifierProxyProvider<ProfileProvider, ItemProvider>(
+              create: (context) => ItemProvider(profileProvider, context),
+              update: (context, profileProvider, previous) =>
+                  ItemProvider(profileProvider, context),
+            ),
+            ChangeNotifierProxyProvider<ProfileProvider, GoalProvider>(
+              create: (context) => GoalProvider(profileProvider),
+              update: (context, profileProvider, previous) =>
+                  GoalProvider(profileProvider),
+            ),
+          ],
+          child: const PlanetApp(),
+        ),
+      );
+
+      // Wait for loading to complete
+      await tester.pumpAndSettle();
+
+      // Should show Home screen
+      expect(find.byType(Home), findsOneWidget);
+    });
+  });
+
+  group('Introduction Screen Tests', () {
+    late ProfileProvider profileProvider;
+
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({
+        'isFirstLaunch': true
+      });
+      profileProvider = ProfileProvider();
+      await profileProvider.initialize();
+    });
+
+    Widget buildTestableWidget(Widget child) {
+      return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<ProfileProvider>.value(
+            value: profileProvider,
+          ),
+          ChangeNotifierProxyProvider<ProfileProvider, ItemProvider>(
+            create: (context) => ItemProvider(profileProvider, context),
+            update: (context, profileProvider, previous) =>
+                ItemProvider(profileProvider, context),
+          ),
+          ChangeNotifierProxyProvider<ProfileProvider, GoalProvider>(
+            create: (context) => GoalProvider(profileProvider),
+            update: (context, profileProvider, previous) =>
+                GoalProvider(profileProvider),
+          ),
+        ],
+        child: MaterialApp(home: child),
+      );
+    }
+
+    testWidgets('shows welcome message and name input',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(buildTestableWidget(const IntroductionScreen()));
 
       // Verify welcome message is shown
       expect(find.text('اهلاً بيك يغالي'), findsOneWidget);
@@ -30,14 +137,14 @@ void main() {
     });
 
     testWidgets('validates empty name input', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: IntroductionScreen(),
-        ),
-      );
+      await tester.pumpWidget(buildTestableWidget(const IntroductionScreen()));
+
+      // Navigate to the last page
+      await tester.tap(find.text('تخطي'));
+      await tester.pumpAndSettle();
 
       // Try to complete introduction without entering name
-      await tester.tap(find.text('تم'));
+      await tester.enterText(find.byType(TextField), '');
       await tester.pump();
 
       // Verify error message is shown
@@ -45,24 +152,23 @@ void main() {
     });
 
     testWidgets('saves name and proceeds to home', (WidgetTester tester) async {
-      SharedPreferences.setMockInitialValues({});
+      await tester.pumpWidget(buildTestableWidget(const IntroductionScreen()));
 
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: IntroductionScreen(),
-        ),
-      );
+      // Navigate to the last page
+      await tester.tap(find.text('تخطي'));
+      await tester.pumpAndSettle();
 
       // Enter name
       await tester.enterText(find.byType(TextField), 'Test User');
       await tester.pump();
 
       // Complete introduction
-      await tester.tap(find.text('تم'));
+      await tester.tap(find.text('تخطي'));
       await tester.pumpAndSettle();
 
       // Verify navigation to home screen
       expect(find.byType(IntroductionScreen), findsNothing);
+      expect(find.byType(Home), findsOneWidget);
     });
   });
 
