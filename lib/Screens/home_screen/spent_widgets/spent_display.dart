@@ -48,7 +48,7 @@ class _SpentDisplayState extends State<SpentDisplay>
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      value: 'Spent amount: ${widget.value} pounds',
+      value: 'المبلغ المصروف: ${NumberFormatter.formatNumber(widget.value)} جنيه',
       child: GestureDetector(
         onTap: () {
           HapticFeedback.mediumImpact();

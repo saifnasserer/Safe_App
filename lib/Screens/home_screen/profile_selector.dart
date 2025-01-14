@@ -152,22 +152,6 @@ class ProfileSelector extends StatelessWidget {
               ),
             ),
             actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Constants.responsiveSpacing(context, 16),
-                    vertical: Constants.responsiveSpacing(context, 8),
-                  ),
-                ),
-                child: Text(
-                  'إلغاء',
-                  style: TextStyle(
-                    color: primaryColor,
-                    fontSize: Constants.responsiveFontSize(context, 16),
-                  ),
-                ),
-              ),
               ElevatedButton(
                 onPressed: () {
                   if (nameController.text.isNotEmpty) {
@@ -188,6 +172,22 @@ class ProfileSelector extends StatelessWidget {
                 child: Text(
                   'إنشاء',
                   style: TextStyle(
+                    fontSize: Constants.responsiveFontSize(context, 16),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Constants.responsiveSpacing(context, 16),
+                    vertical: Constants.responsiveSpacing(context, 8),
+                  ),
+                ),
+                child: Text(
+                  'إلغاء',
+                  style: TextStyle(
+                    color: primaryColor,
                     fontSize: Constants.responsiveFontSize(context, 16),
                   ),
                 ),

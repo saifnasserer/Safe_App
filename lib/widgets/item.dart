@@ -8,12 +8,16 @@ class item extends StatelessWidget {
     required this.flag,
     required this.title,
     required this.price,
+    this.isGoal = false,
+    this.goalIndex,
   });
 
   final String title;
   double price;
   bool flag;
   DateTime dateTime;
+  final bool isGoal;
+  final int? goalIndex;
 
   // Convert item to JSON
   Map<String, dynamic> toJson() {
@@ -22,6 +26,8 @@ class item extends StatelessWidget {
       'price': price,
       'flag': flag,
       'dateTime': dateTime.toIso8601String(),
+      'isGoal': isGoal,
+      'goalIndex': goalIndex,
     };
   }
 
@@ -32,6 +38,8 @@ class item extends StatelessWidget {
       price: json['price'],
       flag: json['flag'],
       dateTime: DateTime.parse(json['dateTime']),
+      isGoal: json['isGoal'] ?? false,
+      goalIndex: json['goalIndex'],
     );
   }
 

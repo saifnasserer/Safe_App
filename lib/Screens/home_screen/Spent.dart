@@ -39,10 +39,7 @@ class SpentBlock extends StatefulWidget {
   State<SpentBlock> createState() => _SpentBlockState();
 }
 
-class _SpentBlockState extends State<SpentBlock>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<Offset> _slideAnimation;
+class _SpentBlockState extends State<SpentBlock> {
   DateFilter _currentFilter = DateFilter.today;
   DateTime? _customDate;
 
@@ -86,11 +83,11 @@ class _SpentBlockState extends State<SpentBlock>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
+          title: Text(
             'اختر الفترة',
             style: TextStyle(
               fontFamily: Constants.defaultFontFamily,
-              color: Color(0xff4558c8),
+              color: Constants.getPrimaryColor(context),
             ),
             textAlign: TextAlign.center,
           ),
@@ -196,43 +193,19 @@ class _SpentBlockState extends State<SpentBlock>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(-1.0, 0.0),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
-
-    _controller.forward();
-
-    // Initialize spent for current profile
     WidgetsBinding.instance.addPostFrameCallback((_) {
       SpentBlock.initSpent(context);
     });
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final screenWidth = Constants.screenWidth(context);
-    final screenHeight = Constants.screenHeight(context);
-    final containerHeight = Constants.screenHeight(context);
     final profileProvider = context.watch<ProfileProvider>();
     final currentProfileId = profileProvider.currentProfile?.id;
 
     if (currentProfileId == null) {
-      return const SizedBox.shrink();
+      return const SizedBox();
     }
 
     if (!SpentBlock.spentByProfile.containsKey(currentProfileId)) {
@@ -243,7 +216,8 @@ class _SpentBlockState extends State<SpentBlock>
     return ValueListenableBuilder<double>(
       valueListenable: SpentBlock.spentByProfile[currentProfileId]!,
       builder: (context, value, child) {
-        return Expanded(
+        return SizedBox(
+          height: Constants.screenHeight(context) * 0.5,
           child: Padding(
             padding: EdgeInsets.symmetric(
                 horizontal: Constants.widthPercent(context, 5)),

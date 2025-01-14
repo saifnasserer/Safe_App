@@ -41,9 +41,23 @@ class GoalProvider extends ChangeNotifier {
 
   Future<void> updateGoalProgress(int index, double amount) async {
     final currentProfile = _profileProvider.currentProfile;
-    if (currentProfile != null && index >= 0 && index < _goals.length) {
-      _goals[index].currentAmount += amount;
+    if (currentProfile == null || (index < 0 || index >= _goals.length)) {
+      return;
+    }
+
+    final goal = _goals[index];
+    final newAmount = goal.currentAmount + amount;
+
+    if (newAmount < 0 || newAmount > goal.targetAmount) {
+      return;
+    }
+    try {
+      goal.currentAmount = newAmount;
       await StorageService.saveGoals(currentProfile.id, _goals);
+      notifyListeners();
+    } catch (e) {
+      // Rollback the change if save fails
+      goal.currentAmount -= amount;
       notifyListeners();
     }
   }

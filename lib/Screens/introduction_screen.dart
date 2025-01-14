@@ -3,6 +3,8 @@ import 'package:safe/Constants.dart';
 import 'package:safe/utils/storage_service.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:safe/Screens/home_screen/HomePage.dart';
+import 'package:provider/provider.dart';
+import 'package:safe/providers/profile_provider.dart';
 
 class IntroductionScreen extends StatefulWidget {
   const IntroductionScreen({super.key});
@@ -37,13 +39,33 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
       return;
     }
 
-    await StorageService.saveUserName(_nameController.text);
-    await StorageService.setFirstLaunch(false);
+    try {
+      await StorageService.saveUserName(_nameController.text);
+      await StorageService.setFirstLaunch(false);
 
-    if (mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const Home()),
-      );
+      if (mounted) {
+        // Initialize providers before navigation
+        final profileProvider =
+            Provider.of<ProfileProvider>(context, listen: false);
+        await profileProvider.initialize();
+
+        // Navigate and replace all previous routes
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const Home()),
+          (route) => false, // Remove all previous routes
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('حدث خطأ، ممكن تعمل ريستارت للابلكيشن',
+                textAlign: TextAlign.center),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     }
   }
 
@@ -365,7 +387,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                       ),
                       const SizedBox(height: 20),
                       const Text(
-                        'اكتبة بالعربي وعيش عيشة اهلك لو سمحت ',
+                        'ده الاسم اللي هتستخدمة لملف المصاريف الاساسي بتاعك ',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14,

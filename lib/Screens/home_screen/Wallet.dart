@@ -139,17 +139,22 @@ class _WalletBlockState extends State<WalletBlock>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(height: screenHeight * 0.02),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    widget.title,
-                    style: TextStyle(
-                      fontSize: Constants.responsiveFontSize(context, 32),
-                      fontWeight: FontWeight.bold,
-                      fontFamily: Constants.titles,
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Constants.responsiveSpacing(context, 24),
+                  ),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      widget.title,
+                      style: TextStyle(
+                        fontSize: Constants.responsiveFontSize(context, 32),
+                        fontWeight: FontWeight.bold,
+                        fontFamily: Constants.titles,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.05),

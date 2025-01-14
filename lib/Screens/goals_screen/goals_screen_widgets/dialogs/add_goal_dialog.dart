@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/providers/Goal_Provider.dart';
 import 'package:safe/widgets/Goal.dart';
@@ -288,14 +289,14 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
             backgroundColor: Constants.getPrimaryColor(context),
             foregroundColor: Colors.white,
             padding: EdgeInsets.symmetric(
-              horizontal: Constants.responsiveSpacing(context, 24),
-              vertical: Constants.responsiveSpacing(context, 12),
+              horizontal: Constants.responsiveSpacing(context, 16),
+              vertical: Constants.responsiveSpacing(context, 8),
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                Constants.responsiveSpacing(context, 12),
-              ),
-            ),
+            // shape: RoundedRectangleBorder(
+            //   borderRadius: BorderRadius.circular(
+            //     Constants.responsiveSpacing(context, 12),
+            //   ),
+            // ),
             elevation: 0,
           ),
           child: Text(
@@ -328,7 +329,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
   }
 
   void _handleAddGoal() {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && amountController.text.isNotEmpty) {
       HapticFeedback.mediumImpact();
       Provider.of<GoalProvider>(context, listen: false).addGoal(
         Goal(
@@ -338,6 +339,14 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
         ),
       );
       Navigator.pop(context);
+    } else {
+      showSimpleNotification(
+        const Text(
+          'برجاء ادخال قيم صحيحة',
+          textAlign: TextAlign.center,
+        ),
+        background: Colors.red,
+      );
     }
   }
 }

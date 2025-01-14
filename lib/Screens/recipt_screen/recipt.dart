@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/Screens/manage_screen/manage.dart';
 import 'package:safe/providers/Item_Provider.dart';
+import 'package:safe/providers/Goal_Provider.dart';
 import 'package:safe/utils/FirstUse.dart';
 import 'package:safe/utils/transaction_filter.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -41,6 +42,15 @@ class _RecieptState extends State<Reciept> {
     final itemIndex =
         Provider.of<ItemProvider>(context, listen: false).items.indexOf(item);
     if (itemIndex >= 0) {
+      // If this is a goal transaction, update the goal progress
+      if (item.isGoal && item.goalIndex != null) {
+        // If flag is true, it was adding to wallet (removing from goal)
+        // If flag is false, it was removing from wallet (adding to goal)
+        // So we need to do the opposite when deleting
+        final amount = item.flag ? item.price : -item.price;
+        context.read<GoalProvider>().updateGoalProgress(item.goalIndex!, amount);
+      }
+
       Provider.of<ItemProvider>(context, listen: false).removeItem(itemIndex);
       showSimpleNotification(
         const Center(child: Text('تم الحذف')),

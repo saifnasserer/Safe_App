@@ -56,6 +56,7 @@ class TransactionListView extends StatelessWidget {
       padding: EdgeInsets.symmetric(
         vertical: Constants.responsiveSpacing(context, 16),
       ),
+      // reverse: true,
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
       itemCount: sortedDates.length,
@@ -72,7 +73,7 @@ class TransactionListView extends StatelessWidget {
               date: dateKey,
               formatDate: _formatDate,
             ),
-            ...itemsForDate.map((item) => TransactionItemCard(
+            ...itemsForDate.reversed.map((item) => TransactionItemCard(
                   item: item,
                   onDelete: onDeleteItem,
                 )),

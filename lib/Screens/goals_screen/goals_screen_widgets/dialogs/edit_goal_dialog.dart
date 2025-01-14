@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/Screens/home_screen/Wallet.dart';
 import 'package:safe/providers/Goal_Provider.dart';
+import 'package:safe/providers/Item_Provider.dart';
+import 'package:safe/utils/transaction_filter.dart';
 import 'package:safe/widgets/Goal.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/providers/profile_provider.dart';
+import 'package:safe/widgets/item.dart';
 
 class EditGoalDialog extends StatefulWidget {
   final Goal goal;
@@ -44,7 +48,7 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'تعديل الهدف',
+              'تحديث الهدف',
               style: TextStyle(
                 fontFamily: Constants.defaultFontFamily,
                 fontSize: Constants.responsiveFontSize(context, 24),
@@ -217,33 +221,86 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
   }
 
   void _handleEditGoal(double amount, bool isAdding) {
-    if (amount > 0) {
-      double finalAmount = isAdding
-          ? widget.goal.currentAmount + amount
-          : widget.goal.currentAmount - amount;
-
-      if (finalAmount < 0) {
-        finalAmount = 0;
-      }
-
-      context
-          .read<GoalProvider>()
-          .updateGoalProgress(widget.index, finalAmount);
-
-      final profileProvider = context.read<ProfileProvider>();
-      final currentProfileId = profileProvider.currentProfile?.id;
-
-      if (currentProfileId != null) {
-        final currentBalance =
-            WalletBlock.balanceByProfile[currentProfileId]?.value ?? 0.0;
-
-        if (!isAdding) {
-          WalletBlock.updateWalletBalance(context, currentBalance - amount);
-        } else {
-          WalletBlock.updateWalletBalance(context, currentBalance + amount);
-        }
-      }
-      Navigator.pop(context);
+    if (amount <= 0 || amountController.text.isEmpty) {
+      showSimpleNotification(
+        const Text(
+          'برجاء ادخال قيمة صحيحة',
+          textAlign: TextAlign.center,
+        ),
+        background: Colors.red,
+      );
+      return;
     }
+
+    final profileProvider = context.read<ProfileProvider>();
+    final currentProfileId = profileProvider.currentProfile?.id;
+
+    if (currentProfileId == null) return;
+
+    final currentBalance =
+        WalletBlock.balanceByProfile[currentProfileId]?.value ?? 0.0;
+
+    if (isAdding && amount > currentBalance) {
+      showSimpleNotification(
+        const Text(
+          'رصيدك غير كافي',
+          textAlign: TextAlign.center,
+        ),
+        background: Colors.red,
+      );
+      return;
+    }
+
+    // Calculate new goal amount
+    if (isAdding) {
+      if (widget.goal.currentAmount + amount > widget.goal.targetAmount) {
+        showSimpleNotification(
+          const Text(
+            'مينفعش تضيف اكتر من المبلغ المستهدف',
+            textAlign: TextAlign.center,
+          ),
+          background: Colors.red,
+        );
+        return;
+      } else {
+        WalletBlock.updateWalletBalance(context, currentBalance - amount);
+        // Send the positive delta amount
+        context.read<GoalProvider>().updateGoalProgress(widget.index, amount);
+        context.read<ItemProvider>().addItem(
+              item(
+                title: "هدف: ${widget.goal.title}",
+                flag: false,
+                price: amount,
+                dateTime: DateTime.now(),
+                isGoal: true,
+                goalIndex: widget.index,
+              ),
+            );
+      }
+    } else {
+      if (widget.goal.currentAmount - amount < 0) {
+        showSimpleNotification(
+          const Text('مينفعش تخصم اكتر من المبلغ اللي في الهدف',
+              textAlign: TextAlign.center),
+          background: Colors.red,
+        );
+        return;
+      }
+      WalletBlock.updateWalletBalance(context, currentBalance + amount);
+      // Send the negative delta amount
+      context.read<GoalProvider>().updateGoalProgress(widget.index, -amount);
+      context.read<ItemProvider>().addItem(
+            item(
+              title: "هدف: ${widget.goal.title}",
+              flag: true,
+              price: amount,
+              dateTime: DateTime.now(),
+              isGoal: true,
+              goalIndex: widget.index,
+            ),
+          );
+    }
+
+    Navigator.pop(context);
   }
 }

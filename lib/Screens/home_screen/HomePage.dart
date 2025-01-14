@@ -16,27 +16,12 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
+class _HomeState extends State<Home> {
   String? _userName;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeIn,
-      ),
-    );
-
-    _controller.forward();
     _loadUserName();
   }
 
@@ -45,12 +30,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     setState(() {
       _userName = userName;
     });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -66,12 +45,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         ),
       ),
       backgroundColor: const Color(0xffefefef),
-      body: FadeTransition(
-        opacity: _fadeAnimation,
+      body: SafeArea(
         child: Column(
           children: [
             WalletBlock(title: GreetingService.getGreeting(_userName ?? '')),
-            const SpentBlock(),
+            const Expanded(
+              child: SpentBlock(),
+            ),
           ],
         ),
       ),

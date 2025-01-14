@@ -54,7 +54,8 @@ class _BalanceDisplayState extends State<BalanceDisplay>
             widget.balance, widget.fontSize));
 
     return Semantics(
-      value: 'Balance: ${widget.balance} pounds',
+      value:
+          'رصيد المحفظة: ${NumberFormatter.formatNumber(widget.balance)} جنيه',
       child: GestureDetector(
         onTap: () {
           HapticFeedback.mediumImpact();
