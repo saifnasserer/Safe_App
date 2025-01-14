@@ -112,7 +112,11 @@ class _ManageState extends State<Manage> {
   void _handleTransaction(bool isIncome) async {
     if (titleController.text.isNotEmpty && amountController.text.isNotEmpty) {
       final amount = getAmount();
+
+      // Check for order-related words if it's an expense
+
       if (amount > 0) {
+        final title = titleController.text.toLowerCase();
         final newItem = item(
           title: titleController.text,
           price: amount,
@@ -127,21 +131,39 @@ class _ManageState extends State<Manage> {
         if (!isIncome) {
           final profileProvider = context.read<ProfileProvider>();
           final currentProfileId = profileProvider.currentProfile?.id;
-          showSimpleNotification(
-            Text(
-              WalletBlock.balanceByProfile[currentProfileId]?.value != null &&
-                      WalletBlock.balanceByProfile[currentProfileId]!.value <
-                          200
-                  ? 'خف صرف شوية بقا المحفظة فضيت'
-                  : 'تم اضافة اللي صرفتة يغالي ',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: Constants.defaultFontFamily,
+          if (title.contains('order') ||
+              title.contains('اوردر') ||
+              title.contains('أوردر')) {
+            showSimpleNotification(
+              const Text(
+                'كفااااية اوردرات',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: Constants.defaultFontFamily,
+                  fontSize: 16,
+                ),
               ),
-            ),
-            background: Colors.red,
-            duration: const Duration(seconds: 1),
-          );
+              background: Colors.red,
+              duration: const Duration(seconds: 2),
+            );
+            return;
+          } else {
+            showSimpleNotification(
+              Text(
+                WalletBlock.balanceByProfile[currentProfileId]?.value != null &&
+                        WalletBlock.balanceByProfile[currentProfileId]!.value <
+                            200
+                    ? 'خف صرف شوية بقا المحفظة فضيت'
+                    : 'تم اضافة اللي صرفتة يغالي ',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: Constants.defaultFontFamily,
+                ),
+              ),
+              background: Colors.red,
+              duration: const Duration(seconds: 2),
+            );
+          }
         } else {
           showSimpleNotification(
             const Text(
