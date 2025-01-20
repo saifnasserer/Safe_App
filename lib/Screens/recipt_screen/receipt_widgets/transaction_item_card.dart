@@ -17,9 +17,8 @@ class TransactionItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isIncome = item.flag;
-    final statusColor = isIncome
-        ? const Color(0xFF10B981)
-        : const Color(0xFFEF4444);
+    final statusColor =
+        isIncome ? const Color(0xFF10B981) : const Color(0xFFEF4444);
 
     return Container(
       margin: EdgeInsets.symmetric(
@@ -28,7 +27,8 @@ class TransactionItemCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(Constants.responsiveRadius(context, 16)),
+        borderRadius:
+            BorderRadius.circular(Constants.responsiveRadius(context, 16)),
         border: Border.all(
           color: const Color(0xFFE2E8F0),
           width: 1,
@@ -38,36 +38,79 @@ class TransactionItemCard extends StatelessWidget {
         padding: EdgeInsets.all(Constants.responsiveSpacing(context, 12)),
         child: Row(
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Constants.responsiveSpacing(context, 8),
-                  ),
-                  child: Text(
-                    NumberFormatter.formatCurrency(item.price),
-                    style: TextStyle(
-                      fontFamily: Constants.defaultFontFamily,
-                      fontSize: Constants.responsiveFontSize(context, 17),
-                      color: statusColor,
-                    ),
-                  ),
-                ),
-                SizedBox(height: Constants.responsiveSpacing(context, 6)),
-                GestureDetector(
-                  onTap: () {
-                    HapticFeedback.heavyImpact();
-                    onDelete(item);
-                  },
-                  child: Icon(
-                    Icons.delete_outline_rounded,
-                    color: statusColor,
-                    size: Constants.responsiveFontSize(context, 20),
-                  ),
-                ),
-              ],
+            IconButton(
+              onPressed: () {
+                HapticFeedback.heavyImpact();
+                showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                          title: Text(
+                            'حذف المعاملة',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: Constants.defaultFontFamily,
+                              fontSize:
+                                  Constants.responsiveFontSize(context, 18),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          // content: Text(
+                          //   'سيتم حذف المعاملة بشكل نهائي',
+                          //   style: TextStyle(
+                          //     fontFamily: Constants.defaultFontFamily,
+                          //     fontSize:
+                          //         Constants.responsiveFontSize(context, 14),
+                          //   ),
+                          //   textAlign: TextAlign.right,
+                          // ),
+                          actionsAlignment: MainAxisAlignment.center,
+                          actions: [
+                            TextButton(
+                              child: const Text(
+                                'الغاء',
+                                textAlign: TextAlign.center,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.red,
+                              ),
+                              onPressed: () {
+                                HapticFeedback.mediumImpact();
+                                onDelete(item);
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                'حذف',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ));
+              },
+              icon: Icon(
+                Icons.highlight_remove_outlined,
+                color: statusColor,
+                size: Constants.responsiveFontSize(context, 20),
+              ),
             ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: Constants.responsiveSpacing(context, 8),
+              ),
+              child: Text(
+                NumberFormatter.formatCurrency(item.price),
+                style: TextStyle(
+                  fontFamily: Constants.defaultFontFamily,
+                  fontSize: Constants.responsiveFontSize(context, 17),
+                  color: statusColor,
+                ),
+              ),
+            ),
+            SizedBox(height: Constants.responsiveSpacing(context, 6)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -79,6 +122,7 @@ class TransactionItemCard extends StatelessWidget {
                       fontSize: Constants.responsiveFontSize(context, 16),
                       color: const Color(0xFF1E293B),
                     ),
+                    textAlign: TextAlign.right,
                   ),
                   SizedBox(height: Constants.responsiveSpacing(context, 4)),
                   Text(

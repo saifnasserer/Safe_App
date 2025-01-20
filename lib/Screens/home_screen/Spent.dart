@@ -194,6 +194,14 @@ class _SpentBlockState extends State<SpentBlock> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateSpentValue();
+    });
+  }
+
+  @override
+  void didUpdateWidget(SpentBlock oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       SpentBlock.initSpent(context);
     });
   }

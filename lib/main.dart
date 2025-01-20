@@ -56,7 +56,7 @@ void main() {
           ),
         ],
         child: const AppInitializer(
-          child: PlanetApp(),
+          child: SafeApp(),
         ),
       ),
     );
@@ -66,14 +66,14 @@ void main() {
   });
 }
 
-class PlanetApp extends StatefulWidget {
-  const PlanetApp({super.key});
+class SafeApp extends StatefulWidget {
+  const SafeApp({super.key});
 
   @override
-  State<PlanetApp> createState() => _PlanetAppState();
+  State<SafeApp> createState() => _SafeAppState();
 }
 
-class _PlanetAppState extends State<PlanetApp> {
+class _SafeAppState extends State<SafeApp> {
   bool _isFirstLaunch = false;
   bool _isLoading = true;
 
@@ -112,7 +112,7 @@ class _PlanetAppState extends State<PlanetApp> {
 
         return OverlaySupport.global(
           child: MaterialApp(
-            title: 'Planet',
+            title: 'Safe',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               fontFamily: Constants.defaultFontFamily,

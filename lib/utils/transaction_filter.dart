@@ -1,8 +1,4 @@
-enum TransactionType {
-  all,
-  expenses,
-  income
-}
+enum TransactionType { all, expenses, income }
 
 class TransactionFilterHelper {
   static String getFilterName(TransactionType type) {
@@ -19,8 +15,7 @@ class TransactionFilterHelper {
   static double calculateTotal(List<dynamic> items, TransactionType filter) {
     double total = 0;
     for (var item in items) {
-      if (filter == TransactionType.all ||
-          (filter == TransactionType.expenses && !item.flag) ||
+      if ((filter == TransactionType.expenses && !item.flag) ||
           (filter == TransactionType.income && item.flag)) {
         total += item.price;
       }

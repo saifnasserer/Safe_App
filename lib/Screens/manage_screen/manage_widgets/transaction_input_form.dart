@@ -60,26 +60,6 @@ class TransactionInputForm extends StatelessWidget {
                   ),
                 ),
               ),
-              child: TextField(
-                textAlign: TextAlign.center,
-                controller: titleController,
-                style: TextStyle(
-                  fontSize: Constants.responsiveFontSize(context, 30),
-                  fontFamily: Constants.secondaryFontFamily,
-                ),
-                decoration: const InputDecoration(
-                  hintText: 'وصف المعاملة',
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                    fontFamily: Constants.secondaryFontFamily,
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -140,6 +120,26 @@ class TransactionInputForm extends StatelessWidget {
               CalculatorKeypad(
                 onButtonPressed: onCalculatorButtonPressed,
               ),
+            Container(
+              padding: EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
+              child: TextField(
+                textAlign: TextAlign.center,
+                controller: titleController,
+                style: TextStyle(
+                  fontSize: Constants.responsiveFontSize(context, 30),
+                  fontFamily: Constants.secondaryFontFamily,
+                ),
+                decoration: const InputDecoration(
+                  hintText: 'وصف المعاملة',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                    fontFamily: Constants.secondaryFontFamily,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+            ),
           ],
         ),
       ),

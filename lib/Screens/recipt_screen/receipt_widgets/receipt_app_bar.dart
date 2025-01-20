@@ -41,7 +41,8 @@ class ReceiptAppBar extends StatelessWidget implements PreferredSizeWidget {
           child: Container(
             decoration: BoxDecoration(
               color: Constants.getPrimaryColor(context).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(Constants.responsiveRadius(context, 16)),
+              borderRadius: BorderRadius.circular(
+                  Constants.responsiveRadius(context, 16)),
             ),
             child: TextButton.icon(
               onPressed: onFilterTap,

@@ -48,20 +48,22 @@ class _ManageState extends State<Manage> {
 
   void _toggleCalculatorMode() {
     setState(() {
-      _isCalculatorMode = !_isCalculatorMode;
-      if (_isCalculatorMode) {
-        amountController.clear();
+      if (!_isCalculatorMode) {
+        // Switching TO calculator mode
         _amountFocusNode.unfocus();
       } else {
+        // Switching FROM calculator mode
         try {
           final calculatedValue = getAmount();
-          amountController.text =
-              NumberFormatter.formatCalculatorNumber(calculatedValue);
+          if (calculatedValue != 0.0) {
+            amountController.text = NumberFormatter.formatCalculatorNumber(calculatedValue);
+          }
           _amountFocusNode.requestFocus();
         } catch (e) {
-          amountController.clear();
+          // Keep the existing value even if there's an error
         }
       }
+      _isCalculatorMode = !_isCalculatorMode;
     });
   }
 

@@ -13,11 +13,13 @@ class DateFilterHelper {
 
       case DateFilter.lastWeek:
         final lastWeek = now.subtract(const Duration(days: 7));
-        return itemDate.isAfter(lastWeek) && itemDate.isBefore(now);
+        final startOfToday = DateTime(now.year, now.month, now.day);
+        return itemDate.isAfter(lastWeek) && itemDate.isBefore(startOfToday);
 
       case DateFilter.lastMonth:
         final lastMonth = DateTime(now.year, now.month - 1, now.day);
-        return itemDate.isAfter(lastMonth) && itemDate.isBefore(now);
+        final startOfToday = DateTime(now.year, now.month, now.day);
+        return itemDate.isAfter(lastMonth) && itemDate.isBefore(startOfToday);
 
       case DateFilter.custom:
         if (customDate == null) return false;

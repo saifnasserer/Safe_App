@@ -45,7 +45,27 @@ class GoalsListView extends StatelessWidget {
                 color: goal.color,
                 onDismissed: () {
                   HapticFeedback.heavyImpact();
-                  onGoalRemoved(index);
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('متأكد من حذف الهدف ؟'),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('لا')),
+                        TextButton(
+                          onPressed: () {
+                            onGoalRemoved(index);
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            'نعم',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
                 },
               ),
             ),

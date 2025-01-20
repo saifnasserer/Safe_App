@@ -46,7 +46,7 @@ void main() {
                   GoalProvider(profileProvider),
             ),
           ],
-          child: const PlanetApp(),
+          child: const SafeApp(),
         ),
       );
 
@@ -80,7 +80,7 @@ void main() {
                   GoalProvider(profileProvider),
             ),
           ],
-          child: const PlanetApp(),
+          child: const SafeApp(),
         ),
       );
 
