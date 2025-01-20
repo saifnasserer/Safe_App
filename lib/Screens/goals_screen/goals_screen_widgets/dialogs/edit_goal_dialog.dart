@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:safe/Screens/home_screen/Wallet.dart';
 import 'package:safe/providers/Goal_Provider.dart';
 import 'package:safe/providers/Item_Provider.dart';
-import 'package:safe/utils/transaction_filter.dart';
 import 'package:safe/widgets/Goal.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/providers/profile_provider.dart';
