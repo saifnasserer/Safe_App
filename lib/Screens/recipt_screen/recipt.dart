@@ -23,7 +23,6 @@ class Reciept extends StatefulWidget {
 
 class _RecieptState extends State<Reciept> {
   TransactionType _currentFilter = TransactionType.all;
-  final _appTutorial = AppTutorial();
 
   void _showFilterDialog() {
     showDialog(
@@ -48,7 +47,9 @@ class _RecieptState extends State<Reciept> {
         // If flag is false, it was removing from wallet (adding to goal)
         // So we need to do the opposite when deleting
         final amount = item.flag ? item.price : -item.price;
-        context.read<GoalProvider>().updateGoalProgress(item.goalIndex!, amount);
+        context
+            .read<GoalProvider>()
+            .updateGoalProgress(item.goalIndex!, amount);
       }
 
       Provider.of<ItemProvider>(context, listen: false).removeItem(itemIndex);
@@ -64,17 +65,6 @@ class _RecieptState extends State<Reciept> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkFirstUse();
-    });
-  }
-
-  Future<void> _checkFirstUse() async {
-    if (await _appTutorial.isFirstUse()) {
-      if (mounted) {
-        _appTutorial.showTutorial(context);
-      }
-    }
   }
 
   @override
@@ -90,7 +80,6 @@ class _RecieptState extends State<Reciept> {
       body: items.isEmpty
           ? EmptyStateWidget(
               onAddTransaction: () => Navigator.pushNamed(context, Manage.id),
-              tutorialKey: _appTutorial.goalsKey,
             )
           : Column(
               children: [
@@ -98,6 +87,7 @@ class _RecieptState extends State<Reciept> {
                   TransactionFilterHeader(
                     items: items,
                     filterType: _currentFilter,
+                    onFilterTap: _showFilterDialog,
                   ),
                 Expanded(
                   child: TransactionListView(
@@ -111,7 +101,6 @@ class _RecieptState extends State<Reciept> {
       floatingActionButton: items.isEmpty
           ? null
           : FloatingActionButton(
-              key: _appTutorial.addTransactionKey,
               onPressed: () {
                 Navigator.pushNamed(context, Manage.id);
               },

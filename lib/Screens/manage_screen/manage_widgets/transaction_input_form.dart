@@ -10,6 +10,8 @@ class TransactionInputForm extends StatelessWidget {
   final VoidCallback onToggleCalculator;
   final VoidCallback onDateSelect;
   final Function(String) onCalculatorButtonPressed;
+  final GlobalKey? titleKey;
+  final GlobalKey? amountKey;
 
   const TransactionInputForm({
     super.key,
@@ -20,6 +22,8 @@ class TransactionInputForm extends StatelessWidget {
     required this.onToggleCalculator,
     required this.onDateSelect,
     required this.onCalculatorButtonPressed,
+    this.titleKey,
+    this.amountKey,
   });
 
   @override
@@ -49,6 +53,8 @@ class TransactionInputForm extends StatelessWidget {
         ),
         padding: EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
@@ -64,6 +70,7 @@ class TransactionInputForm extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   TextField(
+                    key: amountKey,
                     controller: amountController,
                     focusNode: amountFocusNode,
                     keyboardType: isCalculatorMode
@@ -120,24 +127,23 @@ class TransactionInputForm extends StatelessWidget {
               CalculatorKeypad(
                 onButtonPressed: onCalculatorButtonPressed,
               ),
-            Container(
-              padding: EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
-              child: TextField(
-                textAlign: TextAlign.center,
-                controller: titleController,
-                style: TextStyle(
-                  fontSize: Constants.responsiveFontSize(context, 30),
+            const SizedBox(height: 16),
+            TextField(
+              key: titleKey,
+              textAlign: TextAlign.center,
+              controller: titleController,
+              style: TextStyle(
+                fontSize: Constants.responsiveFontSize(context, 30),
+                fontFamily: Constants.secondaryFontFamily,
+              ),
+              decoration: const InputDecoration(
+                hintText: 'وصف المعاملة',
+                hintStyle: TextStyle(
+                  color: Colors.grey,
                   fontFamily: Constants.secondaryFontFamily,
                 ),
-                decoration: const InputDecoration(
-                  hintText: 'وصف المعاملة',
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                    fontFamily: Constants.secondaryFontFamily,
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
-                ),
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
               ),
             ),
           ],

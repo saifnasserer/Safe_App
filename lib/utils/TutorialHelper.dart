@@ -1,31 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:safe/Constants.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:safe/utils/FirstUse.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class TutorialHelper {
-  static const String _keyHomePageSeen = 'homepage_tutorial_seen';
-  static const String _keyManageSeen = 'manage_tutorial_seen';
-  static const String _keyGoalsSeen = 'goals_tutorial_seen';
-  static const String _keyReceiptSeen = 'receipt_tutorial_seen';
-
-  static Future<bool> _hasSeenTutorial(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(key) ?? false;
-  }
-
-  static Future<void> _markTutorialAsSeen(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(key, true);
-  }
-
-  static Future<TutorialCoachMark> createHomeTutorial({
+  static Future<TutorialCoachMark?> createHomeTutorial({
     required BuildContext context,
     required List<GlobalKey> keys,
   }) async {
-    if (await _hasSeenTutorial(_keyHomePageSeen)) {
-      return TutorialCoachMark(targets: []);
-    }
+    final appTutorial = AppTutorial();
+    final isFirstUse = await appTutorial.isHomeFirstUse();
+    if (!isFirstUse) return null;
 
     List<TargetFocus> targets = [
       TargetFocus(
@@ -38,7 +23,7 @@ class TutorialHelper {
           TargetContent(
             align: ContentAlign.custom,
             customPosition: CustomTargetContentPosition(
-              bottom: 20,
+              bottom: 100,
               left: 20,
               right: 20,
             ),
@@ -50,13 +35,14 @@ class TutorialHelper {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Text(
-                      "هنا هتلاقي محفظتك وفلوسك",
+                      "هنا هيبقا موجود كل الفلوس اللي موجوده ف محفظتك او الفلوس اللي بتضيفها ك دخل",
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: Constants.secondaryFontFamily,
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 10),
                     ElevatedButton(
@@ -80,150 +66,50 @@ class TutorialHelper {
           ),
         ],
       ),
-      if (keys.length > 1)
-        TargetFocus(
-          identify: "goals_key",
-          keyTarget: keys[1],
-          alignSkip: Alignment.bottomRight,
-          shape: ShapeLightFocus.RRect,
-          radius: 10,
-          contents: [
-            TargetContent(
-              align: ContentAlign.custom,
-              customPosition: CustomTargetContentPosition(
-                bottom: 20,
-                left: 20,
-                right: 20,
-              ),
-              builder: (context, controller) {
-                return Container(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "هنا تقدر تشوف وتضيف أهدافك",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: Constants.secondaryFontFamily,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: () => controller.next(),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Constants.getPrimaryColor(context),
-                        ),
-                        child: const Text(
-                          'فهمت',
-                          style: TextStyle(
-                            fontFamily: Constants.secondaryFontFamily,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-    ];
-
-    await _markTutorialAsSeen(_keyHomePageSeen);
-    return TutorialCoachMark(
-      targets: targets,
-      colorShadow: Constants.getPrimaryColor(context),
-      textSkip: "تخطي",
-      textStyleSkip: const TextStyle(
-        color: Colors.white,
-        fontFamily: Constants.secondaryFontFamily,
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-      ),
-      paddingFocus: 10,
-      opacityShadow: 0.8,
-      hideSkip: false,
-    );
-  }
-
-  static Future<TutorialCoachMark> createManageTutorial({
-    required BuildContext context,
-    required List<GlobalKey> keys,
-  }) async {
-    if (await _hasSeenTutorial(_keyManageSeen)) {
-      return TutorialCoachMark(targets: []);
-    }
-
-    List<TargetFocus> targets = [
       TargetFocus(
-        identify: "title_input",
-        keyTarget: keys[0],
-        alignSkip: Alignment.bottomRight,
-        shape: ShapeLightFocus.RRect,
-        radius: 10,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            customPosition: CustomTargetContentPosition(
-              bottom: 20,
-              left: 0,
-              right: 0,
-            ),
-            builder: (context, controller) {
-              return Container(
-                padding: const EdgeInsets.all(15),
-                child: const Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "اكتب هنا وصف المصروف أو الدخل",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: Constants.defaultFontFamily,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      TargetFocus(
-        identify: "amount_input",
+        identify: "spent_key",
         keyTarget: keys[1],
         alignSkip: Alignment.bottomRight,
         shape: ShapeLightFocus.RRect,
         radius: 10,
         contents: [
           TargetContent(
-            align: ContentAlign.bottom,
+            align: ContentAlign.custom,
             customPosition: CustomTargetContentPosition(
-              bottom: 20,
-              left: 0,
-              right: 0,
+              top: 100,
+              left: 20,
+              right: 20,
             ),
             builder: (context, controller) {
               return Container(
                 padding: const EdgeInsets.all(15),
-                child: const Column(
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      "اكتب هنا المبلغ",
+                    const Text(
+                      "هنا هتلاقي كل مصاريفك اللي صرفتها سجلتها علي مدار اليوم وجرب دوس علي الزرار اللي اسمه النهارده ، هسيبك تكتشف بيعمل ايه",
                       style: TextStyle(
                         color: Colors.white,
-                        fontFamily: Constants.defaultFontFamily,
+                        fontFamily: Constants.secondaryFontFamily,
                         fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () => controller.next(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Constants.getPrimaryColor(context),
+                      ),
+                      child: const Text(
+                        'تم',
+                        style: TextStyle(
+                          fontFamily: Constants.secondaryFontFamily,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -235,33 +121,91 @@ class TutorialHelper {
       ),
     ];
 
-    await _markTutorialAsSeen(_keyManageSeen);
     return TutorialCoachMark(
       targets: targets,
       colorShadow: Constants.getPrimaryColor(context),
       textSkip: "تخطي",
-      textStyleSkip: const TextStyle(
-        color: Colors.white,
-        fontFamily: Constants.defaultFontFamily,
-        fontSize: 20,
-      ),
       paddingFocus: 10,
       opacityShadow: 0.8,
+      onFinish: () {
+        final appTutorial = AppTutorial();
+        appTutorial.markHomeFirstUseComplete();
+      },
+      onClickTarget: (target) {
+        print('Clicked target: ${target.identify}');
+      },
+      onSkip: () {
+        final appTutorial = AppTutorial();
+        appTutorial.markHomeFirstUseComplete();
+        return true;
+      },
     );
   }
 
-  static Future<TutorialCoachMark> createGoalsTutorial({
+  static Future<TutorialCoachMark?> createManageTutorial({
     required BuildContext context,
     required List<GlobalKey> keys,
   }) async {
-    if (await _hasSeenTutorial(_keyGoalsSeen)) {
-      return TutorialCoachMark(targets: []);
-    }
+    final appTutorial = AppTutorial();
+    final isFirstUse = await appTutorial.isManageFirstUse();
+    if (!isFirstUse) return null;
 
     List<TargetFocus> targets = [
+      TargetFocus(
+        identify: "transaction_section",
+        keyTarget: keys[0], // _transactionSectionKey
+        alignSkip: Alignment.bottomRight,
+        shape: ShapeLightFocus.RRect,
+        radius: 10,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            customPosition: CustomTargetContentPosition(
+              bottom: 20,
+              left: 20,
+              right: 20,
+            ),
+            builder: (context, controller) {
+              return Container(
+                padding: const EdgeInsets.all(15),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "بعد م تضيف المبلغ والوصف لو الحاجة دي كانت دخل زي مرتب علي سبيل المثال اضغط علي دخل ، \n \n اما لو حاجة صرفتها او فلوس خرجت من محفظتك ف وقتها صرف",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: Constants.defaultFontFamily,
+                        fontSize: 20,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () => controller.next(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Constants.getPrimaryColor(context),
+                      ),
+                      child: const Text(
+                        'التالي',
+                        style: TextStyle(
+                          fontFamily: Constants.secondaryFontFamily,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       TargetFocus(
         identify: "add_goal",
-        keyTarget: keys[0],
+        keyTarget: keys[1], // _addGoalKey
         alignSkip: Alignment.bottomRight,
         shape: ShapeLightFocus.RRect,
         radius: 10,
@@ -269,23 +213,39 @@ class TutorialHelper {
           TargetContent(
             align: ContentAlign.bottom,
             customPosition: CustomTargetContentPosition(
-              bottom: 20,
-              left: 0,
-              right: 0,
+              top: -120,
+              left: 20,
+              right: 20,
             ),
             builder: (context, controller) {
               return Container(
                 padding: const EdgeInsets.all(15),
-                child: const Column(
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      "اضغط هنا لإضافة هدف جديد",
+                    const Text(
+                      "هنا هيظهر اول هدف في قائمة اهدافك عشان يفضل قدامك دايماً وتقدر تشوفة كل م تيجي تصرف ف ضميرك يأنبك",
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: Constants.defaultFontFamily,
                         fontSize: 20,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () => controller.skip(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.grey,
+                      ),
+                      child: const Text(
+                        'تم',
+                        style: TextStyle(
+                          fontFamily: Constants.secondaryFontFamily,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -297,80 +257,24 @@ class TutorialHelper {
       ),
     ];
 
-    await _markTutorialAsSeen(_keyGoalsSeen);
     return TutorialCoachMark(
       targets: targets,
       colorShadow: Constants.getPrimaryColor(context),
       textSkip: "تخطي",
-      textStyleSkip: const TextStyle(
-        color: Colors.white,
-        fontFamily: Constants.defaultFontFamily,
-        fontSize: 20,
-      ),
       paddingFocus: 10,
       opacityShadow: 0.8,
-    );
-  }
-
-  static Future<TutorialCoachMark> createReceiptTutorial({
-    required BuildContext context,
-    required List<GlobalKey> keys,
-  }) async {
-    if (await _hasSeenTutorial(_keyReceiptSeen)) {
-      return TutorialCoachMark(targets: []);
-    }
-
-    List<TargetFocus> targets = [
-      TargetFocus(
-        identify: "empty_state",
-        keyTarget: keys[0],
-        alignSkip: Alignment.bottomRight,
-        shape: ShapeLightFocus.RRect,
-        radius: 10,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            customPosition: CustomTargetContentPosition(
-              bottom: 20,
-              left: 0,
-              right: 0,
-            ),
-            builder: (context, controller) {
-              return Container(
-                padding: const EdgeInsets.all(15),
-                child: const Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "اضغط على زر + لإضافة معاملة جديدة",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: Constants.defaultFontFamily,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    ];
-
-    await _markTutorialAsSeen(_keyReceiptSeen);
-    return TutorialCoachMark(
-      targets: targets,
-      colorShadow: Constants.getPrimaryColor(context),
-      textSkip: "تخطي",
-      textStyleSkip: const TextStyle(
-        color: Colors.white,
-        fontFamily: Constants.defaultFontFamily,
-        fontSize: 20,
-      ),
-      paddingFocus: 10,
-      opacityShadow: 0.8,
+      onFinish: () {
+        final appTutorial = AppTutorial();
+        appTutorial.markManageFirstUseComplete();
+      },
+      onClickTarget: (target) {
+        print('Clicked target: ${target.identify}');
+      },
+      onSkip: () {
+        final appTutorial = AppTutorial();
+        appTutorial.markManageFirstUseComplete();
+        return true;
+      },
     );
   }
 }

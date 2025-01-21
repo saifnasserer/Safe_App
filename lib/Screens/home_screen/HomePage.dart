@@ -6,6 +6,8 @@ import 'package:safe/Screens/home_screen/Wallet.dart';
 import 'package:safe/utils/greeting_service.dart';
 import 'package:safe/utils/storage_service.dart';
 import 'package:safe/Screens/home_screen/profile_selector.dart';
+import 'package:safe/utils/TutorialHelper.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class Home extends StatefulWidget {
   static const String id = 'HomePage';
@@ -18,11 +20,27 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String? _userName;
+  final GlobalKey _walletKey = GlobalKey();
+  final GlobalKey _spentKey = GlobalKey();
+  late TutorialCoachMark? tutorialCoachMark;
 
   @override
   void initState() {
     super.initState();
     _loadUserName();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initTutorial();
+    });
+  }
+
+  Future<void> _initTutorial() async {
+    tutorialCoachMark = await TutorialHelper.createHomeTutorial(
+      context: context,
+      keys: [_walletKey, _spentKey],
+    );
+    if (tutorialCoachMark != null) {
+      tutorialCoachMark!.show(context: context);
+    }
   }
 
   Future<void> _loadUserName() async {
@@ -48,9 +66,12 @@ class _HomeState extends State<Home> {
       body: SafeArea(
         child: Column(
           children: [
-            WalletBlock(title: GreetingService.getGreeting(_userName ?? '')),
-            const Expanded(
-              child: SpentBlock(),
+            WalletBlock(
+              key: _walletKey,
+              title: GreetingService.getGreeting(_userName ?? ''),
+            ),
+            Expanded(
+              child: SpentBlock(key: _spentKey),
             ),
           ],
         ),

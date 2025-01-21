@@ -16,6 +16,8 @@ import 'package:safe/providers/Item_Provider.dart';
 import 'package:safe/providers/profile_provider.dart';
 import 'package:safe/utils/number_formatter.dart';
 import 'package:safe/widgets/item.dart';
+import 'package:safe/utils/TutorialHelper.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class Manage extends StatefulWidget {
   const Manage({super.key});
@@ -29,6 +31,11 @@ class _ManageState extends State<Manage> {
   final TextEditingController amountController = TextEditingController();
   final AudioPlayer audioPlayer = AudioPlayer();
   final FocusNode _amountFocusNode = FocusNode();
+  final GlobalKey _titleKey = GlobalKey();
+  final GlobalKey _amountKey = GlobalKey();
+  final GlobalKey _addGoalKey = GlobalKey();
+  final GlobalKey _transactionSectionKey = GlobalKey();
+  late TutorialCoachMark? tutorialCoachMark;
   bool _isCalculatorMode = false;
   DateTime _selectedDate = DateTime.now();
 
@@ -205,6 +212,24 @@ class _ManageState extends State<Manage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initTutorial();
+    });
+  }
+
+  Future<void> _initTutorial() async {
+    tutorialCoachMark = await TutorialHelper.createManageTutorial(
+      context: context,
+      keys: [_transactionSectionKey, _addGoalKey],
+    );
+    if (tutorialCoachMark != null) {
+      tutorialCoachMark!.show(context: context);
+    }
+  }
+
+  @override
   void dispose() {
     titleController.dispose();
     amountController.dispose();
@@ -232,9 +257,10 @@ class _ManageState extends State<Manage> {
                 builder: (context, goalProvider, _) {
                   final goals = goalProvider.goals;
                   if (goals.isEmpty) {
-                    return const AddGoalButton();
+                    return AddGoalButton(key: _addGoalKey);
                   }
                   return GoalsListView(
+                    key: _addGoalKey,
                     goals: goals,
                     onGoalRemoved: (index) {
                       goalProvider.removeGoal(index);
@@ -247,20 +273,25 @@ class _ManageState extends State<Manage> {
               ),
             ),
             SliverToBoxAdapter(
-              child: TransactionInputForm(
-                titleController: titleController,
-                amountController: amountController,
-                amountFocusNode: _amountFocusNode,
-                isCalculatorMode: _isCalculatorMode,
-                onToggleCalculator: _toggleCalculatorMode,
-                onDateSelect: () => _selectDate(context),
-                onCalculatorButtonPressed: _handleCalculatorButton,
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: TransactionButtons(
-                onExpense: () => _handleTransaction(false),
-                onIncome: () => _handleTransaction(true),
+              child: Column(
+                key: _transactionSectionKey,
+                children: [
+                  TransactionInputForm(
+                    titleController: titleController,
+                    amountController: amountController,
+                    amountFocusNode: _amountFocusNode,
+                    isCalculatorMode: _isCalculatorMode,
+                    onToggleCalculator: _toggleCalculatorMode,
+                    onDateSelect: () => _selectDate(context),
+                    onCalculatorButtonPressed: _handleCalculatorButton,
+                    titleKey: _titleKey,
+                    amountKey: _amountKey,
+                  ),
+                  TransactionButtons(
+                    onExpense: () => _handleTransaction(false),
+                    onIncome: () => _handleTransaction(true),
+                  ),
+                ],
               ),
             ),
           ],

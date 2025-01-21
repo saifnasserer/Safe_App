@@ -5,6 +5,9 @@ import 'package:safe/Constants.dart';
 
 class AppTutorial {
   static const String _firstUseKey = 'first_use_completed';
+  static const String _homeFirstUseKey = 'home_first_use_completed';
+  static const String _manageFirstUseKey = 'manage_first_use_completed';
+  static const String _goalsFirstUseKey = 'goals_first_use_completed';
   late TutorialCoachMark tutorialCoachMark;
   List<TargetFocus> targets = [];
 
@@ -20,9 +23,42 @@ class AppTutorial {
     return isCompleted == null || !isCompleted;
   }
 
+  Future<bool> isHomeFirstUse() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isCompleted = prefs.getBool(_homeFirstUseKey);
+    return isCompleted == null || !isCompleted;
+  }
+
+  Future<bool> isManageFirstUse() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isCompleted = prefs.getBool(_manageFirstUseKey);
+    return isCompleted == null || !isCompleted;
+  }
+
+  Future<bool> isGoalsFirstUse() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isCompleted = prefs.getBool(_goalsFirstUseKey);
+    return isCompleted == null || !isCompleted;
+  }
+
   Future<void> markFirstUseComplete() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_firstUseKey, true);
+  }
+
+  Future<void> markHomeFirstUseComplete() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_homeFirstUseKey, true);
+  }
+
+  Future<void> markManageFirstUseComplete() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_manageFirstUseKey, true);
+  }
+
+  Future<void> markGoalsFirstUseComplete() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_goalsFirstUseKey, true);
   }
 
   void showTutorial(BuildContext context) {
