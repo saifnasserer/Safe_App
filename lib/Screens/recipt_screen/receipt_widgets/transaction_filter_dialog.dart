@@ -16,11 +16,12 @@ class TransactionFilterDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text(
+      title: Text(
         'اختر نوع المعاملات',
         style: TextStyle(
           fontFamily: Constants.defaultFontFamily,
-          color: Color(0xff4558c8),
+          fontSize: Constants.responsiveFontSize(context, 18),
+          color: const Color(0xff4558c8),
         ),
         textAlign: TextAlign.center,
       ),
@@ -30,8 +31,9 @@ class TransactionFilterDialog extends StatelessWidget {
             .map((type) => ListTile(
                   title: Text(
                     TransactionFilterHelper.getFilterName(type),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: Constants.secondaryFontFamily,
+                      fontSize: Constants.responsiveFontSize(context, 16),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -41,6 +43,10 @@ class TransactionFilterDialog extends StatelessWidget {
                   },
                 ))
             .toList(),
+      ),
+      contentPadding: EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Constants.responsiveRadius(context, 12)),
       ),
     );
   }

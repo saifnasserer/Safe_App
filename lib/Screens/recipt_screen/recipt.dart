@@ -4,7 +4,6 @@ import 'package:safe/Constants.dart';
 import 'package:safe/Screens/manage_screen/manage.dart';
 import 'package:safe/providers/Item_Provider.dart';
 import 'package:safe/providers/Goal_Provider.dart';
-import 'package:safe/utils/FirstUse.dart';
 import 'package:safe/utils/transaction_filter.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:safe/Screens/recipt_screen/receipt_widgets/empty_state_widget.dart';

@@ -14,8 +14,6 @@ import 'package:safe/providers/profile_provider.dart';
 import 'package:safe/utils/storage_service.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/widgets/app_initializer.dart';
-import 'package:safe/utils/version_control.dart';
-import 'package:safe/widgets/update_notes_dialog.dart';
 
 void main() {
   runZonedGuarded(() async {
@@ -155,24 +153,5 @@ class _SafeAppState extends State<SafeApp> {
         );
       },
     );
-  }
-
-  void _checkForUpdates(BuildContext context) async {
-    try {
-      if (await VersionControl.shouldShowUpdateNotes(context)) {
-        final notes = VersionControl.getUpdateNotes();
-        if (notes != null && mounted) {
-          showDialog(
-            context: context,
-            builder: (context) => UpdateNotesDialog(
-              version: VersionControl.currentVersion,
-              notes: notes,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      debugPrint('Error checking for updates: $e');
-    }
   }
 }

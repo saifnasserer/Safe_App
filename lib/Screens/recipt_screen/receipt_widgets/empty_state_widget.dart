@@ -45,39 +45,48 @@ class EmptyStateWidget extends StatelessWidget {
             'اضغط على الزار ده عشان تضيف معاملة جديدة',
             style: TextStyle(
               color: Colors.grey,
-              fontSize: Constants.responsiveFontSize(
-                  context, Constants.defaultFontSize),
+              fontSize: Constants.responsiveFontSize(context, 16),
               fontFamily: Constants.secondaryFontFamily,
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: Constants.responsiveSpacing(context, 32)),
+          SizedBox(height: Constants.responsiveSpacing(context, 24)),
           Container(
             key: tutorialKey,
             margin: EdgeInsets.symmetric(
               horizontal: Constants.responsiveSpacing(context, 16),
             ),
             child: ElevatedButton(
+              onPressed: onAddTransaction,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Constants.getPrimaryColor(context),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      Constants.responsiveRadius(context, 16)),
-                ),
                 padding: EdgeInsets.symmetric(
                   horizontal: Constants.responsiveSpacing(context, 24),
                   vertical: Constants.responsiveSpacing(context, 12),
                 ),
-              ),
-              onPressed: onAddTransaction,
-              child: Text(
-                'اضافة معاملة',
-                style: TextStyle(
-                  fontFamily: Constants.secondaryFontFamily,
-                  fontSize: Constants.responsiveFontSize(context, 16),
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(Constants.responsiveRadius(context, 12)),
                 ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.add,
+                    color: Colors.white,
+                    size: Constants.responsiveFontSize(context, 24),
+                  ),
+                  SizedBox(width: Constants.responsiveSpacing(context, 8)),
+                  Text(
+                    'اضافة معاملة',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: Constants.responsiveFontSize(context, 16),
+                      fontFamily: Constants.secondaryFontFamily,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

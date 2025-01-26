@@ -8,7 +8,7 @@ class Constants {
   static const String secondaryFontFamily = 'Cairo';
   static const Color scaffoldBackgroundColor = Color(0xFFefefef);
   static const Color defaultPrimaryColor = Color(0xFF4558C8);
-  static const double defaultFontSize = 16.0;
+  // static const double defaultFontSize = 16.0;
 
   // Screen size breakpoints
   static const double mobileBreakpoint = 600;

@@ -13,8 +13,6 @@ class AppTutorial {
 
   // Global keys for widgets we want to highlight
   final GlobalKey walletKey = GlobalKey();
-  final GlobalKey addTransactionKey = GlobalKey();
-  final GlobalKey goalsKey = GlobalKey();
   final GlobalKey spentKey = GlobalKey();
 
   Future<bool> isFirstUse() async {
@@ -67,7 +65,7 @@ class AppTutorial {
       targets: targets,
       colorShadow: Constants.getPrimaryColor(context),
       textSkip: "تخطي",
-      paddingFocus: 10,
+      paddingFocus: Constants.responsiveSpacing(context, 10),
       opacityShadow: 0.8,
       onFinish: () {
         markFirstUseComplete();
@@ -94,8 +92,8 @@ class AppTutorial {
             align: ContentAlign.bottom,
             builder: (context, controller) {
               return Container(
-                padding: const EdgeInsets.all(16),
-                child: const Column(
+                padding: EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -104,103 +102,17 @@ class AppTutorial {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: Constants.responsiveFontSize(context, 20),
                         fontFamily: Constants.defaultFontFamily,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: Constants.responsiveSpacing(context, 8)),
                     Text(
                       "هنا يمكنك رؤية رصيدك الحالي",
                       textAlign: TextAlign.end,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
-                        fontFamily: Constants.defaultFontFamily,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-
-    targets.add(
-      TargetFocus(
-        identify: "add_transaction_key",
-        keyTarget: addTransactionKey,
-        alignSkip: Alignment.topRight,
-        contents: [
-          TargetContent(
-            align: ContentAlign.top,
-            builder: (context, controller) {
-              return Container(
-                padding: const EdgeInsets.all(16),
-                child: const Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      "إضافة معاملة",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontFamily: Constants.defaultFontFamily,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      "اضغط هنا لإضافة معاملة جديدة (مصروف أو دخل)",
-                      textAlign: TextAlign.end,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontFamily: Constants.defaultFontFamily,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-
-    targets.add(
-      TargetFocus(
-        identify: "goals_key",
-        keyTarget: goalsKey,
-        alignSkip: Alignment.topRight,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            builder: (context, controller) {
-              return Container(
-                padding: const EdgeInsets.all(16),
-                child: const Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      "الأهداف",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontFamily: Constants.defaultFontFamily,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      "يمكنك إضافة أهداف مالية وتتبع تقدمك نحو تحقيقها",
-                      textAlign: TextAlign.end,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
+                        fontSize: Constants.responsiveFontSize(context, 16),
                         fontFamily: Constants.defaultFontFamily,
                       ),
                     ),
@@ -223,8 +135,8 @@ class AppTutorial {
             align: ContentAlign.top,
             builder: (context, controller) {
               return Container(
-                padding: const EdgeInsets.all(16),
-                child: const Column(
+                padding: EdgeInsets.all(Constants.responsiveSpacing(context, 16)),
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -233,17 +145,17 @@ class AppTutorial {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: Constants.responsiveFontSize(context, 20),
                         fontFamily: Constants.defaultFontFamily,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: Constants.responsiveSpacing(context, 8)),
                     Text(
                       "هنا يمكنك رؤية إجمالي مصروفاتك",
                       textAlign: TextAlign.end,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: Constants.responsiveFontSize(context, 16),
                         fontFamily: Constants.defaultFontFamily,
                       ),
                     ),

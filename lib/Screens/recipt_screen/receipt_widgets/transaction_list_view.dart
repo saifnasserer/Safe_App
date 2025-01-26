@@ -56,7 +56,6 @@ class TransactionListView extends StatelessWidget {
       padding: EdgeInsets.symmetric(
         vertical: Constants.responsiveSpacing(context, 16),
       ),
-      // reverse: true,
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
       itemCount: sortedDates.length,

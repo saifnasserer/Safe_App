@@ -9,7 +9,6 @@ import 'package:safe/Screens/goals_screen/goals_screen_widgets/dialogs/add_goal_
 import 'package:safe/Screens/goals_screen/goals_screen_widgets/dialogs/edit_goal_dialog.dart';
 import 'package:safe/Screens/goals_screen/goals_screen_widgets/empty_goals_view.dart';
 import 'package:safe/Screens/goals_screen/goals_screen_widgets/goal_item_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class GoalsBlock extends StatefulWidget {
   const GoalsBlock({super.key});
@@ -47,13 +46,15 @@ class _GoalsBlockState extends State<GoalsBlock> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: EdgeInsets.symmetric(
+            vertical: Constants.responsiveSpacing(context, 8),
+          ),
           child: Text(
             message,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               fontFamily: Constants.defaultFontFamily,
-              fontSize: 16,
+              fontSize: Constants.responsiveFontSize(context, 16),
               height: 1.5,
             ),
             textAlign: TextAlign.center,
@@ -63,9 +64,9 @@ class _GoalsBlockState extends State<GoalsBlock> {
         duration: Duration(seconds: duration),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(Constants.responsiveRadius(context, 10)),
         ),
-        margin: const EdgeInsets.all(10),
+        margin: EdgeInsets.all(Constants.responsiveSpacing(context, 10)),
       ),
     );
   }
@@ -114,15 +115,17 @@ class _GoalsBlockState extends State<GoalsBlock> {
                         mainColor: Constants.getPrimaryColor(context),
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: Constants.defaultFontSize,
-                            vertical: Constants.defaultFontSize / 2),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Constants.responsiveSpacing(context, 16),
+                          vertical: Constants.responsiveSpacing(context, 8),
+                        ),
                         itemCount: goals.length,
                         itemBuilder: (context, index) {
                           final goal = goals[index];
                           return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: Constants.defaultFontSize / 2),
+                            padding: EdgeInsets.symmetric(
+                              vertical: Constants.responsiveSpacing(context, 8),
+                            ),
                             child: Center(
                               child: SizedBox(
                                 width: Constants.widthPercent(context, 90),
@@ -152,11 +155,10 @@ class _GoalsBlockState extends State<GoalsBlock> {
                                                   context),
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
-                                                Constants.defaultFontSize *
-                                                    0.625),
+                                                Constants.responsiveRadius(context, 10)),
                                           ),
-                                          margin: const EdgeInsets.all(
-                                              Constants.defaultFontSize),
+                                          margin: EdgeInsets.all(
+                                              Constants.responsiveSpacing(context, 10)),
                                         ),
                                       );
                                     },
@@ -199,7 +201,7 @@ class _GoalsBlockState extends State<GoalsBlock> {
         style: TextStyle(
           color: Constants.getPrimaryColor(context),
           fontFamily: Constants.defaultFontFamily,
-          fontSize: Constants.defaultFontSize * 1.875,
+          fontSize: Constants.responsiveFontSize(context, 24),
           fontWeight: FontWeight.bold,
         ),
       ),
