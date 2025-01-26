@@ -122,6 +122,11 @@ class _SafeAppState extends State<SafeApp> {
               appBarTheme: AppBarTheme(
                 backgroundColor: primaryColor,
                 foregroundColor: Colors.white,
+                systemOverlayStyle: const SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.dark,
+                  statusBarBrightness: Brightness.light,
+                ),
               ),
               floatingActionButtonTheme: FloatingActionButtonThemeData(
                 backgroundColor: primaryColor,
