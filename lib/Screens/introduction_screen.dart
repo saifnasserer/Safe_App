@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/utils/storage_service.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -60,7 +61,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: Colors.red,
-            content: Text('حدث خطأ، ممكن تعمل ريستارت للابلكيشن',
+            content: Text('حصل خطأ، ممكن تعمل ريستارت للابلكيشن',
                 textAlign: TextAlign.center),
             duration: Duration(seconds: 2),
           ),
@@ -78,7 +79,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
           controller: _controller,
           onPageChanged: (index) {
             setState(() {
-              isLastPage = index == 5;
+              isLastPage = index == 4;
             });
           },
           children: [
@@ -242,7 +243,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                       child: const Column(
                         children: [
                           Text(
-                            'قدر تعمل حسابات مختلفة لكل حاجة:',
+                            'تقدر تعمل حسابات مختلفة لكل حاجة',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18,
@@ -323,7 +324,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                       child: const Column(
                         children: [
                           Text(
-                            'اهداف مالية زي:',
+                            'اهداف مالية زي',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18,
@@ -400,6 +401,33 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                       TextFormField(
                         controller: _nameController,
                         textAlign: TextAlign.center,
+                        textDirection: TextDirection.rtl,
+                        inputFormatters: [
+                          TextInputFormatter.withFunction((oldValue, newValue) {
+                            if (newValue.text.isEmpty) return newValue;
+                            
+                            // Maintain cursor position
+                            final cursorPos = newValue.selection.start;
+                            
+                            // Split text into words and capitalize each English word
+                            final words = newValue.text.split(' ');
+                            final capitalizedWords = words.map((word) {
+                              // Only capitalize if it starts with English letters
+                              if (RegExp(r'^[a-zA-Z]').hasMatch(word)) {
+                                return word[0].toUpperCase() + 
+                                       (word.length > 1 ? word.substring(1) : '');
+                              }
+                              return word;
+                            }).join(' ');
+                            
+                            return TextEditingValue(
+                              text: capitalizedWords,
+                              selection: TextSelection.collapsed(
+                                offset: cursorPos,
+                              ),
+                            );
+                          }),
+                        ],
                         decoration: InputDecoration(
                           hintText: 'اكتب اسمك هنا',
                           hintStyle: TextStyle(
@@ -432,50 +460,50 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
             ),
 
             // Let's Start Page
-            Container(
-              color: Colors.white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color:
-                          Constants.getPrimaryColor(context).withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.rocket_launch_rounded,
-                      size: 60,
-                      color: Constants.getPrimaryColor(context),
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  const Text(
-                    'يلا نبدأ!',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: Constants.secondaryFontFamily,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
-                    child: Text(
-                      'كل حاجة جاهزة.. يلا نبدأ نظبط فلوسك',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontFamily: Constants.secondaryFontFamily,
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // Container(
+            //   color: Colors.white,
+            //   child: Column(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //       Container(
+            //         width: 120,
+            //         height: 120,
+            //         decoration: BoxDecoration(
+            //           color:
+            //               Constants.getPrimaryColor(context).withOpacity(0.1),
+            //           shape: BoxShape.circle,
+            //         ),
+            //         child: Icon(
+            //           Icons.rocket_launch_rounded,
+            //           size: 60,
+            //           color: Constants.getPrimaryColor(context),
+            //         ),
+            //       ),
+            //       const SizedBox(height: 40),
+            //       const Text(
+            //         'يلا نبدأ!',
+            //         style: TextStyle(
+            //           fontSize: 32,
+            //           fontWeight: FontWeight.bold,
+            //           fontFamily: Constants.secondaryFontFamily,
+            //         ),
+            //       ),
+            //       const SizedBox(height: 20),
+            //       const Padding(
+            //         padding: EdgeInsets.symmetric(horizontal: 30),
+            //         child: Text(
+            //           'كل حاجة جاهزة.. يلا نبدأ نظبط فلوسك',
+            //           textAlign: TextAlign.center,
+            //           style: TextStyle(
+            //             fontSize: 18,
+            //             fontFamily: Constants.secondaryFontFamily,
+            //             height: 1.5,
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -531,7 +559,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
                   Center(
                     child: SmoothPageIndicator(
                       controller: _controller,
-                      count: 6,
+                      count: 4,
                       effect: WormEffect(
                         spacing: 16,
                         dotColor: Colors.black12,

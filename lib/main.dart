@@ -15,7 +15,8 @@ import 'package:safe/utils/storage_service.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/widgets/app_initializer.dart';
 
-void main() {
+void main() async {
+  await Future.delayed(const Duration(seconds: 2));
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
 

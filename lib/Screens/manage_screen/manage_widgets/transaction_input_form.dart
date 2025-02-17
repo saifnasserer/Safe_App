@@ -103,10 +103,21 @@ class TransactionInputForm extends StatelessWidget {
                   Positioned(
                     right: 0,
                     child: IconButton(
-                      icon: Icon(
-                        isCalculatorMode ? Icons.keyboard : Icons.calculate,
-                        color: Constants.getPrimaryColor(context),
-                      ),
+                      icon: isCalculatorMode
+                          ? Container(
+                              decoration: BoxDecoration(
+                                  color: Constants.getPrimaryColor(context),
+                                  shape: BoxShape.circle),
+                              child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('=',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      color: Colors.white,
+                                    )),
+                              ))
+                          : Icon(Icons.calculate,
+                              color: Constants.getPrimaryColor(context)),
                       onPressed: onToggleCalculator,
                     ),
                   ),
