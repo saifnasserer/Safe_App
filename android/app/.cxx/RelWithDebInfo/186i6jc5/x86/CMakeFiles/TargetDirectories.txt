@@ -1,0 +1,2 @@
+D:/Coding/safe app/Planet/android/app/.cxx/RelWithDebInfo/186i6jc5/x86/CMakeFiles/edit_cache.dir
+D:/Coding/safe app/Planet/android/app/.cxx/RelWithDebInfo/186i6jc5/x86/CMakeFiles/rebuild_cache.dir

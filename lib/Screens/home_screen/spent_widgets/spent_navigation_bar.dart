@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/Screens/manage_screen/manage.dart';
-import 'package:safe/Screens/notes/notes_scree.dart';
 import 'package:safe/Screens/recipt_screen/recipt.dart';
 import 'package:safe/Screens/goals_screen/Goals.dart';
 import 'package:safe/widgets/navigation.dart';

@@ -50,7 +50,7 @@ dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/money.png" 
+  image_path: "assets/Safe logo.svg" 
 
 dev_dependencies:
   flutter_test:
@@ -145,8 +145,7 @@ flutter_native_splash:
   branding_mode: bottom
   branding_bottom_padding: 24
   color_dark: "#FFFFFF"
-  branding_dark: assets/bottomBranding.png
-
+  branding_dark: assets/darkbottomBranding.png
   # Optional parameters are listed below.  To enable a parameter, uncomment the line by removing
   # the leading # character.
 
@@ -191,14 +190,14 @@ flutter_native_splash:
     #icon_background_color: "#111111"
 
     # The branding property allows you to specify an image used as branding in the splash screen.
-    branding: assets\bottomBranding.png
+    branding: assets/bottomBranding.png
 
     # The image_dark, color_dark, icon_background_color_dark, and branding_dark set values that
     # apply when the device is in dark mode. If they are not specified, the app will use the
     # parameters from above.  If there is no parameter above, the app will use the light mode values.
     #image_dark: assets/android12splash-invert.png
     color_dark: "#FFFFFF"
-    branding_dark: assets\bottomBranding.png
+    branding_dark: assets/darkbottomBranding.png
     #icon_background_color_dark: "#eeeeee"
 
   # The android, ios and web parameters can be used to disable generating a splash screen on a given

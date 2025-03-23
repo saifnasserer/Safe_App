@@ -22,6 +22,7 @@ class _HomeState extends State<Home> {
   String? _userName;
   final GlobalKey _walletKey = GlobalKey();
   final GlobalKey _spentKey = GlobalKey();
+  final GlobalKey _profileKey = GlobalKey();
   late TutorialCoachMark? tutorialCoachMark;
 
   @override
@@ -36,7 +37,7 @@ class _HomeState extends State<Home> {
   Future<void> _initTutorial() async {
     tutorialCoachMark = await TutorialHelper.createHomeTutorial(
       context: context,
-      keys: [_walletKey, _spentKey],
+      keys: [_walletKey, _spentKey, _profileKey],
     );
     if (tutorialCoachMark != null) {
       tutorialCoachMark!.show(context: context);
@@ -54,7 +55,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const ProfileSelector(),
+        title: ProfileSelector(key: _profileKey),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
