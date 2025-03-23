@@ -105,7 +105,7 @@ class TransactionInputForm extends StatelessWidget {
                     child: IconButton(
                       icon: isCalculatorMode
                           ? Padding(
-                              padding: EdgeInsets.only(bottom: 8.0),
+                              padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text('=',
                                   style: TextStyle(
                                     fontSize: 24,

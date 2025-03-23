@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/Screens/manage_screen/manage.dart';
+import 'package:safe/Screens/notes/notes_scree.dart';
 import 'package:safe/Screens/recipt_screen/recipt.dart';
 import 'package:safe/Screens/goals_screen/Goals.dart';
 import 'package:safe/widgets/navigation.dart';
@@ -51,6 +52,13 @@ class SpentNavigationBar extends StatelessWidget {
             labelText: 'اضافة',
           ),
           const Spacer(flex: 1),
+          // Screen(
+          //   buttonIcon: Icons.notes_rounded,
+          //   screenName: const notes(),
+          //   size: Constants.responsiveSpacing(context, 28),
+          //   labelText: 'نوت',
+          // ),
+          // const Spacer(flex: 1),
         ],
       ),
     );

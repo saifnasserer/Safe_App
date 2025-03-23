@@ -262,7 +262,7 @@ class _EditGoalDialogState extends State<EditGoalDialog> {
         );
         return;
       } else {
-        WalletBlock.updateWalletBalance(context, currentBalance - amount);
+        // WalletBlock.updateWalletBalance(context, currentBalance - amount);
         // Send the positive delta amount
         context.read<GoalProvider>().updateGoalProgress(widget.index, amount);
         context.read<ItemProvider>().addItem(

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:safe/Constants.dart';
+import 'package:safe/Screens/notes/notes_scree.dart';
 import 'package:safe/Screens/recipt_screen/recipt.dart';
 import 'package:safe/Screens/goals_screen/Goals.dart';
 import 'package:safe/Screens/home_screen/HomePage.dart';
@@ -146,6 +147,7 @@ class _SafeAppState extends State<SafeApp> {
               GoalsBlock.goalsID: (context) => const GoalsBlock(),
               Reciept.id: (context) => const Reciept(),
               Manage.id: (context) => const Manage(),
+              notes.id: (context) => const notes(),
             },
             builder: (context, child) {
               return ScrollConfiguration(
