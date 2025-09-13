@@ -156,8 +156,9 @@ class ShareHandler {
         return updatedErrorReceipt;
       }
 
-      // Parse the receipt text
-      final receiptData = ReceiptParser.parseReceiptText(cleanedText, imagePath,
+      // Parse the receipt text using Grok API with fallback
+      final receiptData = await ReceiptParser.parseReceiptText(
+          cleanedText, imagePath,
           sourceApp: sourceApp);
 
       // Save the processed image to app directory

@@ -130,7 +130,7 @@ class _SpentDisplayState extends State<SpentDisplay>
                     'ج.م',
                     style: TextStyle(
                       fontSize: Constants.responsiveFontSize(
-                          context, widget.fontSize * 0.6),
+                          context, widget.fontSize * 0.3),
                       fontFamily: Constants.secondaryFontFamily,
                       color: Colors.white.withOpacity(0.9),
                       fontWeight: FontWeight.w500,

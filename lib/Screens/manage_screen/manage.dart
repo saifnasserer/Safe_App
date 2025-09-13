@@ -419,9 +419,10 @@ class _ManageState extends State<Manage> {
                         padding: EdgeInsets.all(
                             Constants.responsiveSpacing(context, 16)),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Icon(
                                   Icons.receipt_long,
@@ -432,7 +433,7 @@ class _ManageState extends State<Manage> {
                                     width: Constants.responsiveSpacing(
                                         context, 8)),
                                 Text(
-                                  'مسح الإيصالات',
+                                  'الإيصالات',
                                   style: TextStyle(
                                     fontFamily: Constants.defaultFontFamily,
                                     fontSize: 18,

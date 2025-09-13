@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Internet permissions for Grok API -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
     <application
         android:label="Safe"
         android:name="${applicationName}"
@@ -24,7 +28,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <!-- Add these intent filters for sharing -->
+            <!--e Add these intent filters for sharing -->
             <!-- Share intent for images -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:safe/models/receipt_data.dart';
+import 'package:safe/services/gemini_service.dart';
 
 /// Helper class to represent amount candidates with context and priority
 class AmountCandidate {
@@ -17,6 +18,8 @@ class AmountCandidate {
 }
 
 class ReceiptParser {
+  static final GeminiService _geminiService = GeminiService();
+
   // Enhanced regex patterns for better amount detection
   static final Map<String, RegExp> _patterns = {
     // Enhanced amount patterns with thousands separators support
@@ -58,8 +61,50 @@ class ReceiptParser {
     'merchant_english': RegExp(r'^([A-Za-z\s]+)', multiLine: true),
   };
 
-  /// Parse receipt text and extract structured data
-  static ReceiptData parseReceiptText(String text, String imagePath,
+  /// Parse receipt text using Gemini API with fallback to regex
+  static Future<ReceiptData> parseReceiptText(String text, String imagePath,
+      {String? sourceApp}) async {
+    try {
+      // Check if Gemini API is available first
+      final isApiKeyValid = await _geminiService.testApiKey();
+      print('Gemini API key valid: $isApiKeyValid');
+
+      if (!isApiKeyValid) {
+        print('API key is invalid, using regex fallback');
+        return _parseReceiptTextWithRegex(text, imagePath,
+            sourceApp: sourceApp);
+      }
+
+      final isGeminiAvailable = await _geminiService.isAvailable();
+      print('Gemini API available: $isGeminiAvailable');
+
+      if (isGeminiAvailable) {
+        // Try Gemini API first
+        final geminiAnalysis = await _geminiService.analyzeReceiptText(text);
+
+        if (geminiAnalysis != null && geminiAnalysis.confidence > 0.6) {
+          print(
+              'Using Gemini analysis with confidence: ${geminiAnalysis.confidence}');
+          // Use Gemini analysis if confidence is high enough
+          return _createReceiptFromGeminiAnalysis(
+              geminiAnalysis, text, imagePath, sourceApp);
+        } else {
+          print(
+              'Gemini analysis failed or low confidence, using regex fallback');
+        }
+      } else {
+        print('Gemini API not available, using regex fallback');
+      }
+    } catch (e) {
+      print('Gemini API failed, falling back to regex: $e');
+    }
+
+    // Fallback to regex-based parsing
+    return _parseReceiptTextWithRegex(text, imagePath, sourceApp: sourceApp);
+  }
+
+  /// Parse receipt text using traditional regex patterns (fallback)
+  static ReceiptData _parseReceiptTextWithRegex(String text, String imagePath,
       {String? sourceApp}) {
     final lines =
         text.split('\n').where((line) => line.trim().isNotEmpty).toList();
@@ -92,6 +137,35 @@ class ReceiptParser {
       currency: currency,
       merchant: merchant,
       confidenceScore: confidenceScore,
+      processedAt: DateTime.now(),
+      isProcessed: true,
+      sourceApp: sourceApp,
+    );
+  }
+
+  /// Create ReceiptData from Gemini API analysis
+  static ReceiptData _createReceiptFromGeminiAnalysis(
+    GeminiReceiptAnalysis analysis,
+    String originalText,
+    String imagePath,
+    String? sourceApp,
+  ) {
+    // Use Gemini's generated title or fallback to generated title (without source app)
+    String title = analysis.title ??
+        _generateTitle(analysis.merchant, analysis.totalAmount, null);
+
+    return ReceiptData(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      imagePath: imagePath,
+      extractedText: originalText,
+      title: title,
+      amount: analysis.totalAmount,
+      date: analysis.date != null
+          ? DateTime.tryParse(analysis.date!)
+          : DateTime.now(),
+      currency: analysis.currency,
+      merchant: analysis.merchant,
+      confidenceScore: analysis.confidence,
       processedAt: DateTime.now(),
       isProcessed: true,
       sourceApp: sourceApp,
