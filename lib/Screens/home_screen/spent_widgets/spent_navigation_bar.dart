@@ -21,9 +21,20 @@ class SpentNavigationBar extends StatelessWidget {
         top: Constants.responsiveSpacing(context, 10),
       ),
       decoration: BoxDecoration(
-        color: const Color(0xff1c1c1c),
+        color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.all(
-            Radius.circular(Constants.responsiveRadius(context, 40))),
+            Radius.circular(Constants.responsiveRadius(context, 24))),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       height: Constants.heightPercent(context, 8),
       width: Constants.screenWidth(context) * 0.59,

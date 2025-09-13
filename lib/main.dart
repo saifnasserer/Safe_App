@@ -5,6 +5,7 @@ import 'package:overlay_support/overlay_support.dart';
 import 'package:safe/Constants.dart';
 import 'package:safe/Screens/notes/notes_scree.dart';
 import 'package:safe/Screens/recipt_screen/recipt.dart';
+import 'package:safe/Screens/receipt_screen/receipt_list_screen.dart';
 import 'package:safe/Screens/goals_screen/Goals.dart';
 import 'package:safe/Screens/home_screen/HomePage.dart';
 import 'package:safe/Screens/introduction_screen.dart';
@@ -12,6 +13,7 @@ import 'package:safe/Screens/manage_screen/manage.dart';
 import 'package:safe/providers/Goal_Provider.dart';
 import 'package:safe/providers/Item_Provider.dart';
 import 'package:safe/providers/profile_provider.dart';
+import 'package:safe/providers/receipt_provider.dart';
 import 'package:safe/utils/storage_service.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/widgets/app_initializer.dart';
@@ -53,6 +55,9 @@ void main() async {
             create: (context) => GoalProvider(profileProvider),
             update: (context, profileProvider, previous) =>
                 GoalProvider(profileProvider),
+          ),
+          ChangeNotifierProvider<ReceiptProvider>(
+            create: (context) => ReceiptProvider(),
           ),
         ],
         child: const AppInitializer(
@@ -148,6 +153,7 @@ class _SafeAppState extends State<SafeApp> {
               Reciept.id: (context) => const Reciept(),
               Manage.id: (context) => const Manage(),
               notes.id: (context) => const notes(),
+              '/receipts': (context) => const ReceiptListScreen(),
             },
             builder: (context, child) {
               return ScrollConfiguration(

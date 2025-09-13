@@ -66,18 +66,82 @@ class _BalanceDisplayState extends State<BalanceDisplay>
         },
         child: ScaleTransition(
           scale: _scaleAnimation,
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: Constants.responsiveSpacing(context, 8),
-                  vertical: Constants.responsiveSpacing(context, 4)),
-              child: Text(
-                NumberFormatter.formatNumber(widget.balance),
-                style: TextStyle(
-                  fontSize: baseFontSize,
-                  fontFamily: Constants.defaultFontFamily,
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: Constants.responsiveSpacing(context, 16),
+              vertical: Constants.responsiveSpacing(context, 8),
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.9),
+                  Colors.white.withOpacity(0.7),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(
+                  Constants.responsiveSpacing(context, 20)),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
+              ],
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Container(
+                  //   padding:
+                  //       EdgeInsets.all(Constants.responsiveSpacing(context, 6)),
+                  //   decoration: BoxDecoration(
+                  //     color:
+                  //         Constants.getPrimaryColor(context).withOpacity(0.1),
+                  //     borderRadius: BorderRadius.circular(
+                  //         Constants.responsiveSpacing(context, 8)),
+                  //   ),
+                  //   child: Icon(
+                  //     Icons.account_balance_wallet_rounded,
+                  //     color: Constants.getPrimaryColor(context),
+                  //     size: Constants.responsiveFontSize(context, 16),
+                  //   ),
+                  // ),
+                  // SizedBox(width: Constants.responsiveSpacing(context, 8)),
+                  Text(
+                    NumberFormatter.formatNumber(widget.balance),
+                    style: TextStyle(
+                      fontSize: baseFontSize,
+                      fontFamily: Constants.defaultFontFamily,
+                      color: Colors.grey[800],
+                      fontWeight: FontWeight.bold,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withOpacity(0.1),
+                          offset: const Offset(0, 1),
+                          blurRadius: 2,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: Constants.responsiveSpacing(context, 4)),
+                  Text(
+                    'ج.م',
+                    style: TextStyle(
+                      fontSize: baseFontSize * 0.3,
+                      fontFamily: Constants.secondaryFontFamily,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

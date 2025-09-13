@@ -21,25 +21,39 @@ class SpentFilterSection extends StatelessWidget {
         HapticFeedback.mediumImpact();
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.white.withOpacity(0.15),
+        foregroundColor: Colors.white,
         padding: EdgeInsets.symmetric(
-          horizontal: Constants.responsiveSpacing(context, 16),
-          vertical: Constants.responsiveSpacing(context, 8),
+          horizontal: Constants.responsiveSpacing(context, 20),
+          vertical: Constants.responsiveSpacing(context, 12),
         ),
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(Constants.responsiveSpacing(context, 12)),
+          side: BorderSide(
+            color: Colors.white.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        elevation: 0,
+        shadowColor: Colors.transparent,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             Icons.arrow_drop_down,
-            color: Constants.getPrimaryColor(context),
+            color: Colors.white,
+            size: Constants.responsiveFontSize(context, 20),
           ),
+          SizedBox(width: Constants.responsiveSpacing(context, 4)),
           Text(
             _getFilterText(),
             style: TextStyle(
               fontSize: Constants.responsiveFontSize(context, 14),
-              color: Constants.getPrimaryColor(context),
+              color: Colors.white,
               fontFamily: Constants.secondaryFontFamily,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
