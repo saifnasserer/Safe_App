@@ -65,41 +65,37 @@ class ReceiptParser {
   static Future<ReceiptData> parseReceiptText(String text, String imagePath,
       {String? sourceApp}) async {
     try {
-      // Check if Gemini API is available first
-      final isApiKeyValid = await _geminiService.testApiKey();
-      print('Gemini API key valid: $isApiKeyValid');
+      // OPTIMIZED: Try Gemini API directly with enhanced error handling and caching
+      // The analyzeReceiptTextWithCache method will handle API key validation internally
+      print('Attempting Gemini API analysis...');
+      final geminiResult = await _geminiService.analyzeReceiptTextWithCache(text);
 
-      if (!isApiKeyValid) {
-        print('API key is invalid, using regex fallback');
-        return _parseReceiptTextWithRegex(text, imagePath,
-            sourceApp: sourceApp);
-      }
-
-      final isGeminiAvailable = await _geminiService.isAvailable();
-      print('Gemini API available: $isGeminiAvailable');
-
-      if (isGeminiAvailable) {
-        // Try Gemini API first
-        final geminiAnalysis = await _geminiService.analyzeReceiptText(text);
-
-        if (geminiAnalysis != null && geminiAnalysis.confidence > 0.6) {
-          print(
-              'Using Gemini analysis with confidence: ${geminiAnalysis.confidence}');
-          // Use Gemini analysis if confidence is high enough
-          return _createReceiptFromGeminiAnalysis(
-              geminiAnalysis, text, imagePath, sourceApp);
-        } else {
-          print(
-              'Gemini analysis failed or low confidence, using regex fallback');
-        }
+      if (geminiResult.isSuccess && 
+          geminiResult.analysis != null && 
+          geminiResult.analysis!.confidence > 0.6) {
+        print('Using Gemini analysis with confidence: ${geminiResult.analysis!.confidence}');
+        // Use Gemini analysis if confidence is high enough
+        // Set sourceApp to indicate AI was successfully used
+        return _createReceiptFromGeminiAnalysis(
+            geminiResult.analysis!, text, imagePath, 'AI_PROCESSED');
       } else {
-        print('Gemini API not available, using regex fallback');
+        // Log the specific error type for debugging
+        if (geminiResult.isResourceExhausted) {
+          print('Gemini API quota exhausted, using regex fallback');
+        } else if (geminiResult.isNetworkError) {
+          print('Gemini API network error, using regex fallback');
+        } else if (geminiResult.isApiKeyError) {
+          print('Gemini API key error, using regex fallback');
+        } else {
+          print('Gemini analysis failed (${geminiResult.errorType}): ${geminiResult.errorMessage}, using regex fallback');
+        }
       }
     } catch (e) {
       print('Gemini API failed, falling back to regex: $e');
     }
 
     // Fallback to regex-based parsing
+    // Don't set sourceApp to indicate this was processed locally, not with AI
     return _parseReceiptTextWithRegex(text, imagePath, sourceApp: sourceApp);
   }
 

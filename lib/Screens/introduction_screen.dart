@@ -35,6 +35,8 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
           backgroundColor: Colors.red,
           content: Text('من فضلك اكتب اسمك الأول', textAlign: TextAlign.center),
           duration: Duration(seconds: 1),
+          behavior: SnackBarBehavior.fixed,
+          margin: EdgeInsets.all(16),
         ),
       );
       return;
@@ -64,6 +66,8 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
             content: Text('حصل خطأ، ممكن تعمل ريستارت للابلكيشن',
                 textAlign: TextAlign.center),
             duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.fixed,
+            margin: EdgeInsets.all(16),
           ),
         );
       }

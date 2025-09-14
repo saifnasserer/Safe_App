@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safe/models/receipt_data.dart';
 import 'package:safe/services/share_handler.dart';
@@ -22,15 +23,21 @@ class ReceiptProvider extends ChangeNotifier {
     _onReceiptAdded = callback;
   }
 
-  /// Initialize the provider
+  /// Initialize the provider (lazy initialization)
   Future<void> initialize() async {
+    // Prevent multiple initializations
+    if (_isLoading) return;
+    
     _setLoading(true);
     try {
       await _loadReceipts();
 
       // Set callback for share handler to automatically add processed receipts
       _shareHandler.setReceiptProcessedCallback((ReceiptData receiptData) {
-        addReceipt(receiptData);
+        // Use post-frame callback to avoid setState during build
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          addReceipt(receiptData);
+        });
       });
 
       _shareHandler.initialize();

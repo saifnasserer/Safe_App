@@ -62,7 +62,7 @@ class _GoalsBlockState extends State<GoalsBlock> {
         ),
         backgroundColor: Constants.getPrimaryColor(context),
         duration: Duration(seconds: duration),
-        behavior: SnackBarBehavior.floating,
+        behavior: SnackBarBehavior.fixed,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Constants.responsiveRadius(context, 10)),
         ),
@@ -149,7 +149,7 @@ class _GoalsBlockState extends State<GoalsBlock> {
                                           content: Center(
                                               child:
                                                   Text("تم حذف ${goal.title}")),
-                                          behavior: SnackBarBehavior.floating,
+                                          behavior: SnackBarBehavior.fixed,
                                           backgroundColor:
                                               Constants.getPrimaryColor(
                                                   context),

@@ -171,7 +171,8 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
           ),
         ),
         backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
+        behavior: SnackBarBehavior.fixed,
+        margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -190,7 +191,8 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
           ),
         ),
         backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
+        behavior: SnackBarBehavior.fixed,
+        margin: const EdgeInsets.all(16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -789,7 +791,7 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.refresh,
                                   color: Colors.white,
                                   size: 20,
@@ -883,7 +885,7 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
                         : Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.save,
                                 color: Colors.white,
                                 size: 20,
