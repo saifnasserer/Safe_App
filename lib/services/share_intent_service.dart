@@ -197,4 +197,3 @@ class ShareIntentService {
     _ocrService.dispose();
   }
 }
-

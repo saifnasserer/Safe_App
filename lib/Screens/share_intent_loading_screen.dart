@@ -389,7 +389,7 @@ class _ShareIntentLoadingScreenState extends State<ShareIntentLoadingScreen>
                           ),
                         ],
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.receipt_long,
                         size: 60,
                         color: Colors.white,

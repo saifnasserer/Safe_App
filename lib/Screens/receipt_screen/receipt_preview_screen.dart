@@ -791,7 +791,7 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.refresh,
                                   color: Colors.white,
                                   size: 20,
@@ -885,7 +885,7 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
                         : Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.save,
                                 color: Colors.white,
                                 size: 20,
