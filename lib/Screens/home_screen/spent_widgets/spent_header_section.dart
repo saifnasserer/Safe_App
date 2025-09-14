@@ -22,18 +22,27 @@ class SpentHeaderSection extends StatelessWidget {
         Text(
           "مصاريفك",
           style: TextStyle(
-            fontSize: Constants.responsiveFontSize(context, 40),
+            fontSize: Constants.responsiveFontSize(context, 36),
             color: Colors.white,
             fontFamily: Constants.defaultFontFamily,
+            fontWeight: FontWeight.w700,
+            shadows: [
+              Shadow(
+                color: Colors.black.withOpacity(0.3),
+                offset: const Offset(0, 2),
+                blurRadius: 4,
+              ),
+            ],
           ),
         ),
-        SizedBox(height: Constants.responsiveSpacing(context, 8)),
+        SizedBox(height: Constants.responsiveSpacing(context, 6)),
         Text(
           "انت صرفت",
           style: TextStyle(
-            fontSize: Constants.responsiveFontSize(context, 20),
-            color: Colors.white,
+            fontSize: Constants.responsiveFontSize(context, 18),
+            color: Colors.white.withOpacity(0.9),
             fontFamily: Constants.secondaryFontFamily,
+            fontWeight: FontWeight.w500,
           ),
         ),
         SpentDisplay(

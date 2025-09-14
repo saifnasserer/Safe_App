@@ -14,6 +14,8 @@ import 'package:safe/Screens/manage_screen/manage_widgets/transaction_input_form
 import 'package:safe/providers/Goal_Provider.dart';
 import 'package:safe/providers/Item_Provider.dart';
 import 'package:safe/providers/profile_provider.dart';
+import 'package:safe/providers/receipt_provider.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:safe/utils/number_formatter.dart';
 import 'package:safe/widgets/item.dart';
 import 'package:safe/utils/TutorialHelper.dart';
@@ -38,6 +40,7 @@ class _ManageState extends State<Manage> {
   late TutorialCoachMark? tutorialCoachMark;
   bool _isCalculatorMode = false;
   DateTime _selectedDate = DateTime.now();
+  final ImagePicker _imagePicker = ImagePicker();
 
   double getAmount() {
     try {
@@ -63,7 +66,8 @@ class _ManageState extends State<Manage> {
         try {
           final calculatedValue = getAmount();
           if (calculatedValue != 0.0) {
-            amountController.text = NumberFormatter.formatCalculatorNumber(calculatedValue);
+            amountController.text =
+                NumberFormatter.formatCalculatorNumber(calculatedValue);
           }
           _amountFocusNode.requestFocus();
         } catch (e) {
@@ -211,6 +215,114 @@ class _ManageState extends State<Manage> {
     );
   }
 
+  Future<void> _scanReceipt() async {
+    try {
+      final XFile? image = await _imagePicker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
+      );
+
+      if (image != null) {
+        final receiptProvider =
+            Provider.of<ReceiptProvider>(context, listen: false);
+        final receiptData =
+            await receiptProvider.processImage(image.path, sourceApp: 'Camera');
+
+        if (receiptData != null && mounted) {
+          // Navigate to receipt preview screen
+          Navigator.pushNamed(
+            context,
+            '/receipts',
+          );
+        } else if (mounted) {
+          showSimpleNotification(
+            const Center(
+              child: Text(
+                'فشل في معالجة الإيصال',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: Constants.defaultFontFamily,
+                ),
+              ),
+            ),
+            background: Colors.red,
+            duration: const Duration(seconds: 2),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        showSimpleNotification(
+          Center(
+            child: Text(
+              'خطأ في مسح الإيصال: $e',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: Constants.defaultFontFamily,
+              ),
+            ),
+          ),
+          background: Colors.red,
+          duration: const Duration(seconds: 2),
+        );
+      }
+    }
+  }
+
+  Future<void> _pickReceiptFromGallery() async {
+    try {
+      final XFile? image = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
+
+      if (image != null) {
+        final receiptProvider =
+            Provider.of<ReceiptProvider>(context, listen: false);
+        final receiptData = await receiptProvider.processImage(image.path,
+            sourceApp: 'Gallery');
+
+        if (receiptData != null && mounted) {
+          // Navigate to receipt preview screen
+          Navigator.pushNamed(
+            context,
+            '/receipts',
+          );
+        } else if (mounted) {
+          showSimpleNotification(
+            const Center(
+              child: Text(
+                'فشل في معالجة الإيصال',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: Constants.defaultFontFamily,
+                ),
+              ),
+            ),
+            background: Colors.red,
+            duration: const Duration(seconds: 2),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        showSimpleNotification(
+          Center(
+            child: Text(
+              'خطأ في اختيار الإيصال: $e',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: Constants.defaultFontFamily,
+              ),
+            ),
+          ),
+          background: Colors.red,
+          duration: const Duration(seconds: 2),
+        );
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -290,6 +402,140 @@ class _ManageState extends State<Manage> {
                   TransactionButtons(
                     onExpense: () => _handleTransaction(false),
                     onIncome: () => _handleTransaction(true),
+                  ),
+
+                  // Receipt Scanning Section
+                  Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: Constants.responsiveSpacing(context, 20),
+                      vertical: Constants.responsiveSpacing(context, 16),
+                    ),
+                    child: Card(
+                      elevation: 6,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(
+                            Constants.responsiveSpacing(context, 16)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Icon(
+                                  Icons.receipt_long,
+                                  color: Constants.getPrimaryColor(context),
+                                  size: 24,
+                                ),
+                                SizedBox(
+                                    width: Constants.responsiveSpacing(
+                                        context, 8)),
+                                Text(
+                                  'الإيصالات',
+                                  style: TextStyle(
+                                    fontFamily: Constants.defaultFontFamily,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Constants.getPrimaryColor(context),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                                height:
+                                    Constants.responsiveSpacing(context, 12)),
+                            Text(
+                              'امسح إيصال أو فاتورة لاستخراج البيانات تلقائياً',
+                              style: TextStyle(
+                                fontFamily: Constants.secondaryFontFamily,
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                            SizedBox(
+                                height:
+                                    Constants.responsiveSpacing(context, 16)),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton.icon(
+                                    onPressed: _scanReceipt,
+                                    icon: const Icon(Icons.camera_alt),
+                                    label: const Text(
+                                      'مسح',
+                                      style: TextStyle(
+                                        fontFamily: Constants.defaultFontFamily,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Constants.getPrimaryColor(context),
+                                      foregroundColor: Colors.white,
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: Constants.responsiveSpacing(
+                                            context, 12),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                    width: Constants.responsiveSpacing(
+                                        context, 12)),
+                                Expanded(
+                                  child: OutlinedButton.icon(
+                                    onPressed: _pickReceiptFromGallery,
+                                    icon: const Icon(Icons.photo_library),
+                                    label: const Text(
+                                      'معرض',
+                                      style: TextStyle(
+                                        fontFamily: Constants.defaultFontFamily,
+                                      ),
+                                    ),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor:
+                                          Constants.getPrimaryColor(context),
+                                      side: BorderSide(
+                                        color:
+                                            Constants.getPrimaryColor(context),
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: Constants.responsiveSpacing(
+                                            context, 12),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                                height:
+                                    Constants.responsiveSpacing(context, 8)),
+                            Center(
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/receipts');
+                                },
+                                child: Text(
+                                  'عرض الإيصالات الممسوحة',
+                                  style: TextStyle(
+                                    fontFamily: Constants.secondaryFontFamily,
+                                    color: Constants.getPrimaryColor(context),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

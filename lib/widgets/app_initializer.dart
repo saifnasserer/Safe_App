@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:safe/Screens/home_screen/Spent.dart';
 import 'package:safe/Screens/home_screen/Wallet.dart';
+import 'package:safe/providers/receipt_provider.dart';
 
 class AppInitializer extends StatefulWidget {
   final Widget child;
@@ -24,6 +26,12 @@ class _AppInitializerState extends State<AppInitializer> {
     if (!mounted) return;
     await WalletBlock.initWallet(context);
     await SpentBlock.initSpent(context);
+
+    // Initialize ReceiptProvider to handle share intents
+    final receiptProvider =
+        Provider.of<ReceiptProvider>(context, listen: false);
+    await receiptProvider.initialize();
+
     if (mounted) {
       setState(() {
         _initialized = true;
