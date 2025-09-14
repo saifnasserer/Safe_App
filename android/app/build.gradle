@@ -18,6 +18,13 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+    
+    // JVM toolchain configuration
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
@@ -30,13 +37,39 @@ android {
         versionName = flutter.versionName
     }
 
+    // signingConfigs {
+    //     release {
+    //         storeFile file('upload-keystore.jks')
+    //         storePassword 'appbundlepassword'
+    //         keyAlias 'upload'
+    //         keyPassword 'appbundlepassword'
+    //     }
+    // }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            // Use debug signing for testing purposes
+            signingConfig signingConfigs.debug
+            
+            // Disable R8 to avoid missing classes issue
+            minifyEnabled false
+            shrinkResources false
+            // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+}
+
+dependencies {
+    // Replace deprecated Play Core libraries with Play In-App Update and Play In-App Review
+    // These are compatible with Android 14 (SDK 34)
+    implementation "com.google.android.play:app-update:2.1.0"
+    implementation "com.google.android.play:app-update-ktx:2.1.0"
+    implementation "com.google.android.play:review:2.0.1"
+    implementation "com.google.android.play:review-ktx:2.0.1"
+    
+    // Add Play Feature Delivery for split install functionality
+    implementation "com.google.android.play:feature-delivery:2.1.0"
+    implementation "com.google.android.play:feature-delivery-ktx:2.1.0"
 }
 
 flutter {
