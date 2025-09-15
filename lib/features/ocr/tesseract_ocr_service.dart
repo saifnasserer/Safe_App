@@ -285,22 +285,6 @@ class TesseractOcrService {
 
       print('💾 [Tesseract OCR] Saved processed image to: $processedPath');
 
-      // Also save a debug version to external storage for analysis
-      try {
-        final debugDir =
-            Directory('/storage/emulated/0/Download/Safe_OCR_Debug');
-        if (!await debugDir.exists()) {
-          await debugDir.create(recursive: true);
-        }
-        final debugPath =
-            '${debugDir.path}/debug_${DateTime.now().millisecondsSinceEpoch}.png';
-        final debugFile = File(debugPath);
-        await debugFile.writeAsBytes(img.encodePng(denoised));
-        print('🔍 [Tesseract OCR] Saved debug image to: $debugPath');
-      } catch (e) {
-        print('⚠️ [Tesseract OCR] Could not save debug image: $e');
-      }
-
       return processedPath;
     } catch (e) {
       print('❌ [Tesseract OCR] Image preprocessing failed: $e');

@@ -7,6 +7,7 @@ import 'package:safe/models/receipt_data.dart';
 import 'package:safe/services/ocr_service.dart';
 import 'package:safe/services/receipt_parser.dart';
 import 'package:safe/services/navigation_service.dart';
+import 'package:safe/providers/receipt_provider.dart';
 
 class ShareHandler {
   static final ShareHandler _instance = ShareHandler._internal();
@@ -17,12 +18,12 @@ class ShareHandler {
   StreamSubscription? _intentDataStreamSubscription;
   StreamSubscription? _intentDataStreamSubscription2;
 
-  // Callback function to handle processed receipts
-  Function(ReceiptData)? _onReceiptProcessed;
+  // ReceiptProvider instance for processing
+  ReceiptProvider? _receiptProvider;
 
-  /// Set callback for when receipts are processed
-  void setReceiptProcessedCallback(Function(ReceiptData) callback) {
-    _onReceiptProcessed = callback;
+  /// Set ReceiptProvider for processing shared images
+  void setReceiptProvider(ReceiptProvider receiptProvider) {
+    _receiptProvider = receiptProvider;
   }
 
   /// Initialize share intent handling
@@ -41,14 +42,14 @@ class ShareHandler {
     );
 
     // Handle sharing coming from outside the app while the app was closed
-    // Only process if there's a callback set (meaning the app is ready to handle receipts)
-    ReceiveSharingIntent.instance
-        .getInitialMedia()
-        .then((List<SharedMediaFile> sharedMedia) {
-      if (sharedMedia.isNotEmpty && _onReceiptProcessed != null) {
-        _handleSharedMedia(sharedMedia);
-      }
-    });
+    // DISABLED: Automatic processing on app startup for production
+    // ReceiveSharingIntent.instance
+    //     .getInitialMedia()
+    //     .then((List<SharedMediaFile> sharedMedia) {
+    //   if (sharedMedia.isNotEmpty && _onReceiptProcessed != null) {
+    //     _handleSharedMedia(sharedMedia);
+    //   }
+    // });
   }
 
   /// Handle shared media (images and text)
@@ -85,110 +86,33 @@ class ShareHandler {
     return null; // Unknown source
   }
 
-  /// Process a shared image
+  /// Process a shared image using ReceiptProvider
   Future<ReceiptData?> _processSharedImage(String imagePath,
       {String? sourceApp}) async {
     try {
-      // Show loading overlay for share processing
-      NavigationService().showShareProcessingOverlay();
+      print('🔍 [ShareHandler] Processing shared image: $imagePath');
 
-      // Extract text using OCR with timeout
-      final extractedText = await _ocrService
-          .extractTextFromImage(imagePath)
-          .timeout(const Duration(seconds: 30));
-
-      if (extractedText.isEmpty) {
-        print('No text extracted from image');
-        // Hide loading overlay
-        NavigationService().hideShareProcessingOverlay();
-
-        // Create a receipt with error message for user feedback
-        final errorReceipt = ReceiptData(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          imagePath: imagePath,
-          extractedText: '',
-          title: 'لم يتم استخراج نص',
-          amount: null,
-          date: DateTime.now(),
-          currency: 'ج.م',
-          merchant: null,
-          confidenceScore: 0.0,
-          processedAt: DateTime.now(),
-          isProcessed: false,
-          errorMessage: 'لم يتم العثور على نص في الصورة',
-          sourceApp: sourceApp,
-        );
-
-        // Save image and notify callback
-        final savedImagePath = await _saveImageToAppDirectory(imagePath);
-        final updatedErrorReceipt =
-            errorReceipt.copyWith(imagePath: savedImagePath);
-
-        if (_onReceiptProcessed != null) {
-          _onReceiptProcessed!(updatedErrorReceipt);
-        }
-
-        return updatedErrorReceipt;
-      }
-
-      // Clean the extracted text
-      final cleanedText = ReceiptParser.cleanText(extractedText);
-      print('Extracted text for processing: $cleanedText');
-
-      // Parse the receipt text using Gemini API with fallback
-      final receiptData = await ReceiptParser.parseReceiptText(
-          cleanedText, imagePath,
-          sourceApp: sourceApp);
-
-      // Save the processed image to app directory
-      final savedImagePath = await _saveImageToAppDirectory(imagePath);
-      final updatedReceiptData =
-          receiptData.copyWith(imagePath: savedImagePath);
-
-      // Notify callback if set (this will trigger navigation and hide loading overlay)
-      if (_onReceiptProcessed != null) {
-        _onReceiptProcessed!(updatedReceiptData);
-      }
-
-      return updatedReceiptData;
-    } catch (e) {
-      print('Error processing shared image: $e');
-
-      // Hide loading overlay
-      NavigationService().hideShareProcessingOverlay();
-
-      // Create a receipt with error message for user feedback
-      final errorReceipt = ReceiptData(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        imagePath: imagePath,
-        extractedText: '',
-        title: 'خطأ في المعالجة',
-        amount: null,
-        date: DateTime.now(),
-        currency: 'ج.م',
-        merchant: null,
-        confidenceScore: 0.0,
-        processedAt: DateTime.now(),
-        isProcessed: false,
-        errorMessage: 'حدث خطأ أثناء معالجة الصورة: $e',
-        sourceApp: sourceApp,
-      );
-
-      // Save image and notify callback
-      try {
-        final savedImagePath = await _saveImageToAppDirectory(imagePath);
-        final updatedErrorReceipt =
-            errorReceipt.copyWith(imagePath: savedImagePath);
-
-        if (_onReceiptProcessed != null) {
-          _onReceiptProcessed!(updatedErrorReceipt);
-        }
-
-        return updatedErrorReceipt;
-      } catch (saveError) {
-        print('Error saving image: $saveError');
+      if (_receiptProvider == null) {
+        print('❌ [ShareHandler] ReceiptProvider not set');
         return null;
       }
+
+      // Use the same processing function as Manage screen
+      final receiptData =
+          await _receiptProvider!.processImage(imagePath, sourceApp: sourceApp);
+
+      if (receiptData != null) {
+        print('✅ [ShareHandler] Successfully processed shared image');
+        // Navigate to receipts screen
+        NavigationService().navigateToReceipts();
+      } else {
+        print('❌ [ShareHandler] Failed to process shared image');
+      }
+
+      return receiptData;
+    } catch (e) {
+      print('❌ [ShareHandler] Error processing shared image: $e');
+      return null;
     }
   }
 

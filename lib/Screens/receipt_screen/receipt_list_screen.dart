@@ -54,11 +54,6 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
                               style: TextStyle(
                                   fontFamily: Constants.defaultFontFamily),
                             ),
-                            content: const Text(
-                              'هل أنت متأكد من حذف جميع الإيصالات؟ لا يمكن التراجع عن هذا الإجراء.',
-                              style: TextStyle(
-                                  fontFamily: Constants.secondaryFontFamily),
-                            ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context, false),

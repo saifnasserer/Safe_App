@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/Constants.dart';
+import 'package:safe/Screens/home_screen/HomePage.dart';
 import 'package:safe/models/receipt_data.dart';
 import 'package:safe/providers/receipt_provider.dart';
 import 'package:safe/providers/Item_Provider.dart';
@@ -87,8 +88,8 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
 
       if (mounted) {
         _showSuccessSnackBar('تم إعادة معالجة الإيصال');
-        // Navigate to home after successful retry
-        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil(Home.id, (route) => false);
       }
     } catch (e) {
       if (mounted) {
@@ -146,8 +147,8 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
       if (mounted) {
         HapticFeedback.mediumImpact();
         _showSuccessSnackBar('تم حفظ المعاملة بنجاح');
-        // Navigate to home instead of just popping
-        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil(Home.id, (route) => false);
       }
     } catch (e) {
       if (mounted) {
@@ -222,9 +223,8 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
             IconButton(
               icon: const Icon(Icons.close),
               onPressed: () {
-                // Navigate to home when cancel is pressed
                 Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/', (route) => false);
+                    .pushNamedAndRemoveUntil(Home.id, (route) => false);
               },
             ),
             IconButton(
@@ -263,7 +263,7 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
                   if (mounted) {
                     // Navigate to home after deletion
                     Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/', (route) => false);
+                        .pushNamedAndRemoveUntil(Home.id, (route) => false);
                   }
                 }
               },

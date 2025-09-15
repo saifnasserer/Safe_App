@@ -115,4 +115,12 @@ class NavigationService {
       _isOverlayVisible = false;
     }
   }
+
+  /// Navigate to receipts screen
+  void navigateToReceipts() {
+    final context = navigatorKey.currentContext;
+    if (context != null) {
+      Navigator.of(context).pushNamed('/receipts');
+    }
+  }
 }

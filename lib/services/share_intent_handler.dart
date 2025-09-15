@@ -12,6 +12,7 @@ import 'package:safe/Screens/receipt_screen/receipt_preview_screen.dart';
 import 'package:safe/Constants.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/providers/receipt_provider.dart';
+import 'package:safe/widgets/share_loading_screen.dart';
 
 /// Optimized share intent handler that bypasses heavy app initialization
 class ShareIntentHandler {
@@ -28,62 +29,135 @@ class ShareIntentHandler {
   static const int _maxRetries = 3;
 
   /// Initialize share intent handling with immediate processing
-  void initialize() {
+  void initialize({bool processInitialMedia = false}) {
+    print('🔧 [ShareIntentHandler] Initializing share intent handling...');
+
     // Handle sharing coming from outside the app while the app is already started
     _intentDataStreamSubscription2 =
         ReceiveSharingIntent.instance.getMediaStream().listen(
       (List<SharedMediaFile> sharedMedia) {
+        print(
+            '📱 [ShareIntentHandler] Received shared media: ${sharedMedia.length} items');
+        for (int i = 0; i < sharedMedia.length; i++) {
+          print(
+              '📱 [ShareIntentHandler] Media $i: ${sharedMedia[i].type} - ${sharedMedia[i].path}');
+        }
+
         if (sharedMedia.isNotEmpty && !_isProcessing) {
+          print('🚀 [ShareIntentHandler] Starting to handle shared media...');
           _handleSharedMedia(sharedMedia);
+        } else if (_isProcessing) {
+          print(
+              '⏳ [ShareIntentHandler] Already processing, ignoring new intent');
         }
       },
       onError: (err) {
-        print('Error receiving shared media: $err');
+        print('❌ [ShareIntentHandler] Error receiving shared media: $err');
         _showErrorAndNavigateHome('خطأ في استقبال الصورة: $err');
       },
     );
 
+    print(
+        '✅ [ShareIntentHandler] Share intent handling initialized successfully');
+
+    // Test the stream subscription
+    print('🔍 [ShareIntentHandler] Testing stream subscription...');
+    if (_intentDataStreamSubscription2 != null) {
+      print('✅ [ShareIntentHandler] Stream subscription is active');
+    } else {
+      print('❌ [ShareIntentHandler] Stream subscription is null!');
+    }
+
     // Handle sharing coming from outside the app while the app was closed
-    ReceiveSharingIntent.instance
-        .getInitialMedia()
-        .then((List<SharedMediaFile> sharedMedia) {
-      if (sharedMedia.isNotEmpty && !_isProcessing) {
-        _handleSharedMedia(sharedMedia);
-      }
-    });
+    if (processInitialMedia) {
+      print('🔍 [ShareIntentHandler] Checking for initial shared media...');
+      ReceiveSharingIntent.instance
+          .getInitialMedia()
+          .then((List<SharedMediaFile> sharedMedia) {
+        print(
+            '📱 [ShareIntentHandler] Initial media check: ${sharedMedia.length} items');
+        if (sharedMedia.isNotEmpty && !_isProcessing) {
+          print('🚀 [ShareIntentHandler] Processing initial shared media...');
+          _handleSharedMedia(sharedMedia);
+        } else if (sharedMedia.isEmpty) {
+          print('📭 [ShareIntentHandler] No initial shared media found');
+        }
+      }).catchError((error) {
+        print('❌ [ShareIntentHandler] Error checking initial media: $error');
+      });
+    } else {
+      print(
+          '📭 [ShareIntentHandler] Initial media processing disabled - only active sharing will be processed');
+    }
   }
 
   /// Handle shared media (images and text)
   Future<void> _handleSharedMedia(List<SharedMediaFile> sharedMedia) async {
-    if (_isProcessing) return;
+    if (_isProcessing) {
+      print('⏳ [ShareIntentHandler] Already processing, skipping...');
+      return;
+    }
 
+    print(
+        '🔄 [ShareIntentHandler] Starting to process ${sharedMedia.length} media files...');
     _isProcessing = true;
     _retryCount = 0;
 
     try {
-      for (final mediaFile in sharedMedia) {
+      for (int i = 0; i < sharedMedia.length; i++) {
+        final mediaFile = sharedMedia[i];
+        print(
+            '📄 [ShareIntentHandler] Processing media $i: ${mediaFile.type} - ${mediaFile.path}');
+
         if (mediaFile.type == SharedMediaType.image) {
+          print('🖼️ [ShareIntentHandler] Processing image: ${mediaFile.path}');
+
           // Show immediate loading screen
           _showProcessingScreen();
 
           // Try to detect source app from file path or metadata
           final sourceApp = _detectSourceApp(mediaFile);
+          print('🔍 [ShareIntentHandler] Detected source app: $sourceApp');
+
           await _processSharedImage(mediaFile.path, sourceApp: sourceApp);
         } else if (mediaFile.type == SharedMediaType.text) {
-          print('Received shared text: ${mediaFile.path}');
+          print(
+              '📝 [ShareIntentHandler] Received shared text: ${mediaFile.path}');
           // Handle shared text if needed
         }
       }
     } catch (e) {
-      print('Error processing shared media: $e');
+      print('❌ [ShareIntentHandler] Error processing shared media: $e');
       _showErrorAndNavigateHome('خطأ في معالجة الصورة: $e');
     } finally {
       _isProcessing = false;
+      print('✅ [ShareIntentHandler] Finished processing shared media');
     }
   }
 
-  /// Show processing screen immediately
+  /// Show elegant loading screen immediately
   void _showProcessingScreen() {
+    final context = NavigationService().navigatorKey.currentContext;
+    if (context != null && context.mounted) {
+      try {
+        // Navigate to the elegant loading screen
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const ShareLoadingScreen(),
+            fullscreenDialog: true,
+          ),
+        );
+        print('✅ [ShareIntentHandler] Elegant loading screen shown');
+      } catch (e) {
+        print('⚠️ [ShareIntentHandler] Error showing loading screen: $e');
+        // Fallback to dialog if navigation fails
+        _showFallbackDialog();
+      }
+    }
+  }
+
+  /// Fallback dialog if navigation fails
+  void _showFallbackDialog() {
     final context = NavigationService().navigatorKey.currentContext;
     if (context != null && context.mounted) {
       try {
@@ -93,7 +167,7 @@ class ShareIntentHandler {
           builder: (context) => _ProcessingScreen(),
         );
       } catch (e) {
-        print('⚠️ [Share Intent Handler] Error showing processing screen: $e');
+        print('⚠️ [ShareIntentHandler] Error showing fallback dialog: $e');
       }
     }
   }
@@ -107,10 +181,11 @@ class ShareIntentHandler {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (context.mounted && Navigator.of(context).canPop()) {
             Navigator.of(context).pop();
+            print('✅ [ShareIntentHandler] Loading screen hidden');
           }
         });
       } catch (e) {
-        print('⚠️ [Share Intent Handler] Error hiding processing screen: $e');
+        print('⚠️ [ShareIntentHandler] Error hiding processing screen: $e');
       }
     }
   }
@@ -119,10 +194,15 @@ class ShareIntentHandler {
   Future<void> _processSharedImage(String imagePath,
       {String? sourceApp}) async {
     try {
+      print('🔍 [ShareIntentHandler] Starting OCR processing for: $imagePath');
+
       // Extract text using OCR with timeout
       final extractedText = await _ocrService
           .extractTextFromImage(imagePath)
           .timeout(const Duration(seconds: 30));
+
+      print(
+          '📝 [ShareIntentHandler] OCR extracted text length: ${extractedText.length}');
 
       if (extractedText.isEmpty) {
         print('No text extracted from image');
@@ -215,15 +295,17 @@ class ShareIntentHandler {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (context.mounted) {
             try {
+              // Navigate to receipt preview screen
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
                   builder: (context) =>
                       ReceiptPreviewScreen(receiptData: receiptData),
                 ),
               );
-            } catch (e) {
               print(
-                  '⚠️ [Share Intent Handler] Error navigating to preview: $e');
+                  '✅ [ShareIntentHandler] Navigated to receipt preview screen');
+            } catch (e) {
+              print('⚠️ [ShareIntentHandler] Error navigating to preview: $e');
             }
           }
         });

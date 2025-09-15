@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:safe/Screens/home_screen/Spent.dart';
 import 'package:safe/Screens/home_screen/Wallet.dart';
 import 'package:safe/providers/receipt_provider.dart';
-import 'package:safe/services/share_intent_handler.dart';
 import 'package:safe/Constants.dart';
 
 class AppInitializer extends StatefulWidget {
@@ -26,17 +25,15 @@ class _AppInitializerState extends State<AppInitializer> {
 
   Future<void> _initializeApp() async {
     if (!mounted) return;
+
+    // Initialize core components
     await WalletBlock.initWallet(context);
     await SpentBlock.initSpent(context);
 
-    // Initialize ReceiptProvider to handle share intents
+    // Initialize ReceiptProvider
     final receiptProvider =
         Provider.of<ReceiptProvider>(context, listen: false);
     await receiptProvider.initialize();
-
-    // Initialize the optimized share intent handler
-    final shareIntentHandler = ShareIntentHandler();
-    shareIntentHandler.initialize();
 
     if (mounted) {
       setState(() {

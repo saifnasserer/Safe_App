@@ -14,35 +14,31 @@ class ReceiptAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios_new,
-          color: Constants.getPrimaryColor(context),
-        ),
-        onPressed: () => Navigator.pop(context),
-      ),
-      title: Text(
-        'مصاريفك',
-        style: TextStyle(
-          color: Constants.getPrimaryColor(context),
-          fontFamily: Constants.defaultFontFamily,
-          fontSize: Constants.responsiveFontSize(context, 30),
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      actions: [
-        Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: Constants.responsiveSpacing(context, 20),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: Constants.getPrimaryColor(context),
           ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Constants.getPrimaryColor(context).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(
-                  Constants.responsiveRadius(context, 16)),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'مصاريفك',
+          style: TextStyle(
+            color: Constants.getPrimaryColor(context),
+            fontFamily: Constants.defaultFontFamily,
+            fontSize: Constants.responsiveFontSize(context, 30),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: Constants.responsiveSpacing(context, 20),
             ),
             child: TextButton.icon(
               onPressed: onFilterTap,
@@ -61,9 +57,9 @@ class ReceiptAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
           ),
-        ),
-      ],
-      centerTitle: true,
+        ],
+        centerTitle: true,
+      ),
     );
   }
 

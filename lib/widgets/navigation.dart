@@ -100,29 +100,41 @@ class _ScreenState extends State<Screen> with SingleTickerProviderStateMixin {
                 child: InkWell(
                   onTap: _handleTap,
                   borderRadius: BorderRadius.circular(
-                      Constants.responsiveSpacingNew(context, 16)),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        widget.buttonIcon,
-                        color: Colors.white,
-                        size: Constants.responsiveSpacingNew(
-                            context, widget.size),
-                      ),
-                      SizedBox(
-                          height: Constants.responsiveSpacingNew(context, 6)),
-                      Text(
-                        widget.labelText,
-                        style: TextStyle(
+                      Constants.responsiveSpacingNew(context, 50)),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Constants.responsiveSpacingNew(context, 8),
+                      vertical: Constants.responsiveSpacingNew(context, 6),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          widget.buttonIcon,
                           color: Colors.white,
-                          fontSize: Constants.responsiveSpacingNew(context, 11),
-                          fontFamily: Constants.secondaryFontFamily,
-                          fontWeight: FontWeight.w500,
+                          size: Constants.responsiveSpacingNew(
+                              context, widget.size),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                        SizedBox(
+                            height: Constants.responsiveSpacingNew(context, 4)),
+                        Flexible(
+                          child: Text(
+                            widget.labelText,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize:
+                                  Constants.responsiveSpacingNew(context, 10),
+                              fontFamily: Constants.secondaryFontFamily,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
