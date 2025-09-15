@@ -6,6 +6,7 @@ import 'package:path/path.dart' as path;
 import 'package:safe/models/receipt_data.dart';
 import 'package:safe/services/ocr_service.dart';
 import 'package:safe/services/receipt_parser.dart';
+import 'package:safe/services/navigation_service.dart';
 
 class ShareHandler {
   static final ShareHandler _instance = ShareHandler._internal();
@@ -39,11 +40,12 @@ class ShareHandler {
       },
     );
 
-    // Handle sharing coming from outside the app while the app is closed
+    // Handle sharing coming from outside the app while the app was closed
+    // Only process if there's a callback set (meaning the app is ready to handle receipts)
     ReceiveSharingIntent.instance
         .getInitialMedia()
         .then((List<SharedMediaFile> sharedMedia) {
-      if (sharedMedia.isNotEmpty) {
+      if (sharedMedia.isNotEmpty && _onReceiptProcessed != null) {
         _handleSharedMedia(sharedMedia);
       }
     });
@@ -87,11 +89,19 @@ class ShareHandler {
   Future<ReceiptData?> _processSharedImage(String imagePath,
       {String? sourceApp}) async {
     try {
-      // Extract text using OCR
-      final extractedText = await _ocrService.extractTextFromImage(imagePath);
+      // Show loading overlay for share processing
+      NavigationService().showShareProcessingOverlay();
+
+      // Extract text using OCR with timeout
+      final extractedText = await _ocrService
+          .extractTextFromImage(imagePath)
+          .timeout(const Duration(seconds: 30));
 
       if (extractedText.isEmpty) {
         print('No text extracted from image');
+        // Hide loading overlay
+        NavigationService().hideShareProcessingOverlay();
+
         // Create a receipt with error message for user feedback
         final errorReceipt = ReceiptData(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -123,40 +133,9 @@ class ShareHandler {
 
       // Clean the extracted text
       final cleanedText = ReceiptParser.cleanText(extractedText);
+      print('Extracted text for processing: $cleanedText');
 
-      // Validate if it looks like a receipt
-      if (!ReceiptParser.isValidReceipt(cleanedText)) {
-        print('Text does not appear to be a receipt');
-        // Create a receipt with error message for user feedback
-        final errorReceipt = ReceiptData(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          imagePath: imagePath,
-          extractedText: cleanedText,
-          title: 'إيصال غير صالح',
-          amount: null,
-          date: DateTime.now(),
-          currency: 'ج.م',
-          merchant: null,
-          confidenceScore: 0.0,
-          processedAt: DateTime.now(),
-          isProcessed: false,
-          errorMessage: 'لا يبدو هذا النص كإيصال صالح',
-          sourceApp: sourceApp,
-        );
-
-        // Save image and notify callback
-        final savedImagePath = await _saveImageToAppDirectory(imagePath);
-        final updatedErrorReceipt =
-            errorReceipt.copyWith(imagePath: savedImagePath);
-
-        if (_onReceiptProcessed != null) {
-          _onReceiptProcessed!(updatedErrorReceipt);
-        }
-
-        return updatedErrorReceipt;
-      }
-
-      // Parse the receipt text using Grok API with fallback
+      // Parse the receipt text using Gemini API with fallback
       final receiptData = await ReceiptParser.parseReceiptText(
           cleanedText, imagePath,
           sourceApp: sourceApp);
@@ -166,7 +145,7 @@ class ShareHandler {
       final updatedReceiptData =
           receiptData.copyWith(imagePath: savedImagePath);
 
-      // Notify callback if set
+      // Notify callback if set (this will trigger navigation and hide loading overlay)
       if (_onReceiptProcessed != null) {
         _onReceiptProcessed!(updatedReceiptData);
       }
@@ -174,6 +153,9 @@ class ShareHandler {
       return updatedReceiptData;
     } catch (e) {
       print('Error processing shared image: $e');
+
+      // Hide loading overlay
+      NavigationService().hideShareProcessingOverlay();
 
       // Create a receipt with error message for user feedback
       final errorReceipt = ReceiptData(

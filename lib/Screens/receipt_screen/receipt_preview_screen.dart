@@ -87,7 +87,8 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
 
       if (mounted) {
         _showSuccessSnackBar('تم إعادة معالجة الإيصال');
-        Navigator.pop(context, true);
+        // Navigate to home after successful retry
+        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
       }
     } catch (e) {
       if (mounted) {
@@ -145,7 +146,8 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
       if (mounted) {
         HapticFeedback.mediumImpact();
         _showSuccessSnackBar('تم حفظ المعاملة بنجاح');
-        Navigator.pop(context, true);
+        // Navigate to home instead of just popping
+        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
       }
     } catch (e) {
       if (mounted) {
@@ -205,17 +207,26 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
       child: Scaffold(
         backgroundColor: Constants.scaffoldBackgroundColor,
         appBar: AppBar(
+          centerTitle: true,
           title: const Text(
             'معاينة الإيصال',
             style: TextStyle(
               fontFamily: Constants.defaultFontFamily,
-              color: Colors.white,
+              color: Constants.defaultPrimaryColor,
             ),
           ),
-          backgroundColor: Constants.getPrimaryColor(context),
-          foregroundColor: Colors.white,
+          backgroundColor: Colors.white,
+          foregroundColor: Constants.defaultPrimaryColor,
           elevation: 0,
           actions: [
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                // Navigate to home when cancel is pressed
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/', (route) => false);
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.delete_outline),
               onPressed: () async {
@@ -224,6 +235,7 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
                   builder: (context) => AlertDialog(
                     title: const Text(
                       'حذف الإيصال',
+                      textAlign: TextAlign.center,
                       style: TextStyle(fontFamily: Constants.defaultFontFamily),
                     ),
                     content: const Text(
@@ -249,7 +261,9 @@ class _ReceiptPreviewScreenState extends State<ReceiptPreviewScreen> {
                   await Provider.of<ReceiptProvider>(context, listen: false)
                       .removeReceipt(widget.receiptData.id);
                   if (mounted) {
-                    Navigator.pop(context);
+                    // Navigate to home after deletion
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/', (route) => false);
                   }
                 }
               },

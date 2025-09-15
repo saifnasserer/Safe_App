@@ -1,11 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safe/models/receipt_data.dart';
-import 'package:safe/services/share_handler.dart';
 
 class ReceiptProvider extends ChangeNotifier {
-  final ShareHandler _shareHandler = ShareHandler();
   List<ReceiptData> _receipts = [];
   bool _isLoading = false;
   String? _errorMessage;
@@ -27,13 +26,19 @@ class ReceiptProvider extends ChangeNotifier {
     _setLoading(true);
     try {
       await _loadReceipts();
+      _clearError();
+    } catch (e) {
+      _setError('Failed to initialize receipt provider: $e');
+    } finally {
+      _setLoading(false);
+    }
+  }
 
-      // Set callback for share handler to automatically add processed receipts
-      _shareHandler.setReceiptProcessedCallback((ReceiptData receiptData) {
-        addReceipt(receiptData);
-      });
-
-      _shareHandler.initialize();
+  /// Initialize for share intent flow (lightweight)
+  Future<void> initializeForShareIntent() async {
+    _setLoading(true);
+    try {
+      await _loadReceipts();
       _clearError();
     } catch (e) {
       _setError('Failed to initialize receipt provider: $e');
@@ -134,7 +139,7 @@ class ReceiptProvider extends ChangeNotifier {
         final receipt = _receipts[index];
 
         // Delete the image file
-        await _shareHandler.deleteReceiptImage(receipt.imagePath);
+        await _deleteReceiptImage(receipt.imagePath);
 
         _receipts.removeAt(index);
         await _saveReceipts();
@@ -156,14 +161,9 @@ class ReceiptProvider extends ChangeNotifier {
       _setLoading(true);
       _clearError();
 
-      final receiptData = await _shareHandler.processImageFromPicker(imagePath,
-          sourceApp: sourceApp);
-
-      if (receiptData != null) {
-        await addReceipt(receiptData);
-      }
-
-      return receiptData;
+      // This method is no longer used since ShareIntentHandler handles image processing
+      // Return null to indicate processing should be handled by ShareIntentHandler
+      return null;
     } catch (e) {
       _setError('Failed to process image: $e');
       return null;
@@ -237,7 +237,7 @@ class ReceiptProvider extends ChangeNotifier {
 
       // Delete all image files
       for (final receipt in _receipts) {
-        await _shareHandler.deleteReceiptImage(receipt.imagePath);
+        await _deleteReceiptImage(receipt.imagePath);
       }
 
       _receipts.clear();
@@ -258,12 +258,13 @@ class ReceiptProvider extends ChangeNotifier {
 
       final receipt = getReceiptById(receiptId);
       if (receipt != null) {
-        final updatedReceipt = await _shareHandler.processImageFromPicker(
-            receipt.imagePath,
-            sourceApp: receipt.sourceApp);
-        if (updatedReceipt != null) {
-          await updateReceipt(updatedReceipt);
-        }
+        // Retry processing is now handled by ShareIntentHandler
+        // For now, just clear the error message
+        final updatedReceipt = receipt.copyWith(
+          errorMessage: null,
+          isProcessed: true,
+        );
+        await updateReceipt(updatedReceipt);
       }
     } catch (e) {
       _setError('Failed to retry processing: $e');
@@ -290,9 +291,18 @@ class ReceiptProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  @override
-  void dispose() {
-    _shareHandler.dispose();
-    super.dispose();
+  /// Delete receipt image file
+  Future<bool> _deleteReceiptImage(String imagePath) async {
+    try {
+      final file = File(imagePath);
+      if (await file.exists()) {
+        await file.delete();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Error deleting receipt image: $e');
+      return false;
+    }
   }
 }

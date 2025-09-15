@@ -17,9 +17,7 @@ class _ReceiptListScreenState extends State<ReceiptListScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ReceiptProvider>(context, listen: false).initialize();
-    });
+    // Removed automatic initialization to prevent unwanted receipt processing
   }
 
   @override

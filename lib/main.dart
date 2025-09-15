@@ -17,6 +17,7 @@ import 'package:safe/providers/receipt_provider.dart';
 import 'package:safe/utils/storage_service.dart';
 import 'package:provider/provider.dart';
 import 'package:safe/widgets/app_initializer.dart';
+import 'package:safe/services/navigation_service.dart';
 
 void main() async {
   await Future.delayed(const Duration(seconds: 2));
@@ -34,6 +35,7 @@ void main() async {
       debugPrint('Flutter Error: ${details.toString()}');
     };
 
+    // Always use full initialization for now, but with optimized share intent handling
     final profileProvider = ProfileProvider();
     await profileProvider.initialize();
 
@@ -119,6 +121,7 @@ class _SafeAppState extends State<SafeApp> {
           child: MaterialApp(
             title: 'Safe',
             debugShowCheckedModeBanner: false,
+            navigatorKey: NavigationService().navigatorKey,
             theme: ThemeData(
               fontFamily: Constants.defaultFontFamily,
               colorScheme: ColorScheme.fromSeed(
@@ -166,6 +169,67 @@ class _SafeAppState extends State<SafeApp> {
           ),
         );
       },
+    );
+  }
+}
+
+/// Lightweight app for share intent flow
+class ShareIntentApp extends StatelessWidget {
+  const ShareIntentApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryColor = Constants.defaultPrimaryColor;
+
+    return OverlaySupport.global(
+      child: MaterialApp(
+        title: 'Safe',
+        debugShowCheckedModeBanner: false,
+        navigatorKey: NavigationService().navigatorKey,
+        theme: ThemeData(
+          fontFamily: Constants.defaultFontFamily,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: primaryColor,
+            brightness: Brightness.light,
+          ),
+          useMaterial3: true,
+          appBarTheme: AppBarTheme(
+            backgroundColor: primaryColor,
+            foregroundColor: Colors.white,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.dark,
+              statusBarBrightness: Brightness.light,
+            ),
+          ),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+            backgroundColor: primaryColor,
+            foregroundColor: Colors.white,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ),
+        home: const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+        routes: {
+          '/': (context) => const Home(),
+        },
+        builder: (context, child) {
+          return ScrollConfiguration(
+            behavior: const ScrollBehavior().copyWith(
+              physics: const BouncingScrollPhysics(),
+            ),
+            child: child!,
+          );
+        },
+      ),
     );
   }
 }

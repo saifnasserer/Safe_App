@@ -34,7 +34,7 @@ class ReceiptParser {
 
     // Total/Sum patterns (high priority)
     'total_patterns': RegExp(
-        r'(?:total|المجموع|الإجمالي|مبلغ|amount|price|سعر|المبلغ|الاجمالي|المجموع الكلي)[\s:]*(\d{1,3}(?:[,\s]\d{3})*(?:\.\d{2})?)',
+        r'(?:total|المجموع|الإجمالي|مبلغ|amount|price|سعر|المبلغ|الاجمالي|المجموع الكلي|تم تحويل)[\s:]*(\d{1,3}(?:[,\s]\d{3})*(?:\.\d{2})?)',
         caseSensitive: false),
 
     // Subtotal patterns (medium priority)
@@ -62,38 +62,49 @@ class ReceiptParser {
   };
 
   /// Parse receipt text using Gemini API with fallback to regex
+  /// OPTIMIZED: Only makes 1 API call instead of 3
   static Future<ReceiptData> parseReceiptText(String text, String imagePath,
       {String? sourceApp}) async {
     try {
-      // Check if Gemini API is available first
-      final isApiKeyValid = await _geminiService.testApiKey();
-      print('Gemini API key valid: $isApiKeyValid');
+      // OPTIMIZATION: Skip separate API key and availability checks
+      // Go directly to analysis - the analyzeReceiptText method handles all error cases
+      print('Attempting Gemini API analysis...');
 
-      if (!isApiKeyValid) {
-        print('API key is invalid, using regex fallback');
-        return _parseReceiptTextWithRegex(text, imagePath,
-            sourceApp: sourceApp);
-      }
+      final (result, geminiAnalysis) =
+          await _geminiService.analyzeReceiptText(text);
 
-      final isGeminiAvailable = await _geminiService.isAvailable();
-      print('Gemini API available: $isGeminiAvailable');
-
-      if (isGeminiAvailable) {
-        // Try Gemini API first
-        final geminiAnalysis = await _geminiService.analyzeReceiptText(text);
-
-        if (geminiAnalysis != null && geminiAnalysis.confidence > 0.6) {
-          print(
-              'Using Gemini analysis with confidence: ${geminiAnalysis.confidence}');
-          // Use Gemini analysis if confidence is high enough
-          return _createReceiptFromGeminiAnalysis(
-              geminiAnalysis, text, imagePath, sourceApp);
-        } else {
-          print(
-              'Gemini analysis failed or low confidence, using regex fallback');
-        }
+      if (result == GeminiResult.success &&
+          geminiAnalysis != null &&
+          geminiAnalysis.confidence >= 0.5) {
+        print(
+            'Using Gemini analysis with confidence: ${geminiAnalysis.confidence}');
+        return _createReceiptFromGeminiAnalysis(
+            geminiAnalysis, text, imagePath, sourceApp);
       } else {
-        print('Gemini API not available, using regex fallback');
+        // Log the specific failure reason and fallback
+        switch (result) {
+          case GeminiResult.resourceExhausted:
+            print(
+                'Gemini API resource exhausted (quota exceeded), using regex fallback');
+            break;
+          case GeminiResult.networkError:
+            print('Gemini API network error, using regex fallback');
+            break;
+          case GeminiResult.invalidResponse:
+            print('Gemini API invalid response, using regex fallback');
+            break;
+          case GeminiResult.apiError:
+            print('Gemini API error, using regex fallback');
+            break;
+          case GeminiResult.success:
+            if (geminiAnalysis != null) {
+              print(
+                  'Gemini analysis low confidence: ${geminiAnalysis.confidence}, using regex fallback');
+            } else {
+              print('Gemini analysis returned null, using regex fallback');
+            }
+            break;
+        }
       }
     } catch (e) {
       print('Gemini API failed, falling back to regex: $e');
@@ -121,7 +132,7 @@ class ReceiptParser {
     // Extract merchant name
     final merchant = _extractMerchant(lines);
 
-    // Generate title with source app information
+    // Generate title with source app information (for display purposes only)
     final title = _generateTitle(merchant, amount, sourceApp);
 
     // Calculate confidence score
@@ -139,7 +150,7 @@ class ReceiptParser {
       confidenceScore: confidenceScore,
       processedAt: DateTime.now(),
       isProcessed: true,
-      sourceApp: sourceApp,
+      sourceApp: null, // Never mark regex fallback as AI processed
     );
   }
 
@@ -168,7 +179,8 @@ class ReceiptParser {
       confidenceScore: analysis.confidence,
       processedAt: DateTime.now(),
       isProcessed: true,
-      sourceApp: sourceApp,
+      sourceApp:
+          'gemini-ai', // Mark as AI processed - only set when Gemini actually succeeds
     );
   }
 
@@ -275,7 +287,26 @@ class ReceiptParser {
     if (candidates.isNotEmpty) {
       print(
           'Amount candidates: ${candidates.map((c) => '${c.amount} (priority: ${c.priority}, context: ${c.context})').join(', ')}');
-      return candidates.first.amount;
+
+      // Sort candidates by priority (highest first), then by amount (smallest reasonable amount first)
+      candidates.sort((a, b) {
+        if (a.priority != b.priority) {
+          return b.priority.compareTo(a.priority); // Higher priority first
+        }
+        // If same priority, prefer smaller amounts (but not too small)
+        return a.amount.compareTo(b.amount);
+      });
+
+      // Filter out unreasonably large amounts (likely parsing errors)
+      final reasonableCandidates =
+          candidates.where((c) => c.amount <= 100000).toList();
+
+      if (reasonableCandidates.isNotEmpty) {
+        return reasonableCandidates.first.amount;
+      } else {
+        // If all amounts are too large, return the smallest one
+        return candidates.first.amount;
+      }
     }
 
     return null;
@@ -584,9 +615,14 @@ class ReceiptParser {
 
   /// Validate if text looks like a receipt
   static bool isValidReceipt(String text) {
-    if (text.length < 15) return false;
+    print('Validating receipt text: $text');
 
-    // Check for receipt indicators (more comprehensive)
+    if (text.length < 10) {
+      print('Text too short: ${text.length}');
+      return false;
+    }
+
+    // Check for receipt indicators (more comprehensive with Arabic support)
     final receiptIndicators = [
       'receipt',
       'إيصال',
@@ -619,11 +655,24 @@ class ReceiptParser {
       'shop',
       'محل',
       'مطعم',
-      'restaurant'
+      'restaurant',
+      'شراء',
+      'بيع',
+      'transaction',
+      'معاملة',
+      'سعر',
+      'price',
+      'كمية',
+      'quantity',
+      'منتج',
+      'product',
+      'خدمة',
+      'service'
     ];
 
     final hasReceiptIndicator = receiptIndicators.any(
         (indicator) => text.toLowerCase().contains(indicator.toLowerCase()));
+    print('Has receipt indicator: $hasReceiptIndicator');
 
     // Check for numbers (amounts) - at least one reasonable number
     final numberPattern = RegExp(r'\b(\d{1,3}(?:[,\s]\d{3})*(?:\.\d{2})?)\b');
@@ -634,15 +683,38 @@ class ReceiptParser {
         .toList();
 
     final hasReasonableNumbers = numbers.isNotEmpty;
+    print('Has reasonable numbers: $hasReasonableNumbers (found: $numbers)');
 
     // Check for currency indicators
     final hasCurrency = _patterns['currency']!.hasMatch(text);
+    print('Has currency: $hasCurrency');
 
-    // At least 2 out of 3 conditions should be true
-    final conditions = [hasReceiptIndicator, hasReasonableNumbers, hasCurrency];
-    final trueConditions = conditions.where((c) => c).length;
+    // More flexible validation for Arabic text
+    // If text contains Arabic characters, be more lenient
+    final hasArabicText = RegExp(r'[\u0600-\u06FF]').hasMatch(text);
+    print('Has Arabic text: $hasArabicText');
 
-    return trueConditions >= 2;
+    // More flexible validation - if we have reasonable numbers, it's likely a receipt
+    if (hasReasonableNumbers) {
+      print('Validation passed: Found reasonable numbers');
+      return true;
+    }
+
+    if (hasArabicText) {
+      // For Arabic text, just need receipt indicators
+      final result = hasReceiptIndicator;
+      print('Arabic validation result: $result');
+      return result;
+    } else {
+      // For non-Arabic text, use original logic
+      final conditions = [hasReceiptIndicator, hasCurrency];
+      final trueConditions = conditions.where((c) => c).length;
+      final result =
+          trueConditions >= 1; // More lenient - just need one condition
+      print(
+          'Non-Arabic validation result: $result (conditions met: $trueConditions/2)');
+      return result;
+    }
   }
 
   /// Clean and normalize text
