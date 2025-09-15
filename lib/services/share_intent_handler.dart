@@ -85,20 +85,33 @@ class ShareIntentHandler {
   /// Show processing screen immediately
   void _showProcessingScreen() {
     final context = NavigationService().navigatorKey.currentContext;
-    if (context != null) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => _ProcessingScreen(),
-      );
+    if (context != null && context.mounted) {
+      try {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => _ProcessingScreen(),
+        );
+      } catch (e) {
+        print('⚠️ [Share Intent Handler] Error showing processing screen: $e');
+      }
     }
   }
 
   /// Hide processing screen
   void _hideProcessingScreen() {
     final context = NavigationService().navigatorKey.currentContext;
-    if (context != null) {
-      Navigator.of(context).pop();
+    if (context != null && context.mounted) {
+      try {
+        // Use SchedulerBinding to ensure navigation happens in the next frame
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted && Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          }
+        });
+      } catch (e) {
+        print('⚠️ [Share Intent Handler] Error hiding processing screen: $e');
+      }
     }
   }
 
@@ -198,12 +211,22 @@ class ShareIntentHandler {
         // Hide processing screen and navigate to preview
         _hideProcessingScreen();
 
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) =>
-                ReceiptPreviewScreen(receiptData: receiptData),
-          ),
-        );
+        // Use post frame callback to ensure navigation happens safely
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) {
+            try {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      ReceiptPreviewScreen(receiptData: receiptData),
+                ),
+              );
+            } catch (e) {
+              print(
+                  '⚠️ [Share Intent Handler] Error navigating to preview: $e');
+            }
+          }
+        });
       } catch (e) {
         print('Error adding receipt to provider: $e');
         _hideProcessingScreen();
@@ -215,31 +238,44 @@ class ShareIntentHandler {
   /// Show error and navigate to home
   void _showErrorAndNavigateHome(String errorMessage) {
     final context = NavigationService().navigatorKey.currentContext;
-    if (context != null) {
+    if (context != null && context.mounted) {
       _hideProcessingScreen();
 
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text(
-            'خطأ في المعالجة',
-            style: TextStyle(fontFamily: Constants.defaultFontFamily),
-          ),
-          content: Text(
-            errorMessage,
-            style: const TextStyle(fontFamily: Constants.secondaryFontFamily),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushReplacementNamed('/');
-              },
-              child: const Text('العودة للرئيسية'),
+      try {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text(
+              'خطأ في المعالجة',
+              style: TextStyle(fontFamily: Constants.defaultFontFamily),
             ),
-          ],
-        ),
-      );
+            content: Text(
+              errorMessage,
+              style: const TextStyle(fontFamily: Constants.secondaryFontFamily),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  try {
+                    Navigator.of(context).pop();
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (context.mounted) {
+                        Navigator.of(context).pushReplacementNamed('/');
+                      }
+                    });
+                  } catch (e) {
+                    print(
+                        '⚠️ [Share Intent Handler] Error navigating home: $e');
+                  }
+                },
+                child: const Text('العودة للرئيسية'),
+              ),
+            ],
+          ),
+        );
+      } catch (e) {
+        print('⚠️ [Share Intent Handler] Error showing error dialog: $e');
+      }
     }
   }
 

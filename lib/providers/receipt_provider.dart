@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:safe/models/receipt_data.dart';
+import 'package:safe/services/ocr_service.dart';
+import 'package:safe/services/receipt_parser.dart';
 
 class ReceiptProvider extends ChangeNotifier {
   List<ReceiptData> _receipts = [];
@@ -161,11 +163,35 @@ class ReceiptProvider extends ChangeNotifier {
       _setLoading(true);
       _clearError();
 
-      // This method is no longer used since ShareIntentHandler handles image processing
-      // Return null to indicate processing should be handled by ShareIntentHandler
-      return null;
+      print('🔍 [Receipt Provider] Processing image: $imagePath');
+
+      // Import the necessary services
+      final ocrService = OCRService();
+
+      // Extract text using OCR
+      final extractedText = await ocrService.extractTextFromImage(imagePath);
+
+      if (extractedText.isEmpty) {
+        print('❌ [Receipt Provider] No text extracted from image');
+        _setError('لم يتم استخراج نص من الصورة');
+        return null;
+      }
+
+      print('📝 [Receipt Provider] Extracted text: $extractedText');
+
+      // Parse the receipt text using static method
+      final receiptData = await ReceiptParser.parseReceiptText(
+        extractedText,
+        imagePath,
+        sourceApp: sourceApp,
+      );
+
+      print('✅ [Receipt Provider] Successfully processed receipt');
+      await addReceipt(receiptData);
+      return receiptData;
     } catch (e) {
-      _setError('Failed to process image: $e');
+      print('❌ [Receipt Provider] Error processing image: $e');
+      _setError('فشل في معالجة الصورة: $e');
       return null;
     } finally {
       _setLoading(false);

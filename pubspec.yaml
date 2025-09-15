@@ -48,6 +48,7 @@ dependencies:
   flutter_native_splash: ^2.4.4
   # Receipt scanning dependencies
   google_mlkit_text_recognition: ^0.15.0
+  flutter_tesseract_ocr: ^0.4.24
   receive_sharing_intent: ^1.8.1
   image_picker: ^1.0.4
   path_provider: ^2.1.1
@@ -91,6 +92,9 @@ flutter:
     - assets/animation/
     - assets/SFX/
     - android/app/src/main/res/drawable/
+    - assets/tessdata_config.json
+    - assets/tessdata/eng.traineddata
+    - assets/tessdata/ara.traineddata
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

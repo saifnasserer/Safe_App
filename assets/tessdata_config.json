@@ -1,0 +1,7 @@
+{
+  "files": [
+    "eng.traineddata",
+    "ara.traineddata"
+  ],
+  "tessdata_path": "assets/tessdata/"
+}

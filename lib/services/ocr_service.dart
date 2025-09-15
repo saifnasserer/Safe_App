@@ -1,88 +1,122 @@
 import 'dart:io';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image/image.dart' as img;
+import 'package:safe/features/ocr/ocr_manager.dart';
 
 class OCRService {
   static final OCRService _instance = OCRService._internal();
   factory OCRService() => _instance;
   OCRService._internal();
 
-  // Use default text recognizer which supports multiple scripts including Arabic
+  // Use the new OCR Manager for engine switching
+  final OcrManager _ocrManager = OcrManager();
+
+  // Keep the old ML Kit recognizer for backward compatibility
   final TextRecognizer _textRecognizer = TextRecognizer();
 
-  /// Extract text from image using Google ML Kit with improved Arabic support
+  /// Extract text from image using the new OCR Manager (Tesseract by default)
   Future<String> extractTextFromImage(String imagePath) async {
     try {
-      // Preprocess image for better OCR results
-      final processedImagePath = await preprocessImage(imagePath);
+      print('🔍 [OCR Service] Using new OCR Manager for text extraction');
 
-      final inputImage = InputImage.fromFilePath(processedImagePath);
-      final recognizedText = await _textRecognizer.processImage(inputImage);
+      // Use the new OCR Manager which defaults to Tesseract
+      final extractedText = await _ocrManager.extractTextFromImage(
+        imagePath,
+        language: 'ara+eng', // Support both Arabic and English
+        preprocessImage: true,
+      );
 
-      // Return text (already null-safe)
-      String extractedText = recognizedText.text;
-      print('Raw OCR extracted text: $extractedText');
-      print('OCR text length: ${extractedText.length}');
-
-      // Clean and improve the extracted text
-      extractedText = _cleanExtractedText(extractedText);
-      print('Cleaned OCR text: $extractedText');
-
-      // Check if Arabic text was detected
-      if (extractedText.contains(RegExp(r'[\u0600-\u06FF]'))) {
-        print('Arabic text detected in OCR result');
-      } else {
-        print('No Arabic text detected - may be garbled or English only');
-      }
+      print('📝 [OCR Service] Extracted text length: ${extractedText.length}');
+      print('📝 [OCR Service] Extracted text: $extractedText');
 
       return extractedText;
     } catch (e) {
-      print('OCR Error: $e');
-      return ''; // Return empty string instead of throwing exception
+      print(
+          '❌ [OCR Service] Error with new OCR Manager, falling back to ML Kit: $e');
+
+      // Fallback to the old ML Kit implementation
+      try {
+        final processedImagePath = await preprocessImage(imagePath);
+        final inputImage = InputImage.fromFilePath(processedImagePath);
+        final recognizedText = await _textRecognizer.processImage(inputImage);
+
+        String extractedText = recognizedText.text;
+        print(
+            '📝 [OCR Service] ML Kit fallback extracted text: $extractedText');
+
+        extractedText = _cleanExtractedText(extractedText);
+        print('🧹 [OCR Service] ML Kit fallback cleaned text: $extractedText');
+
+        return extractedText;
+      } catch (fallbackError) {
+        print('❌ [OCR Service] ML Kit fallback also failed: $fallbackError');
+        return '';
+      }
     }
   }
 
-  /// Extract text with confidence scores
+  /// Extract text with confidence scores using the new OCR Manager
   Future<Map<String, dynamic>> extractTextWithConfidence(
     String imagePath,
   ) async {
     try {
-      final inputImage = InputImage.fromFilePath(imagePath);
-      final recognizedText = await _textRecognizer.processImage(inputImage);
+      print(
+          '🔍 [OCR Service] Using new OCR Manager for detailed text extraction');
 
-      final text = recognizedText.text;
+      // Use the new OCR Manager which provides better confidence scores
+      final result = await _ocrManager.extractTextWithConfidence(
+        imagePath,
+        language: 'ara+eng',
+        preprocessImage: true,
+      );
 
-      // Calculate average confidence score (ML Kit doesn't provide confidence scores)
-      // We'll use a simple heuristic based on text length and structure
-      double averageConfidence = 0.0;
-      if (text.isNotEmpty) {
-        // Base confidence on text length and structure
-        averageConfidence = 0.7; // Default confidence
-        if (text.length > 50) averageConfidence += 0.1;
-        if (text.contains(RegExp(r'\d'))) {
-          averageConfidence += 0.1;
-        }
-        if (text.contains(RegExp(r'[A-Za-z\u0600-\u06FF]'))) {
-          averageConfidence += 0.1;
-        }
-      }
-
-      return {
-        'text': text,
-        'confidence': averageConfidence,
-        'blocks': recognizedText.blocks
-            .map(
-              (block) => {'text': block.text, 'boundingBox': block.boundingBox},
-            )
-            .toList(),
-      };
+      print(
+          '📊 [OCR Service] OCR result: ${result['engine']} engine, confidence: ${result['confidence']}');
+      return result;
     } catch (e) {
-      print('OCR Confidence Error: $e');
-      return {
-        'text': '',
-        'confidence': 0.0,
-        'blocks': <Map<String, dynamic>>[],
-      };
+      print(
+          '❌ [OCR Service] Error with new OCR Manager, falling back to ML Kit: $e');
+
+      // Fallback to the old ML Kit implementation
+      try {
+        final inputImage = InputImage.fromFilePath(imagePath);
+        final recognizedText = await _textRecognizer.processImage(inputImage);
+
+        final text = recognizedText.text;
+
+        // Calculate average confidence score (ML Kit doesn't provide confidence scores)
+        double averageConfidence = 0.0;
+        if (text.isNotEmpty) {
+          averageConfidence = 0.7; // Default confidence
+          if (text.length > 50) averageConfidence += 0.1;
+          if (text.contains(RegExp(r'\d'))) {
+            averageConfidence += 0.1;
+          }
+          if (text.contains(RegExp(r'[A-Za-z\u0600-\u06FF]'))) {
+            averageConfidence += 0.1;
+          }
+        }
+
+        return {
+          'text': text,
+          'confidence': averageConfidence,
+          'engine': 'mlkit',
+          'blocks': recognizedText.blocks
+              .map(
+                (block) =>
+                    {'text': block.text, 'boundingBox': block.boundingBox},
+              )
+              .toList(),
+        };
+      } catch (fallbackError) {
+        print('❌ [OCR Service] ML Kit fallback also failed: $fallbackError');
+        return {
+          'text': '',
+          'confidence': 0.0,
+          'engine': 'unknown',
+          'blocks': <Map<String, dynamic>>[],
+        };
+      }
     }
   }
 
@@ -208,11 +242,6 @@ class OCRService {
     }
   }
 
-  /// Get text recognition language options
-  List<String> getSupportedLanguages() {
-    return ['ar', 'en']; // Arabic and English
-  }
-
   /// Detect if extracted text likely contains Arabic content
   bool isLikelyArabicText(String text) {
     if (text.isEmpty) return false;
@@ -228,29 +257,35 @@ class OCRService {
     return arabicRatio > 0.3;
   }
 
+  /// Switch OCR engine
+  void setOcrEngine(OcrEngine engine) {
+    print('🔄 [OCR Service] Switching OCR engine to: $engine');
+    _ocrManager.setEngine(engine);
+  }
+
+  /// Get current OCR engine
+  OcrEngine getCurrentOcrEngine() {
+    return _ocrManager.currentEngine;
+  }
+
+  /// Get supported languages for current engine
+  List<String> getSupportedLanguages() {
+    return _ocrManager.getSupportedLanguages();
+  }
+
+  /// Check if image is suitable for OCR
+  // Future<bool> isImageSuitableForOCR(String imagePath) async {
+  //   return await _ocrManager.isImageSuitableForOCR(imagePath);
+  // }
+
   /// Get OCR quality assessment
   Map<String, dynamic> assessOCRQuality(String text) {
-    final hasArabic = isLikelyArabicText(text);
-    final hasNumbers = text.contains(RegExp(r'\d'));
-    final hasCurrency = text.contains(RegExp(r'[ج\.م|EGP|USD|\$|€]'));
-
-    double qualityScore = 0.0;
-    if (text.isNotEmpty) qualityScore += 0.3;
-    if (hasNumbers) qualityScore += 0.3;
-    if (hasCurrency) qualityScore += 0.2;
-    if (hasArabic) qualityScore += 0.2;
-
-    return {
-      'qualityScore': qualityScore,
-      'hasArabic': hasArabic,
-      'hasNumbers': hasNumbers,
-      'hasCurrency': hasCurrency,
-      'textLength': text.length,
-    };
+    return _ocrManager.assessOCRQuality(text);
   }
 
   /// Dispose resources
   void dispose() {
     _textRecognizer.close();
+    _ocrManager.dispose();
   }
 }
